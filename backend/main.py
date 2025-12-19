@@ -5,6 +5,7 @@ from database import create_db_and_tables
 
 app = FastAPI()
 
+#starting the server and creatin tables
 @app.on_event('startup')
 def startup():
     create_db_and_tables()
