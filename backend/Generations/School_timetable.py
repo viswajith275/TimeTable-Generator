@@ -46,6 +46,17 @@ for t in teachers:
 
     model.Add(sum(my_shifts)==teacher_limits[t])
 
+#constraint 4: there should not be morethan 1 class of the same teacher on the same room
+for d in days:
+    for t in teachers:
+        for r in rooms:
+            model.add(sum(shifts[t,d,r,time] for time in times) == 1)
+
+#constraint 5: there should not be a free period in the morning
+for d in days:
+    for r in rooms:
+        model.add(sum(shifts['FREE',d,r,time] for time in ['9am','10am']) == 0)
+
 #-------Solver----------
 solver = cp_model.CpSolver()
 status = solver.Solve(model)
