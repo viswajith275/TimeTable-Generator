@@ -1,0 +1,80 @@
+/* ======================== DEVELOPER NOTES ================================
+
+FILE STRUCTURE (DO NOT CHANGE ORDER): 
+1. Fonts 
+2. CSS Initial Setup 
+3. Root Variables (:root) 
+4. Global Elements (body, headings, links, etc.) 
+5. Layout (header, footer, grid, containers) 
+6. Components (buttons, cards, forms, modals) 
+7. Utilities (helpers, reusable classes) 
+8. Page-Specific Styles
+9. Animations 
+10. Media Queries
+
+RULES:
+- Do NOT write styles outside their assigned section 
+- ALWAYS sort components in alphabetical order ( inside each section )
+- Keep selectors simple and predictable 
+- Avoid !important unless absolutely necessary 
+- Group related styles together 
+- Comment complex logic or layout decisions 
+- Remove unused styles before committing
+
+NAMING CONVENTION: 
+- Use kebab-case for class names 
+
+MAINTENANCE: 
+- If a section grows too large, split it into a separate file 
+- Update this note if the structure changes
+
+=========================================================================== */
+
+
+/* ------------------------ FONTS ---------------------------- */
+
+@font-face {
+    font-family: "Nunito-Regular";
+    src: url("../fonts/Nunito-Regular.ttf");
+}
+
+/* ------------------------ INITIAL -------------------------- */
+
+*, *::before, *::after{
+    box-sizing: border-box;
+}
+
+body, h1, h2, h3, p, ul {
+    margin: 0;
+}
+
+/* -------------------------- ROOT ---------------------------- */
+
+
+/* ------------------------- GLOBAL ---------------------------- */
+
+a {
+    text-decoration: none;
+}
+
+body, button, input {
+    font-family: "Nunito-Regular", Arial, Helvetica, sans-serif;
+    font-size: 16px;
+}
+
+/* ------------------------- LAYOUT ---------------------------- */
+
+
+/* ----------------------- COMPONENTS -------------------------- */
+
+
+/* ----------------------- UTILITIES -------------------------- */
+
+
+/* --------------------- PAGE SPECIFIC ------------------------- */
+
+
+/* ----------------------- ANIMATIONS -------------------------- */
+
+
+/* ---------------------- MEDIA QUERIES ----------------------- */ 
