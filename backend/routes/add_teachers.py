@@ -40,7 +40,7 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
 
         db.commit()
 
-        return update_teacher
+        return updated_teacher
     return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
 
 @teacher_routes.delete('/teachers/{id}')
