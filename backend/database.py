@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from fastapi import Depends
 from typing import Annotated
-from models import User, Base
-from config import SQL_DATABASE_URL
+from backend.models import User, Base
+from backend.config import SQL_DATABASE_URL
 
 if not SQL_DATABASE_URL:
     raise RuntimeError("SQL_DATABASE_URL is not set. Please set it in the environment or in a .env file.")

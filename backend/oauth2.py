@@ -1,17 +1,12 @@
-try:
-    import jwt
-    from jwt.exceptions import InvalidTokenError
-except Exception as e:
-    raise RuntimeError(
-        "PyJWT is required but not installed. Run `pip install pyjwt` in your environment."
-    ) from e
+import jwt
+from jwt.exceptions import InvalidTokenError
 from datetime import datetime,timedelta, timezone
-from config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from backend.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from pwdlib import PasswordHash
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
-from database import get_user_by_username, get_user_by_id, SessionDep
-from models import TokenData, UsersBase
+from backend.database import get_user_by_username, get_user_by_id, SessionDep
+from backend.models import TokenData, UsersBase
 from fastapi.security import OAuth2PasswordBearer
 
 #initializing password hash and oauth2 password bearer

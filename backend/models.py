@@ -1,19 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Integer, String, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 from pydantic import BaseModel
 from typing import List
 
 class Base(DeclarativeBase):
     pass
-
-
-teacher_class_association = Table(
-    "teacher_class_link",
-    Base.metadata,
-    Column("teacher_id", ForeignKey("teachers.id"), primary_key=True),
-    Column("class_id", ForeignKey("classes.id"), primary_key=True),
-)
-
 
 #Base user model
 class UsersBase(BaseModel):
@@ -34,8 +25,26 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     id: int | None = None
 
+
+class ClassBase(BaseModel):
+    id: int
+    c_name: str
+
+
 class TeacherBase(BaseModel):
-    pass
+    id: int
+    t_name: str
+    t_sub: str
+    max_classes: int
+    class_assignments: List[ClassBase]
+
+class ClassCreate(BaseModel):
+    c_name: str
+
+class TeacherCreate(BaseModel):
+    t_name: str
+    t_sub: str
+    max_classes: int
 
 #table structures
 
@@ -46,7 +55,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
-    disabled: Mapped[bool] = mapped_column(default=True)
+    disabled: Mapped[bool] = mapped_column(default=False)
 
     #relationship with user and teachers
     teachers: Mapped[List["Teacher"]] = relationship(
@@ -78,7 +87,7 @@ class Teacher(Base):
 
 class Class(Base):
 
-    __tablename__ = 'clasess'
+    __tablename__ = 'classes'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     c_name: Mapped[str] = mapped_column(String, nullable=False)
@@ -93,6 +102,7 @@ class Class(Base):
 
 
 class TeacherClassAssignment(Base):
+
     __tablename__ = "teacher_class_assignments"
 
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"), primary_key=True)

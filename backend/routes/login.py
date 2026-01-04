@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
-from database import SessionDep, get_user_by_username
+from backend.database import SessionDep, get_user_by_username
 from fastapi.security import OAuth2PasswordRequestForm
-from oauth2 import authenticate_user, create_access_token, get_password_hash
-from models import Token, UserCreate, User, UsersBase
+from backend.oauth2 import authenticate_user, create_access_token, get_password_hash
+from backend.models import Token, UserCreate, User, UsersBase
 
 #creating a login route
-routes = APIRouter(tags=['login'])
+login_routes = APIRouter(tags=['login'])
 
 #login endpoint
-@routes.post('/login',response_model=Token)
+@login_routes.post('/login',response_model=Token)
 async def login_for_access_token(db : SessionDep,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
@@ -28,7 +28,7 @@ async def login_for_access_token(db : SessionDep,
     return Token(access_token=access_token, token_type="bearer")
 
 #sigh up endpoint
-@routes.post('/register', response_model=UsersBase)
+@login_routes.post('/register', response_model=UsersBase)
 def register_user(db : SessionDep, user: UserCreate):
 
     #checking if useer with same username already exists
