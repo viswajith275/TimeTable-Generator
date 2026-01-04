@@ -39,6 +39,7 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
         updated_teacher.max_classes = teacher.max_classes
 
         db.commit()
+        db.refresh(updated_teacher)
 
         return updated_teacher
     return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
