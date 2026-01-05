@@ -1,0 +1,285 @@
+/* setting up containers here so that box is aligned properly  */
+
+.loginPage {
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginPageContainer {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  width: 70%;
+  height: 80%;
+}
+/* common properties of both panel = flexbox */
+.left,
+.right {
+  display: flex;
+  flex-direction: column;
+}
+
+/* left panel styling */
+.left {
+  align-items: center;
+  gap: 2rem;
+}
+.left h2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 30px;
+}
+.left h2 span {
+  display: block;
+  font-size: 35px;
+}
+.googleLogin {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+  border-radius: 0.3rem;
+  padding: 0.8rem;
+  background-color: transparent;
+  justify-content: center;
+  font-weight: 600;
+  font-family: "Inter";
+}
+.googleLogin:hover {
+  transition: 0.3s;
+  box-shadow: 0 0 0 3px rgba(174, 184, 194, 0.2);
+  cursor: pointer;
+}
+.left p {
+  color: var(--color-grey-500);
+}
+.left p a {
+  color: var(--color-primary-light);
+  text-decoration-color: var(--color-primary-light);
+}
+
+/* right panel styling */
+.right {
+  gap: 1rem;
+}
+.rightInfo h3 {
+  font-size: 32px;
+  font-family: "Outfit";
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.rightInfo p {
+  color: var(--color-primary-light);
+  opacity: 0.8;
+}
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+/* setting up the input fields boxes properly with the logos */
+.inputField {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-grey-500);
+  border: 1px solid var(--color-grey-500);
+  border-radius: 0.3rem;
+  padding-inline: 0.8rem;
+}
+
+.right input[type="email"],
+.right input[type="password"],
+.right input[type="text"] {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 0.8rem 0;
+  font-size: 14px;
+  line-height: 1.2;
+}
+.inputField:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(174, 184, 194, 0.2);
+}
+.right input::placeholder {
+  color: var(--color-grey-500);
+  opacity: 0.8;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.forgotPass {
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  color: var(--color-primary);
+  align-self: flex-end;
+}
+.loginBtn {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Inter";
+  border-radius: 0.3rem;
+  padding: 0.8rem;
+  border: 1px solid var(--color-primary);
+}
+.loginBtn:hover {
+  transition: 0.3s;
+  box-shadow: 0 0 0 3px rgba(174, 184, 194, 0.2);
+  cursor: pointer;
+}
+.or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.or::before,
+.or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-primary);
+}
+/* mobile-only login/signup toggle */
+.mobileToggle {
+  display: none;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 1rem;
+  color: var(--color-grey-500);
+}
+
+.mobileToggleLink {
+  color: var(--color-primary-light);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+}
+.errorLabel {
+  color: var(--color-danger);
+  font-size: 12px;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.submitBtn__loading {
+  position: relative;
+  display: flex;
+
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.submitBtn__loading::before {
+  position: relative;
+  content: "";
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  top: 1px;
+  animation: spin 0.8s linear infinite;
+}
+@media (max-width: 709px) {
+  .mobileToggle {
+    display: block;
+  }
+}
+
+@media (min-width: 1000px) and (max-width: 1200px) {
+  .loginPageContainer {
+    width: 80%;
+  }
+}
+@media (min-width: 800px) and (max-width: 999px) {
+  .loginPageContainer {
+    width: 90%;
+  }
+}
+@media (min-width: 710px) and (max-width: 799px) {
+  .loginPageContainer {
+    width: 95%;
+  }
+}
+@media (max-width: 709px) {
+  .loginPageContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .left {
+    display: none;
+  }
+}
+@media (max-width: 400px) {
+  .loginPageContainer {
+    width: 90%;
+  }
+}
+@keyframes shakeField {
+  0% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-4px);
+  }
+  30% {
+    transform: translateX(4px);
+  }
+  45% {
+    transform: translateX(-4px);
+  }
+  60% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.hidden {
+  display: none;
+}
+.errorInputField {
+  animation: shakeField 0.35s ease-in-out;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  background-color: var(--danger-bg);
+}
+.errorInputField input::placeholder {
+  color: var(--color-danger);
+}
+.errorInputField:focus-within {
+  border-color: var(--color-danger);
+  box-shadow: none;
+}
+.errorInputField input {
+  color: var(--color-danger);
+}
