@@ -1,245 +1,241 @@
 import { useState } from "react";
 import styles from "./Login.module.css";
-import { Mail, LockKeyhole, User, Eye, EyeOff } from "lucide-react";
+import { LockKeyhole, Eye, EyeOff, User } from "lucide-react";
 import logoSmall from "../../assets/logo_small.png";
 import logoBig from "../../assets/logo_full_width.png";
-import sidePanel from "./img/side_panel.png";
-import googleImg from "../../assets/googlel.webp";
+import googleImg from "./img/googlel.webp";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [errors, setErrors] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [errorStates, setErrorStates] = useState({
+    username: false,
+    password: false,
+    confirmPassword: false,
+  });
+
   const [submitLoading, setSubmitLoading] = useState(false);
-
-  const [nameError, setNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  const [nameErrorState, setNameErrorState] = useState(false);
-  const [emailErrorState, setEmailErrorState] = useState(false);
-  const [passwordErrorState, setPasswordErrorState] = useState(false);
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     let hasError = false;
+    const newErrors = { ...errors };
+    const newErrorStates = { ...errorStates };
 
-    // NAME VALIDATION
-    if (!name.trim()) {
-      setNameError("Name is required");
-      setNameErrorState(true);
+    if (!form.username.trim()) {
+      newErrors.username = "Username is required";
+      newErrorStates.username = true;
       hasError = true;
     } else {
-      setNameErrorState(false);
+      newErrorStates.username = false;
     }
 
-    // EMAIL VALIDATION
-    if (!email) {
-      setEmailError("E-mail is required");
-      setEmailErrorState(true);
+    if (!form.password) {
+      newErrors.password = "Enter a password";
+      newErrorStates.password = true;
       hasError = true;
-    } else if (!emailRegex.test(email)) {
-      setEmailError("Invalid E-mail address");
-      setEmailErrorState(true);
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password too short";
+      newErrorStates.password = true;
       hasError = true;
     } else {
-      setEmailErrorState(false);
+      newErrorStates.password = false;
     }
 
-    // PASSWORD VALIDATION
-    if (!password) {
-      setPasswordError("Enter a password");
-      setPasswordErrorState(true);
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = "Confirm your password";
+      newErrorStates.confirmPassword = true;
       hasError = true;
-    } else if (password.length < 6) {
-      setPasswordError("Password too short");
-      setPasswordErrorState(true);
+    } else if (form.confirmPassword !== form.password) {
+      newErrors.confirmPassword = "Passwords do not match";
+      newErrorStates.confirmPassword = true;
       hasError = true;
     } else {
-      setPasswordErrorState(false);
+      newErrorStates.confirmPassword = false;
     }
+
+    setErrors(newErrors);
+    setErrorStates(newErrorStates);
 
     if (hasError) return;
 
     try {
       setSubmitLoading(true);
-
-      //  JWT SIGNUP API GOES HERE
-      console.log("Register payload:", { name, email, password });
+      console.log("Register payload:", form);
     } finally {
       setSubmitLoading(false);
     }
   };
 
   const handleGoogleSignup = () => {
-    //  Google OAuth / JWT flow later
     console.log("Google signup clicked");
   };
 
   return (
     <section className={styles.loginPage}>
-      <div className={styles.loginPageContainer}>
-        {/* LEFT PANEL */}
-        <div className={styles.left}>
-          <img width="200px" src={logoBig} alt="Logo" />
-          <img width="400px" src={sidePanel} alt="Illustration" />
+      <div className={styles.right}>
+        <img
+          src={logoSmall}
+          alt="Logo"
+          width={50}
+          style={{ alignSelf: "center" }}
+        />
 
-          <h2>
-            <span>Welcome to Lorum</span> Lorem ipsum dolor sit amet
-          </h2>
-
-          <p>
-            Already have an account? <a href="#login">Login</a>
-          </p>
+        <div className={styles.rightInfo}>
+          <h3>Sign Up</h3>
+          <p>Create a new account!</p>
         </div>
 
-        {/* RIGHT PANEL */}
-        <div className={styles.right}>
-          <img src={logoSmall} alt="Logo" width={50} />
-
-          <div className={styles.rightInfo}>
-            <h3>Sign Up</h3>
-            <p>Create a new account!</p>
-          </div>
-
-          <form onSubmit={handleSubmit} noValidate>
-            {/* NAME */}
-            <div className={styles.inputContainer}>
-              <label htmlFor="name-register-page" className={styles.label}>
-                <p>Your Name</p>
-                <p
-                  className={`${styles.errorLabel} ${
-                    nameErrorState ? "" : styles.hidden
-                  }`}
-                >
-                  {nameError}
-                </p>
-              </label>
-
-              <div
-                className={`${styles.inputField} ${
-                  nameErrorState ? styles.errorInputField : ""
+        <form onSubmit={handleSubmit} noValidate>
+          {/* USERNAME */}
+          <div className={styles.inputContainer}>
+            <label htmlFor="username-register-page" className={styles.label}>
+              <p>Username</p>
+              <p
+                className={`${styles.errorLabel} ${
+                  errorStates.username ? "" : styles.hidden
                 }`}
               >
-                <User size={16} strokeWidth={1.75} />
-                <input
-                  type="text"
-                  id="name-register-page"
-                  placeholder="Your Name"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    setNameErrorState(false);
-                  }}
-                />
-              </div>
-            </div>
+                {errors.username}
+              </p>
+            </label>
 
-            {/* EMAIL */}
-            <div className={styles.inputContainer}>
-              <label htmlFor="email-register-page" className={styles.label}>
-                <p>E-mail</p>
-                <p
-                  className={`${styles.errorLabel} ${
-                    emailErrorState ? "" : styles.hidden
-                  }`}
-                >
-                  {emailError}
-                </p>
-              </label>
-
-              <div
-                className={`${styles.inputField} ${
-                  emailErrorState ? styles.errorInputField : ""
-                }`}
-              >
-                <Mail size={16} strokeWidth={1.75} />
-                <input
-                  type="email"
-                  id="email-register-page"
-                  placeholder="yourname@gmail.com"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setEmailErrorState(false);
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* PASSWORD */}
-            <div className={styles.inputContainer}>
-              <label htmlFor="password-register-page" className={styles.label}>
-                <p>Password</p>
-                <p
-                  className={`${styles.errorLabel} ${
-                    passwordErrorState ? "" : styles.hidden
-                  }`}
-                >
-                  {passwordError}
-                </p>
-              </label>
-
-              <div
-                className={`${styles.inputField} ${
-                  passwordErrorState ? styles.errorInputField : ""
-                }`}
-              >
-                <LockKeyhole size={16} strokeWidth={1.75} />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password-register-page"
-                  placeholder="●●●●●●●●"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setPasswordErrorState(false);
-                  }}
-                />
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {showPassword ? (
-                    <EyeOff size={16} strokeWidth={1.75} />
-                  ) : (
-                    <Eye size={16} strokeWidth={1.75} />
-                  )}
-                </span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={submitLoading}
-              className={`${styles.loginBtn} ${
-                submitLoading ? styles.submitBtn__loading : ""
+            <div
+              className={`${styles.inputField} ${
+                errorStates.username ? styles.errorInputField : ""
               }`}
             >
-              Sign Up
-            </button>
-          </form>
+              <User size={16} strokeWidth={1.75} />
+              <input
+                type="text"
+                id="username-register-page"
+                placeholder="Username"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+              />
+            </div>
+          </div>
 
-          <p className={styles.or}>Or</p>
+          {/* PASSWORD */}
+          <div className={styles.inputContainer}>
+            <label htmlFor="password-register-page" className={styles.label}>
+              <p>Password</p>
+              <p
+                className={`${styles.errorLabel} ${
+                  errorStates.password ? "" : styles.hidden
+                }`}
+              >
+                {errors.password}
+              </p>
+            </label>
 
-          <button className={styles.googleLogin} onClick={handleGoogleSignup}>
-            <img width={20} src={googleImg} alt="Google logo" />
-            <p>Sign up with Google</p>
+            <div
+              className={`${styles.inputField} ${
+                errorStates.password ? styles.errorInputField : ""
+              }`}
+            >
+              <LockKeyhole size={16} strokeWidth={1.75} />
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password-register-page"
+                placeholder="●●●●●●●●"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ cursor: "pointer" }}
+              >
+                {showPassword ? (
+                  <EyeOff size={16} strokeWidth={1.75} />
+                ) : (
+                  <Eye size={16} strokeWidth={1.75} />
+                )}
+              </span>
+            </div>
+          </div>
+
+          {/* CONFIRM PASSWORD */}
+          <div className={styles.inputContainer}>
+            <label
+              htmlFor="confirm-password-register-page"
+              className={styles.label}
+            >
+              <p>Confirm Password</p>
+              <p
+                className={`${styles.errorLabel} ${
+                  errorStates.confirmPassword ? "" : styles.hidden
+                }`}
+              >
+                {errors.confirmPassword}
+              </p>
+            </label>
+
+            <div
+              className={`${styles.inputField} ${
+                errorStates.confirmPassword ? styles.errorInputField : ""
+              }`}
+            >
+              <LockKeyhole size={16} strokeWidth={1.75} />
+              <input
+                type={showPassword ? "text" : "password"}
+                id="confirm-password-register-page"
+                placeholder="●●●●●●●●"
+                value={form.confirmPassword}
+                onChange={(e) =>
+                  setForm({ ...form, confirmPassword: e.target.value })
+                }
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ cursor: "pointer" }}
+              >
+                {showPassword ? (
+                  <EyeOff size={16} strokeWidth={1.75} />
+                ) : (
+                  <Eye size={16} strokeWidth={1.75} />
+                )}
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitLoading}
+            className={`${styles.loginBtn} ${
+              submitLoading ? styles.submitBtn__loading : ""
+            }`}
+          >
+            Sign Up
           </button>
+        </form>
 
-          {/* MOBILE TOGGLE */}
-          <p className={styles.mobileToggle}>
-            Already have an account?{" "}
-            <a href="#login" className={styles.mobileToggleLink}>
-              Login
-            </a>
-          </p>
-        </div>
+        <p className={styles.or}>Or</p>
+
+        <button className={styles.googleLogin} onClick={handleGoogleSignup}>
+          <img width={20} src={googleImg} alt="Google logo" />
+          <p>Sign up with Google</p>
+        </button>
+
+        <p className={styles.newHere}>
+          New here?{" "}
+          <a href="#register" className={styles.newHereLink}>
+            Sign up
+          </a>
+        </p>
       </div>
     </section>
   );

@@ -1,206 +1,190 @@
 import { useState } from "react";
 import styles from "./Login.module.css";
-import { Mail, LockKeyhole, Eye, EyeOff } from "lucide-react";
+import { User, LockKeyhole, Eye, EyeOff } from "lucide-react";
 import logoSmall from "../../assets/logo_small.png";
-import logoBig from "../../assets/logo_full_width.png";
-import sidePanel from "./img/side_panel.png";
 import googleImg from "./img/googlel.webp";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const [emailErrorState, setEmailErrorState] = useState(false);
-  const [passwordErrorState, setPasswordErrorState] = useState(false);
-  const [emailError, setEmailError] = useState("Invalid email address");
-  const [passwordError, setPasswordError] = useState("Password too short");
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+  });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({
+    username: "",
+    password: "",
+  });
+
+  const [errorStates, setErrorStates] = useState({
+    username: false,
+    password: false,
+  });
+
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  // JWT login placeholder
   const handleLogin = async (e) => {
     e.preventDefault();
 
     let hasError = false;
+    const newErrors = { ...errors };
+    const newErrorStates = { ...errorStates };
 
-    // Email validation
-    if (!email) {
-      setEmailErrorState(true);
-      setEmailError("E-mail is required.");
+    // Username validation
+    if (!form.username.trim()) {
+      newErrors.username = "Username is required";
+      newErrorStates.username = true;
       hasError = true;
-    } else if (!emailRegex.test(email)) {
-      setEmailErrorState(true);
-      setEmailError("Invalid E-mail address.");
-      hasError = true;
+    } else {
+      newErrorStates.username = false;
     }
 
     // Password validation
-    if (!password) {
-      setPasswordErrorState(true);
-      setPasswordError("Enter a password");
+    if (!form.password) {
+      newErrors.password = "Enter a password";
+      newErrorStates.password = true;
       hasError = true;
-    } else if (password.length < 6) {
-      setPasswordErrorState(true);
-      setPasswordError("Password too short");
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password too short";
+      newErrorStates.password = true;
       hasError = true;
+    } else {
+      newErrorStates.password = false;
     }
+
+    setErrors(newErrors);
+    setErrorStates(newErrorStates);
 
     if (hasError) return;
 
     try {
       setSubmitLoading(true);
-
-      // 🔐 JWT API CALL GOES HERE
-      console.log("Login payload:", { email, password });
-    } catch (err) {
-      console.log(err);
+      console.log("Login payload:", form);
+      // JWT login API call goes here
+    } finally {
+      setSubmitLoading(false);
     }
-    // } finally {
-    //   setSubmitLoading(false);
-    // }
   };
 
   const handleGoogleLogin = () => {
-    // 🔐 Google OAuth / JWT flow later
     console.log("Google login clicked");
   };
 
   return (
     <section className={styles.loginPage}>
-      <div className={styles.loginPageContainer}>
-        {/* LEFT PANEL */}
-        <div className={styles.left}>
-          <img width="200px" src={logoBig} alt="Logo" />
-          <img width="400px" src={sidePanel} alt="Illustration" />
+      <div className={styles.right}>
+        <img
+          src={logoSmall}
+          alt="Logo"
+          width={50}
+          style={{ alignSelf: "center" }}
+        />
 
-          <h2>
-            <span>Welcome back</span> to Lorem Ipsum
-          </h2>
-
-          <p>
-            New here? <a href="#register">Sign up</a>
-          </p>
+        <div className={styles.rightInfo}>
+          <h3>Login</h3>
+          <p>Please login to your account!</p>
         </div>
 
-        {/* RIGHT PANEL */}
-        <div className={styles.right}>
-          <img src={logoSmall} alt="Logo" width={50} />
-
-          <div className={styles.rightInfo}>
-            <h3>Login</h3>
-            <p>Please login to your account!</p>
-          </div>
-
-          <form noValidate onSubmit={handleLogin}>
-            {/* Email */}
-            <div className={styles.inputContainer}>
-              <label htmlFor="email-login-page" className={styles.label}>
-                <p>E-mail</p>
-                <p
-                  className={`${styles.errorLabel} ${
-                    emailErrorState ? "" : styles.hidden
-                  }`}
-                >
-                  {emailError}
-                </p>
-              </label>
-
-              <div
-                className={`${styles.inputField} ${
-                  emailErrorState ? styles.errorInputField : ""
+        <form noValidate onSubmit={handleLogin}>
+          {/* USERNAME */}
+          <div className={styles.inputContainer}>
+            <label htmlFor="username-login-page" className={styles.label}>
+              <p>Username</p>
+              <p
+                className={`${styles.errorLabel} ${
+                  errorStates.username ? "" : styles.hidden
                 }`}
               >
-                <Mail size={16} strokeWidth={1.75} />
-                <input
-                  type="email"
-                  id="email-login-page"
-                  placeholder="yourname@gmail.com"
-                  value={email}
-                  onChange={(e) => {
-                    setEmailErrorState(false);
-                    setEmail(e.target.value);
-                  }}
-                />
-              </div>
-            </div>
+                {errors.username}
+              </p>
+            </label>
 
-            {/* Password */}
-            <div className={styles.inputContainer}>
-              <label htmlFor="password-login-page" className={styles.label}>
-                <p>Password</p>
-                <p
-                  className={`${styles.errorLabel} ${
-                    passwordErrorState ? "" : styles.hidden
-                  }`}
-                >
-                  {passwordError}
-                </p>
-              </label>
-
-              <div
-                className={`${styles.inputField} ${
-                  passwordErrorState ? styles.errorInputField : ""
-                }`}
-              >
-                <LockKeyhole size={16} strokeWidth={1.75} />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password-login-page"
-                  placeholder="●●●●●●●●"
-                  value={password}
-                  onChange={(e) => {
-                    setPasswordErrorState(false);
-                    setPassword(e.target.value);
-                  }}
-                />
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {showPassword ? (
-                    <EyeOff size={16} strokeWidth={1.75} />
-                  ) : (
-                    <Eye size={16} strokeWidth={1.75} />
-                  )}
-                </span>
-              </div>
-            </div>
-
-            <p className={styles.forgotPass}>
-              <a className="a-tag" href="#forgot-password">
-                Forgot password?
-              </a>
-            </p>
-
-            <button
-              type="submit"
-              disabled={submitLoading}
-              className={`${styles.loginBtn} ${
-                submitLoading ? styles.submitBtn__loading : ""
+            <div
+              className={`${styles.inputField} ${
+                errorStates.username ? styles.errorInputField : ""
               }`}
             >
-              Login
-            </button>
-          </form>
+              <User size={16} strokeWidth={1.75} />
+              <input
+                type="text"
+                id="username-login-page"
+                placeholder="Username"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+              />
+            </div>
+          </div>
 
-          <p className={styles.or}>Or</p>
+          {/* PASSWORD */}
+          <div className={styles.inputContainer}>
+            <label htmlFor="password-login-page" className={styles.label}>
+              <p>Password</p>
+              <p
+                className={`${styles.errorLabel} ${
+                  errorStates.password ? "" : styles.hidden
+                }`}
+              >
+                {errors.password}
+              </p>
+            </label>
 
-          <button className={styles.googleLogin} onClick={handleGoogleLogin}>
-            <img width={20} src={googleImg} alt="Google logo" />
-            <p>Continue with Google</p>
-          </button>
+            <div
+              className={`${styles.inputField} ${
+                errorStates.password ? styles.errorInputField : ""
+              }`}
+            >
+              <LockKeyhole size={16} strokeWidth={1.75} />
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password-login-page"
+                placeholder="●●●●●●●●"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ cursor: "pointer" }}
+              >
+                {showPassword ? (
+                  <EyeOff size={16} strokeWidth={1.75} />
+                ) : (
+                  <Eye size={16} strokeWidth={1.75} />
+                )}
+              </span>
+            </div>
+          </div>
 
-          {/* MOBILE TOGGLE */}
-          <p className={styles.mobileToggle}>
-            New here?{" "}
-            <a href="#register" className={styles.mobileToggleLink}>
-              Sign up
+          <p className={styles.forgotPass}>
+            <a className="a-tag" href="#forgot-password">
+              Forgot password?
             </a>
           </p>
-        </div>
+
+          <button
+            type="submit"
+            disabled={submitLoading}
+            className={`${styles.loginBtn} ${
+              submitLoading ? styles.submitBtn__loading : ""
+            }`}
+          >
+            Login
+          </button>
+        </form>
+
+        <p className={styles.or}>Or</p>
+
+        <button className={styles.googleLogin} onClick={handleGoogleLogin}>
+          <img width={20} src={googleImg} alt="Google logo" />
+          <p>Continue with Google</p>
+        </button>
+
+        <p className={styles.newHere}>
+          New here?{" "}
+          <a href="#register" className={styles.newHereLink}>
+            Sign up
+          </a>
+        </p>
       </div>
     </section>
   );
