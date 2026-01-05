@@ -1,42 +1,38 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
+:root {
+  /* Primary */
+  --color-primary: #1c1c1e; /* deep charcoal black */
+  --color-primary-light: #2a2a2d; /* lighter charcoal */
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+  /* Accent */
+  --color-accent: #6e4e37; /* warm brown accent */
+  --color-accent-light: #8a6547; /* lighter warm brown */
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+  /* Greys */
+  --color-grey-900: #2b2b2b;
+  --color-grey-700: #4a4a4a;
+  --color-grey-500: #7a7a7a;
+  --color-grey-300: #c7c7c7;
+  --color-grey-100: #eaeaea;
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
+  /* Backgrounds */
+  --color-bg: #ffffff; /* white background */
+  --color-bg-muted: #f5f5f5; /* subtle light grey */
 
-.card {
-  padding: 2em;
-}
+  /* Status Colors */
+  --color-success: #2ecc71;
+  --color-danger: #e74c3c;
+  --color-warning: #f1c40f;
 
-.read-the-docs {
-  color: #888;
+  --danger-bg: #ebcecb81;
+
+  /* Optional Glass UI */
+  --color-glass: rgba(255, 255, 255, 0.1);
+}
+body {
+  font-family: "acumin-pro", sans-serif;
 }
