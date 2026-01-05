@@ -11,6 +11,7 @@ def fetch_all_teachers(current_user: UserDep):
     teachers = current_user.teachers
     if teachers:
         return teachers
+    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teachers not found!")
 
 @teacher_routes.get('/teachers/{id}', response_model=TeacherBase)
 def fetch_teacher(id: int, current_user: UserDep, db: SessionDep):

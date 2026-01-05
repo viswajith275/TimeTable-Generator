@@ -12,7 +12,7 @@ def Fetch_All_Classes(current_user: UserDep):
     classes = current_user.classes
     if classes:
         return classes
-    
+    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Classes not found!')
 
 @class_routes.get('/classes/{id}', response_model=ClassBase)
 def Fetch_Class(id: int, current_user: UserDep, db: SessionDep):
