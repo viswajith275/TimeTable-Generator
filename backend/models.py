@@ -50,14 +50,6 @@ class TeacherClassAssignmentCreate(BaseModel):
     class_id: int
     role: str
 
-class TeacherClassAssignmentBase(BaseModel):
-    t_id: int
-    t_name: str
-    t_sub: str
-    c_id: str
-    c_name: str
-    role: str
-
 class TeacherClassAssignmentDelete(BaseModel):
     teacher_id: int
     class_id: int
