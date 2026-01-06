@@ -1,0 +1,32 @@
+.dashBoard {
+  background-color: var(--color-bg-muted);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: 100%;
+}
+.mainPanelPlaceholder {
+  width: 100%;
+}
+
+.mainPanel {
+  padding: 2rem 2rem 2rem 0rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.mainPanel__headings {
+  font-family: "Inter";
+}
+
+.createBtn {
+  cursor: pointer;
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 14px;
+  color: var(--color-bg);
+  border: none;
+  border-radius: 0.3125rem;
+  background: var(--color-primary);
+}

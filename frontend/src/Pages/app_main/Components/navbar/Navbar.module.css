@@ -1,0 +1,31 @@
+.navBar {
+  background-color: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  height: 100vh;
+  padding: 2rem;
+  width: 11%;
+  flex: 0 0 190px;
+}
+.linkContainer,
+.linkGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+.linkContainer {
+  justify-content: space-between;
+  height: 100%;
+}
+.linkItem {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.linkItem:hover {
+  transform: translateX(2px);
+}

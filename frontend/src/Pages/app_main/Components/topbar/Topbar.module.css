@@ -1,0 +1,58 @@
+.topbar {
+  flex: 1;
+  padding: 2rem 2rem 2rem 0rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: fit-content;
+  width: 100%;
+}
+.profile {
+  display: flex;
+  flex-direction: row;
+  gap: 0.3rem;
+  justify-content: center;
+  height: fit-content;
+}
+/* 
+this is search input styling  */
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 300px;
+}
+
+.inputField {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-grey-500);
+  border-radius: 0.3rem;
+  padding-inline: 0.8rem;
+  background-color: var(--color-bg);
+}
+.inputField:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(174, 184, 194, 0.2);
+}
+input[type="text"],
+input[type="search"] {
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  width: 100%;
+  padding: 0.8rem 0;
+
+  font-size: 14px;
+  line-height: 1.2;
+}
+.inputField svg {
+  flex-shrink: 0;
+}
+input::placeholder {
+  color: var(--color-grey-500);
+  opacity: 0.8;
+}
+/* search input ends */
