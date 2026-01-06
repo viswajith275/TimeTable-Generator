@@ -40,6 +40,7 @@ class TokenData(BaseModel):
 class ClassBase(BaseModel):
     id: int
     c_name: str
+    r_name: str
 
 
 class TeacherBase(BaseModel):
@@ -50,6 +51,7 @@ class TeacherBase(BaseModel):
 
 class ClassCreate(BaseModel):
     c_name: str
+    r_name: str
 
 class TeacherCreate(BaseModel):
     t_name: str
@@ -120,7 +122,8 @@ class Class(Base):
     __tablename__ = 'classes'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    c_name: Mapped[str] = mapped_column(String, nullable=False)
+    c_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    r_name: Mapped[str] = mapped_column(String(50), nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     user: Mapped['User'] = relationship(back_populates='classes')
