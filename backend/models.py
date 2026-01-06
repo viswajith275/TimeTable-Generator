@@ -1,10 +1,22 @@
-from sqlalchemy import Integer, String, ForeignKey
+from sqlalchemy import Integer, String, ForeignKey, Enum, Time
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 from pydantic import BaseModel
 from typing import List
+from datetime import time
+import enum
 
 class Base(DeclarativeBase):
     pass
+
+class WeekDay(enum.Enum):
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
+
 
 #Base user model
 class UsersBase(BaseModel):
@@ -33,7 +45,6 @@ class ClassBase(BaseModel):
 class TeacherBase(BaseModel):
     id: int
     t_name: str
-    t_sub: str
     max_classes: int
     class_assignments: List[ClassBase]
 
@@ -42,17 +53,29 @@ class ClassCreate(BaseModel):
 
 class TeacherCreate(BaseModel):
     t_name: str
-    t_sub: str
     max_classes: int
+
+class TeacherClassAssignmentBase(BaseModel):
+    teacher_id: int
+    t_name: str
+    class_id: int
+    c_name: str
+    role: str
+    subject: str
 
 class TeacherClassAssignmentCreate(BaseModel):
     teacher_id: int
     class_id: int
     role: str
+    subject: str
 
 class TeacherClassAssignmentDelete(BaseModel):
     teacher_id: int
     class_id: int
+
+class TimeEntry(BaseModel):
+    pass
+
 
 #table structures
 
@@ -82,7 +105,6 @@ class Teacher(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     t_name: Mapped[str] = mapped_column(String(50))
-    t_sub: Mapped[str] = mapped_column(String(50), nullable=False)
     max_classes: Mapped[int] = mapped_column(Integer, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
@@ -113,8 +135,28 @@ class TeacherClassAssignment(Base):
 
     __tablename__ = "teacher_class_assignments"
 
-    teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"), primary_key=True)
-    class_id: Mapped[int] = mapped_column(ForeignKey("classes.id"), primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"))
+    class_id: Mapped[int] = mapped_column(ForeignKey("classes.id"))
+
     role: Mapped[str] = mapped_column(String(30))  # "class_teacher","subject_teacher"
+    t_sub: Mapped[str] = mapped_column(String(50), nullable=False)
+
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
+    timetable: Mapped[List["TimeTable"]] = relationship(back_populates='assignment') 
+
+class TimeTable(Base):
+
+    __tablename__ = 'timetables'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    assignment_id: Mapped[int] = mapped_column(ForeignKey('teacher_class_assignments.id'))
+
+    day: Mapped[WeekDay] = mapped_column(Enum(WeekDay))
+    start_time: Mapped[time] = mapped_column(Time)
+    end_time: Mapped[time] = mapped_column(Time)
+
+    assignment: Mapped["TeacherClassAssignment"] = relationship(back_populates="timetable")

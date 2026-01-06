@@ -2,25 +2,17 @@ from fastapi import APIRouter, HTTPException, status
 from typing import List
 from backend.database import SessionDep
 from backend.oauth2 import UserDep
-from backend.models import Teacher, Class, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentDelete
+from backend.models import Teacher, Class, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentDelete, TeacherClassAssignmentBase
 
 assign_routes = APIRouter(tags=['Teacher Assignment'])
 
-@assign_routes.get('/assignments')
+@assign_routes.get('/assignments', response_model=List[TeacherClassAssignmentBase])
 def fetch_all_assignments(current_user: UserDep, db: SessionDep):
 
     assignments = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).all()
     if assignments:
-        result = []
-        for a in assignments:
-            result.append({'t_id': a.teacher.id, 
-                           't_name': a.teacher.t_name, 
-                           't_sub': a.teacher.t_sub, 
-                           'c_id': a.class_.id, 
-                           'c_name': a.class_.c_name, 
-                           'role': a.role})
-        return result
-    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No assignments found!')
+        return assignments
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No assignments found!')
 
 @assign_routes.post('/assignments')
 def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate):
@@ -29,7 +21,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
     cur_class = db.query(Class).filter_by(id=values.class_id, user_id=current_user.id).first()
 
     if not teacher or not cur_class:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher or class does not exists!')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher or class does not exists!')
     
     exist = db.query(TeacherClassAssignment).filter(TeacherClassAssignment.teacher_id == teacher.id, TeacherClassAssignment.class_id == cur_class.id).first()
 
@@ -58,7 +50,7 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
         .first()
     )
     if not assignment:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
 
     assignment.role = values.role
 
@@ -76,4 +68,4 @@ def delete_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
         db.commit()
 
         return {'message': 'Assignment deleted successfully'}
-    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')

@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes.login import login_routes
-from .routes.add_teachers import teacher_routes
-from .routes.add_classes import class_routes
+from .routes.Login import login_routes
+from .routes.Add_Teachers import teacher_routes
+from .routes.Add_Classes import class_routes
 from .routes.Assignment import assign_routes
 from backend.database import create_db_and_tables
 

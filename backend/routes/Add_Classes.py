@@ -12,14 +12,14 @@ def Fetch_All_Classes(current_user: UserDep):
     classes = current_user.classes
     if classes:
         return classes
-    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Classes not found!')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Classes not found!')
 
 @class_routes.get('/classes/{id}', response_model=ClassBase)
 def Fetch_Class(id: int, current_user: UserDep, db: SessionDep):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
     if cur_class:
         return cur_class
-    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
 
 
 @class_routes.post('/classes', response_model=ClassBase)
@@ -42,7 +42,7 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
         db.refresh(cur_class)
         return cur_class
     
-    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
 
 
 @class_routes.delete('/classes/{id}')
@@ -53,4 +53,4 @@ def delete_class(id: int, current_user: UserDep, db: SessionDep):
         db.commit()
         return {'message': 'class deleted successfully'}
     
-    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
