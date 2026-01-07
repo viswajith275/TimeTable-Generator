@@ -4,6 +4,7 @@ from .routes.Login import login_routes
 from .routes.Add_Teachers import teacher_routes
 from .routes.Add_Classes import class_routes
 from .routes.Assignment import assign_routes
+from .routes.Generate_Table import generate_routes
 from backend.database import create_db_and_tables
 
 app = FastAPI()
@@ -21,3 +22,4 @@ app.include_router(login_routes)
 app.include_router(teacher_routes)
 app.include_router(class_routes)
 app.include_router(assign_routes)
+app.include_router(generate_routes)

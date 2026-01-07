@@ -1,8 +1,7 @@
-from sqlalchemy import Integer, String, ForeignKey, Enum, Time
+from sqlalchemy import Integer, String, ForeignKey, Enum
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 from pydantic import BaseModel
 from typing import List
-from datetime import time
 import enum
 
 class Base(DeclarativeBase):
@@ -75,8 +74,10 @@ class TeacherClassAssignmentDelete(BaseModel):
     teacher_id: int
     class_id: int
 
-class TimeEntry(BaseModel):
-    pass
+class Generate_Data(BaseModel):
+    timetable_name: str
+    slotes: int
+    days: List[WeekDay]
 
 
 #table structures
@@ -90,7 +91,7 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     disabled: Mapped[bool] = mapped_column(default=False)
 
-    #relationship with user and teachers
+    #relationship with teachers, class, timetables
     teachers: Mapped[List["Teacher"]] = relationship(
             back_populates="user", 
             cascade="all, delete-orphan"
@@ -100,6 +101,8 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+
+    timetables: Mapped[List["TimeTable"]] = relationship(back_populates='user')
  
 class Teacher(Base):
 
@@ -150,16 +153,31 @@ class TeacherClassAssignment(Base):
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
     timetable: Mapped[List["TimeTable"]] = relationship(back_populates='assignment') 
 
-class TimeTable(Base):
+class TimeTableEntry(Base):
 
-    __tablename__ = 'timetables'
+    __tablename__ = 'timetable_entries'
 
     id: Mapped[int] = mapped_column(primary_key=True)
+
+    timetable_id: Mapped[int] = mapped_column(ForeignKey("timetables.id"))
 
     assignment_id: Mapped[int] = mapped_column(ForeignKey('teacher_class_assignments.id'))
 
     day: Mapped[WeekDay] = mapped_column(Enum(WeekDay))
-    start_time: Mapped[time] = mapped_column(Time)
-    end_time: Mapped[time] = mapped_column(Time)
+    slotes: Mapped[int] = mapped_column(nullable=False)
 
     assignment: Mapped["TeacherClassAssignment"] = relationship(back_populates="timetable")
+    timetable: Mapped["TimeTable"] = relationship(back_populates='entries')
+
+
+class TimeTable(Base):
+    
+    __tablename__ = 'timetables'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    timetable_name: Mapped[str] = mapped_column(String(50), nullable=False)
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+    user: Mapped[User] = relationship(back_populates='timetables')
+    entries: Mapped[List['TimeTableEntry']] = relationship(back_populates='timetable', cascade='all, delete-orphan')
