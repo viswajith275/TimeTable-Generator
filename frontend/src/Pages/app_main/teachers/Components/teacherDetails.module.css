@@ -1,0 +1,18 @@
+.teacherItem {
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-radius: 0.7rem;
+  background-color: var(--color-bg);
+}
+.teacherItem h4 {
+  font-size: 17px;
+}
+.viewDetails {
+  display: flex;
+  cursor: pointer;
+  flex-direction: row;
+  gap: 0.2rem;
+  color: var(--color-grey-500);
+}

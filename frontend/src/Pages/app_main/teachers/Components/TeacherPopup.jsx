@@ -1,34 +1,34 @@
-import styles from "./ClassDetails.module.css";
-import { X } from "lucide-react";
+import styles from "./TeacherPopup.module.css";
 import { useState } from "react";
-const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
+import { X } from "lucide-react";
+const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
   const [errors, setErrors] = useState({
-    classroom: "",
-    roomno: "",
+    teacherName: "",
+    maxPeriods: "",
   });
 
   const [errorStates, setErrorStates] = useState({
-    classroom: false,
-    roomno: false,
+    teacherName: false,
+    maxPeriods: false,
   });
   //two way binding stuff
-  const [className, setClassName] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
+  const [teacherName, setTeacherName] = useState("");
+  const [maxPeriods, setMaxPeriods] = useState("");
 
   //clic handlers
 
   const closeBtnClickHandler = () => {
     // reseting all data once the user clicks close/cancel
     // otherwise it is retained when user clicks and reopens the prompt..
-    setClassName("");
-    setRoomNumber("");
+    setTeacherName("");
+    setMaxPeriods("");
     setErrors({
-      classroom: "",
-      roomno: "",
+      teacherName: "",
+      maxPeriods: "",
     });
     setErrorStates({
-      classroom: false,
-      roomno: false,
+      teacherName: false,
+      maxPeriods: false,
     });
 
     popUpClose();
@@ -40,29 +40,29 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
     const newErrorStates = { ...errorStates };
 
     //classname validation
-    if (!className.trim()) {
-      newErrors.classroom = "Classname is required";
-      newErrorStates.classroom = true;
+    if (!teacherName.trim()) {
+      newErrors.teacherName = "Teacher Name is required";
+      newErrorStates.teacherName = true;
       hasError = true;
-    } else if (className.length > 15) {
-      newErrors.classroom = "Maximum length is 15 characters.";
-      newErrorStates.classroom = true;
+    } else if (teacherName.length > 15) {
+      newErrors.teacherName = "Maximum length is 30 characters.";
+      newErrorStates.teacherName = true;
       hasError = true;
     } else {
-      newErrorStates.classroom = false;
+      newErrorStates.teacherName = false;
     }
 
-    //roomno validation
-    if (!roomNumber.trim()) {
-      newErrors.roomno = "Roomnumber is required";
-      newErrorStates.roomno = true;
+    //maxPeriods validation
+    if (!maxPeriods.trim()) {
+      newErrors.maxPeriods = "Max periods is required";
+      newErrorStates.maxPeriods = true;
       hasError = true;
-    } else if (roomNumber.length > 10) {
-      newErrors.roomno = "Maximum length is 10 characters.";
-      newErrorStates.roomno = true;
+    } else if (maxPeriods.length > 10) {
+      newErrors.maxPeriods = "Maximum length is 10 characters.";
+      newErrorStates.maxPeriods = true;
       hasError = true;
     } else {
-      newErrorStates.roomno = false;
+      newErrorStates.maxPeriods = false;
     }
 
     setErrors(newErrors);
@@ -77,7 +77,7 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
     >
       <div className={`${styles.popupMain} ${isPopupOpen ? styles.open : ""}`}>
         <div className={styles.headingContainer}>
-          <h4>Add Classroom</h4>
+          <h4>Add Teacher Details</h4>
           <button onClick={closeBtnClickHandler}>
             <X></X>
           </button>
@@ -87,20 +87,20 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
           <div className={styles.inputContainer}>
             {" "}
             <label htmlFor="class-name-entry-wa901">
-              <p>Class Name</p>
+              <p>Teacher Name</p>
 
               <p
                 className={`${styles.errorText}  ${
-                  errorStates.classroom ? "" : "hidden"
+                  errorStates.teacherName ? "" : "hidden"
                 }`}
               >
-                {errors.classroom}
+                {errors.teacherName}
               </p>
             </label>
             <input
-              className={errorStates.classroom ? styles.errorField : ""}
-              value={className}
-              onChange={(e) => setClassName(e.target.value)}
+              className={errorStates.teacherName ? styles.errorField : ""}
+              value={teacherName}
+              onChange={(e) => setTeacherName(e.target.value)}
               type="text"
               placeholder="Enter class name"
               id="class-name-entry-wa901"
@@ -110,20 +110,20 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
           <div className={styles.inputContainer}>
             {" "}
             <label htmlFor="class-no-entry-wa902">
-              <p>Room number</p>
+              <p>Maximum periods per week </p>
 
               <p
                 className={`${styles.errorText}  ${
-                  errorStates.roomno ? "" : "hidden"
+                  errorStates.maxPeriods ? "" : "hidden"
                 }`}
               >
-                {errors.roomno}
+                {errors.maxPeriods}
               </p>
             </label>
             <input
-              className={errorStates.roomno ? styles.errorField : ""}
-              value={roomNumber}
-              onChange={(e) => setRoomNumber(e.target.value)}
+              className={errorStates.maxPeriods ? styles.errorField : ""}
+              value={maxPeriods}
+              onChange={(e) => setMaxPeriods(e.target.value)}
               type="text"
               placeholder="Enter Room number"
               id="class-no-entry-wa902"
@@ -147,4 +147,4 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
   );
 };
 
-export default ClassDetailsPopup;
+export default TeacherPopup;

@@ -1,14 +1,16 @@
-import styles from "./Classes.module.css";
+import styles from "./teacher.module.css";
 import Navbar from "../Components/navbar/Navbar";
 import Topbar from "../Components/topbar/Topbar";
 import { Plus } from "lucide-react";
+import TeacherDetails from "./Components/TeacherDetails";
 import { useState } from "react";
-import ClassDetailsPopup from "./Components/ClassDetailsPopup";
-import ClassItem from "./Components/ClassItem";
-const Classes = () => {
+import TeacherPopup from "./Components/TeacherPopup";
+
+const Teachers = () => {
   const [popupShow, setPopupShow] = useState(false);
+
   return (
-    <div className={styles.classRoom}>
+    <div className={styles.teacher}>
       <div
         style={{
           pointerEvents: popupShow ? "auto" : "none",
@@ -17,19 +19,20 @@ const Classes = () => {
         className="popup_overlay"
         onClick={() => setPopupShow(false)}
       ></div>
-
-      <ClassDetailsPopup
+      <TeacherPopup
         isPopupOpen={popupShow}
         popUpClose={() => setPopupShow(false)}
-      />
+      ></TeacherPopup>
       <Navbar></Navbar>
       <div className={styles.mainPanelPlaceholder}>
         <Topbar></Topbar>
         <div className={styles.mainPanel}>
           <div className={styles.mainPanel__headings}>
             <div>
-              <h2>Classrooms</h2>
-              <p>Add and edit classroom details for the timetable.</p>
+              <h2>Teachers</h2>
+              <p>
+                Edit and update the details of teachers in your organization.
+              </p>
             </div>
 
             <button
@@ -44,12 +47,15 @@ const Classes = () => {
           </div>
         </div>
 
-        <div className={styles.gridClasses}>
-          <ClassItem roomName={"S1 CSE"} roomNumber={"Room 101A"}></ClassItem>
+        <div className={styles.gridTeachers}>
+          <TeacherDetails teacherName={"Jithin Chandran"}></TeacherDetails>
+          <TeacherDetails teacherName={"Jithin Chandran"}></TeacherDetails>
+          <TeacherDetails teacherName={"Jithin Chandran"}></TeacherDetails>
+          <TeacherDetails teacherName={"Jithin Chandran"}></TeacherDetails>
         </div>
       </div>
     </div>
   );
 };
 
-export default Classes;
+export default Teachers;

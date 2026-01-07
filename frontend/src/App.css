@@ -46,3 +46,33 @@ body {
   opacity: 0.6;
   backdrop-filter: blur(10px);
 }
+/* 
+this shake animation is for error indication in inputfields */
+@keyframes shakeField {
+  0% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-4px);
+  }
+  30% {
+    transform: translateX(4px);
+  }
+  45% {
+    transform: translateX(-4px);
+  }
+  60% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* this is for hiding stuff */
+.hidden {
+  display: none;
+}
