@@ -1,4 +1,4 @@
-.dashBoard {
+.classRoom {
   background-color: var(--color-bg-muted);
   min-height: 100vh;
   display: flex;
@@ -20,6 +20,7 @@
   font-family: "Inter";
   display: flex;
   justify-content: space-between;
+  flex-direction: row;
 }
 
 .createBtn {
@@ -35,6 +36,14 @@
   border-radius: 0.5rem;
   background: var(--color-primary);
 }
+.gridClasses {
+  padding: 0rem 2rem 2rem 0rem;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
 /* media queries here */
 @media (max-width: 780px) {
   .mainPanel__headings {
@@ -50,6 +59,9 @@
 
 @media (max-width: 615px) {
   .mainPanel {
+    padding: 2rem;
+  }
+  .gridClasses {
     padding: 2rem;
   }
 }

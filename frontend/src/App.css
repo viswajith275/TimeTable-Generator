@@ -36,3 +36,13 @@
 body {
   font-family: "acumin-pro", sans-serif;
 }
+
+.popup_overlay {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  z-index: 10;
+  background-color: black;
+  opacity: 0.6;
+  backdrop-filter: blur(10px);
+}

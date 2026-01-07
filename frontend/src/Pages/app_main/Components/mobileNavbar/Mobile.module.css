@@ -1,0 +1,41 @@
+.mobileNavPlaceholder {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  padding: 3.5rem;
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.links {
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.linkItem {
+  cursor: pointer;
+}
+.navMain {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.closeBtn {
+  cursor: pointer;
+  height: fit-content;
+}
+@media (min-width: 615px) {
+  .mobileNavPlaceholder {
+    display: none;
+  }
+}

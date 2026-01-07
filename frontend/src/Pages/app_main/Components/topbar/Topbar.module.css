@@ -13,6 +13,7 @@
   gap: 0.3rem;
   justify-content: center;
   height: fit-content;
+  cursor: pointer;
 }
 /* 
 this is search input styling  */
@@ -22,7 +23,9 @@ this is search input styling  */
   gap: 0.5rem;
   max-width: 300px;
 }
-
+.hamBurgerIcon {
+  display: none;
+}
 .inputField {
   display: flex;
   align-items: center;
@@ -56,3 +59,22 @@ input::placeholder {
   opacity: 0.8;
 }
 /* search input ends */
+
+/* media queries */
+
+@media (max-width: 615px) {
+  .topbar {
+    padding: 2rem;
+  }
+  .inputContainer {
+    display: none;
+  }
+  .topbar {
+    justify-content: space-between;
+  }
+  .hamBurgerIcon {
+    display: inline-block;
+    cursor: pointer;
+    color: var(--color-primary);
+  }
+}

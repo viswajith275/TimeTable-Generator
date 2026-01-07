@@ -1,7 +1,7 @@
 import Navbar from "../Components/navbar/Navbar";
 import styles from "./Dashboard.module.css";
 import Topbar from "../Components/topbar/Topbar";
-
+import { Plus } from "lucide-react";
 import TableItem from "./Components/TableItem/TableItem";
 const Dashboard = () => {
   return (
@@ -11,14 +11,16 @@ const Dashboard = () => {
         <Topbar></Topbar>
         <div className={styles.mainPanel}>
           <div className={styles.mainPanel__headings}>
-            <h1>Welcome back !!</h1>
-            <p>
-              Easily manage and generate school timetables with our automatic
-              timetable generator.
-            </p>
-          </div>
+            <div>
+              <h2>Dashboard</h2>
+              <p>Create and manage timetables.</p>
+            </div>
 
-          <button className={styles.createBtn}>Create New</button>
+            <button className={styles.createBtn}>
+              <Plus />
+              <p>Create New</p>
+            </button>
+          </div>
 
           <div className={styles.tablesPlaceholder}>
             <TableItem></TableItem>

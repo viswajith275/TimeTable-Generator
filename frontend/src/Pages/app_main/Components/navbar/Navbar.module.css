@@ -5,7 +5,7 @@
   gap: 2rem;
   height: 100vh;
   padding: 2rem;
-  width: 11%;
+
   flex: 0 0 190px;
 }
 .linkContainer,
@@ -28,4 +28,11 @@
 
 .linkItem:hover {
   transform: translateX(2px);
+}
+
+/* media queries */
+@media (max-width: 615px) {
+  .navBar {
+    display: none;
+  }
 }
