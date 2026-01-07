@@ -49,9 +49,6 @@ const Teachers = () => {
 
         <div className={styles.gridTeachers}>
           <TeacherDetails teacherName={"Jithin Chandran"}></TeacherDetails>
-          <TeacherDetails teacherName={"Jithin Chandran"}></TeacherDetails>
-          <TeacherDetails teacherName={"Jithin Chandran"}></TeacherDetails>
-          <TeacherDetails teacherName={"Jithin Chandran"}></TeacherDetails>
         </div>
       </div>
     </div>
