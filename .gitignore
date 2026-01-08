@@ -1,3 +1,38 @@
+# Backend
 backend/.env
-backend/.venv
-frontend/package-lock.json
+backend/.venv/
+backend/__pycache__/
+backend/**/*.pyc
+
+# Frontend
+frontend/node_modules/
+
+# frontend/package-lock.json 
+
+frontend/dist/
+frontend/dist-ssr/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+
+# Local
+*.local
+
+
+# Editor files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
