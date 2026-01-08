@@ -151,7 +151,7 @@ class TeacherClassAssignment(Base):
 
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
-    timetable: Mapped[List["TimeTable"]] = relationship(back_populates='assignment') 
+    timetable_entries: Mapped[List["TimeTableEntry"]] = relationship(back_populates="assignment")
 
 class TimeTableEntry(Base):
 
@@ -166,7 +166,7 @@ class TimeTableEntry(Base):
     day: Mapped[WeekDay] = mapped_column(Enum(WeekDay))
     slotes: Mapped[int] = mapped_column(nullable=False)
 
-    assignment: Mapped["TeacherClassAssignment"] = relationship(back_populates="timetable")
+    assignment: Mapped["TeacherClassAssignment"] = relationship(back_populates="timetable_entries")
     timetable: Mapped["TimeTable"] = relationship(back_populates='entries')
 
 
