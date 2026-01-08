@@ -1,2 +1,3 @@
 backend/.env
 backend/.venv
+frontend/package-lock.json

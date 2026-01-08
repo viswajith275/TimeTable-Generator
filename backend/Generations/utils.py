@@ -3,6 +3,8 @@ import collections
 from backend.models import TimeTable, TimeTableEntry
 
 
+
+
 def Generate_Timetable(db, assignments, data, user_id):
 
     #Condition 4: There should not be more than 1 class of the same teacher on the same room
@@ -83,11 +85,12 @@ def Generate_Timetable(db, assignments, data, user_id):
                             timetable_id = new_timetable.id, # The container ID
                             assignment_id=assignment.id,
                             day=d,
-                            slotes=s
+                            slot=s
                         )
                         db.add(new_entry)
                 
         db.commit()
+        
         return True
     else:
         return False

@@ -1,19 +1,39 @@
 from fastapi import APIRouter, HTTPException, status
 from backend.database import SessionDep
 from backend.oauth2 import UserDep
-from backend.models import Generate_Data, TeacherClassAssignment, Teacher
+from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson
 from backend.Generations.utils import Generate_Timetable
+from typing import List
 
 generate_routes = APIRouter(tags=['Generate TimeTable'])
 
 
-@generate_routes.get('/timetables')
+@generate_routes.get('/timetables', response_model=List[TimeTableJson])
 def Fetch_All_TimeTables(current_user: UserDep, db: SessionDep):
     
     timetables = current_user.timetables
 
-    #just convert timetables to json files
+    total_timetables = []
 
+    for a in timetables:
+        formatted_entries = []
+        for entry in a.entries:
+            formatted_entries.append({
+                "id": entry.id,
+                "day": entry.day,
+                "slot": entry.slot,
+                "teacher_name": entry.assignment.teacher.name,
+                "class_name": entry.assignment.class_.name
+            })
+            
+        total_timetables.append(TimeTableJson(
+            id=a.id,
+            name=a.timetable_name,
+            assignments=formatted_entries
+        ))
+    
+    return total_timetables
+ 
 
 @generate_routes.post('/generate')
 def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Data):

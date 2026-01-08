@@ -1,6 +1,6 @@
 from sqlalchemy import Integer, String, ForeignKey, Enum
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List
 import enum
 
@@ -78,6 +78,24 @@ class Generate_Data(BaseModel):
     timetable_name: str
     slotes: int
     days: List[WeekDay]
+
+class TimeTableEntryJson(BaseModel):
+    id: int
+    day: str
+    slot: int
+    subject: str
+    teacher_name: str
+    class_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class TimeTableJson(BaseModel):
+    id: int
+    name: str
+    
+    assignments: List[TimeTableEntryJson]
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 #table structures
@@ -164,7 +182,7 @@ class TimeTableEntry(Base):
     assignment_id: Mapped[int] = mapped_column(ForeignKey('teacher_class_assignments.id'))
 
     day: Mapped[WeekDay] = mapped_column(Enum(WeekDay))
-    slotes: Mapped[int] = mapped_column(nullable=False)
+    slot: Mapped[int] = mapped_column(nullable=False)
 
     assignment: Mapped["TeacherClassAssignment"] = relationship(back_populates="timetable_entries")
     timetable: Mapped["TimeTable"] = relationship(back_populates='entries')
