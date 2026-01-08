@@ -64,6 +64,8 @@ class TeacherClassAssignmentBase(BaseModel):
     role: str
     subject: str
 
+    model_config = ConfigDict(from_attributes=True)
+
 class TeacherClassAssignmentCreate(BaseModel):
     teacher_id: int
     class_id: int
@@ -164,7 +166,7 @@ class TeacherClassAssignment(Base):
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"))
     class_id: Mapped[int] = mapped_column(ForeignKey("classes.id"))
 
-    role: Mapped[str] = mapped_column(String(30))  # "class_teacher","subject_teacher"
+    role: Mapped[str] = mapped_column(String(30), nullable=False)  # "class_teacher","subject_teacher"
     t_sub: Mapped[str] = mapped_column(String(50), nullable=False)
 
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")

@@ -37,7 +37,6 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
     updated_teacher = db.query(Teacher).filter(Teacher.id == id, Teacher.user_id == current_user.id).first()
     if updated_teacher:
         updated_teacher.t_name = teacher.t_name
-        updated_teacher.t_sub = teacher.t_sub
         updated_teacher.max_classes = teacher.max_classes
 
         db.commit()

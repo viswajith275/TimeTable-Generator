@@ -10,9 +10,21 @@ assign_routes = APIRouter(tags=['Teacher Assignment'])
 def fetch_all_assignments(current_user: UserDep, db: SessionDep):
 
     assignments = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).all()
-    if assignments:
-        return assignments
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No assignments found!')
+    if not assignments:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No assignments found!')
+    
+    result = []
+    for a in assignments:
+        result.append({
+            'teacher_id': a.teacher_id,
+            't_name': a.teacher.t_name,
+            'class_id': a.class_id,
+            'c_name': a.class_.c_name,
+            'role': a.role,
+            'subject': a.t_sub
+        })
+    
+    return result
 
 @assign_routes.post('/assignments')
 def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate):
@@ -31,7 +43,8 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
     new_assignment = TeacherClassAssignment(
         teacher_id=teacher.id,
         class_id=cur_class.id,
-        role=values.role
+        role=values.role,
+        t_sub=values.subject
     )
 
     db.add(new_assignment)
@@ -53,6 +66,7 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
 
     assignment.role = values.role
+    assignment.t_sub = values.subject
 
     db.commit()
 

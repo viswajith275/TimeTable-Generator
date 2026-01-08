@@ -11,22 +11,23 @@ def Generate_Timetable(db, assignments, data, user_id):
     #Condition 5: There should not be a free period in the morning
     #Condition 6: 12pm is strictly for Lunch
     Model = cp_model.CpModel()
-    all_days = data.days
+    all_days = {index:value.value for index,value in enumerate(data.days)}
     all_slotes = range(data.slotes)
 
     shifts = {}
 
-    #Condition 1: All Periods must be filled
-    for d in all_days:
-        for s in all_slotes:
-            Model.Add(
-                sum(shifts[(a.id, d, s)] for a in assignments) == 1
-          )
 
     for assignment in assignments:
         for d in all_days:
             for s in all_slotes:
                 shifts[(assignment.id, d, s)] = Model.NewBoolVar(f'assign_{assignment.id}_d{d}_s{s}')
+
+    #Condition 1: All Periods must be filled
+    #for d in all_days:
+    #    for s in all_slotes:
+    #        Model.Add(
+    #            sum(shifts[(a.id, d, s)] for a in assignments) == 1
+    #     )
 
     #Condition 2: A teacher can take n classes per week, the total of all should be (no of rooms * no of days * no of time slots)
     for assignment in assignments:
@@ -84,7 +85,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                         new_entry = TimeTableEntry(
                             timetable_id = new_timetable.id, # The container ID
                             assignment_id=assignment.id,
-                            day=d,
+                            day=all_days[d],
                             slot=s
                         )
                         db.add(new_entry)

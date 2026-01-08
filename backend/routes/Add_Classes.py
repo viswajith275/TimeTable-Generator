@@ -24,7 +24,7 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep):
 
 @class_routes.post('/classes', response_model=ClassBase)
 def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep):
-    new_class = Class(c_name=classes.c_name, user_id=current_user.id)
+    new_class = Class(c_name=classes.c_name, r_name=classes.r_name, user_id=current_user.id)
 
     db.add(new_class)
     db.commit()
@@ -38,6 +38,7 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
     if cur_class:
         cur_class.c_name = updated_class.c_name
+        cur_class.r_name = updated_class.r_name
         db.commit()
         db.refresh(cur_class)
         return cur_class
