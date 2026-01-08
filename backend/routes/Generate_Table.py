@@ -10,7 +10,7 @@ generate_routes = APIRouter(tags=['Generate TimeTable'])
 
 @generate_routes.get('/timetables', response_model=List[TimeTableJson])
 def Fetch_All_TimeTables(current_user: UserDep, db: SessionDep):
-    
+    #timetables fetching
     timetables = current_user.timetables
 
     total_timetables = []
@@ -25,7 +25,7 @@ def Fetch_All_TimeTables(current_user: UserDep, db: SessionDep):
                 "teacher_name": entry.assignment.teacher.name,
                 "class_name": entry.assignment.class_.name
             })
-            
+
         total_timetables.append(TimeTableJson(
             id=a.id,
             name=a.timetable_name,
