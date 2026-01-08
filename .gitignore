@@ -7,7 +7,7 @@ backend/**/*.pyc
 # Frontend
 frontend/node_modules/
 
-# frontend/package-lock.json 
+#?? frontend/package-lock.json 
 
 frontend/dist/
 frontend/dist-ssr/
