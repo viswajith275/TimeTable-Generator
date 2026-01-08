@@ -3,6 +3,8 @@ import styles from "./Dashboard.module.css";
 import Topbar from "../Components/topbar/Topbar";
 import { Plus } from "lucide-react";
 import TableItem from "./Components/TableItem/TableItem";
+import Loader from "../Components/loader/loader";
+
 const Dashboard = () => {
   return (
     <div className={styles.dashBoard}>
