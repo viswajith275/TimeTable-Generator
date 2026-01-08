@@ -1,5 +1,5 @@
 import jwt
-from jwt.exceptions import InvalidTokenError
+from jwt import InvalidTokenError
 from datetime import datetime,timedelta, timezone
 from backend.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from pwdlib import PasswordHash

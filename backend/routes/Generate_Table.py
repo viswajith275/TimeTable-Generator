@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from backend.database import SessionDep
 from backend.oauth2 import UserDep
-from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTable, TimeTableEntry
+from backend.models import Generate_Data, TeacherClassAssignment, Teacher
 from Generations.utils import Generate_Timetable
 
 generate_routes = APIRouter(tags=['Generate TimeTable'])
