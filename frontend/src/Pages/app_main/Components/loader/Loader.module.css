@@ -1,7 +1,7 @@
 .loader {
     width: 112px;
     height: 112px;
-    transform: scale(0.4); /*@georgy change size here. */
+    transform: scale(0.4);
 }
 
 .box1, .box2, .box3 {
