@@ -1,97 +1,107 @@
 from ortools.sat.python import cp_model
 import collections
-from backend.models import TimeTable, TimeTableEntry
-
-
-
+from backend.models import TimeTable, TimeTableEntry, WeekDay
 
 def Generate_Timetable(db, assignments, data, user_id):
-
-    #Condition 4: There should not be more than 1 class of the same teacher on the same room
-    #Condition 5: There should not be a free period in the morning
-    #Condition 6: 12pm is strictly for Lunch
     Model = cp_model.CpModel()
-    all_days = {index:value.value for index,value in enumerate(data.days)}
+    # keep WeekDay enum members
+    all_days = list(data.days)  # each item should be a WeekDay (or convertible)
+    # ensure enum members if strings were passed
+    for i, d in enumerate(all_days):
+        if not isinstance(d, WeekDay):
+            try:
+                all_days[i] = WeekDay(d)
+            except Exception:
+                all_days[i] = WeekDay[d.upper()]
+
+    day_indices = range(len(all_days))
     all_slotes = range(data.slotes)
 
     shifts = {}
-
-
     for assignment in assignments:
-        for d in all_days:
+        for d in day_indices:
             for s in all_slotes:
                 shifts[(assignment.id, d, s)] = Model.NewBoolVar(f'assign_{assignment.id}_d{d}_s{s}')
 
-    #Condition 1: All Periods must be filled
-    #for d in all_days:
-    #    for s in all_slotes:
-    #        Model.Add(
-    #            sum(shifts[(a.id, d, s)] for a in assignments) == 1
-    #     )
-
-    #Condition 2: A teacher can take n classes per week, the total of all should be (no of rooms * no of days * no of time slots)
+    # teacher weekly limit (use <= for flexibility)
     for assignment in assignments:
-        Model.Add(
-        sum(shifts[(assignment.id, d, s)] for d in all_days for s in all_slotes) 
-        == assignment.teacher.max_classes
-    )
-        
-    #Condition 3: On a Specific day,a teacher can only be assigned to one class at given time
+        max_classes = getattr(assignment.teacher, 'max_classes', None)
+        if max_classes is not None:
+            Model.Add(
+                sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes)
+                <= max_classes
+            )
+
+    # teacher cannot be in two places same time
     assigned_to_teacher = collections.defaultdict(list)
-
-    for assignment in assignments:
-        assigned_to_teacher[assignment.teacher_id].append(assignment)
+    for a in assignments:
+        assigned_to_teacher[a.teacher_id].append(a)
 
     for teacher_assignments in assigned_to_teacher.values():
-        for d in all_days:
+        for d in day_indices:
             for s in all_slotes:
-                Model.Add(
-                    sum(shifts[(a.id, d, s)] for a in teacher_assignments) <= 1
-                )
+                Model.Add(sum(shifts[(a.id, d, s)] for a in teacher_assignments) <= 1)
 
-
-    #Condition 4: On a Specific day,a class can only assign one teacher at a time
+    # class can have only one teacher at a time (fix: group by class_id)
     assigned_to_class = collections.defaultdict(list)
-
-    for assignment in assignments:
-        assigned_to_class[assignment.teacher_id].append(assignment)
+    for a in assignments:
+        assigned_to_class[a.class_id].append(a)
 
     for class_assignments in assigned_to_class.values():
-        for d in all_days:
+        for d in day_indices:
             for s in all_slotes:
-                Model.add(
-                    sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1
-                )
-
+                Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1)
 
     solver = cp_model.CpSolver()
+    solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
     status = solver.Solve(Model)
 
-    if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+    # if model has no objective, solver may return all-false solution; prefer more assignments
+    try:
+        # set objective to maximize total assignments if not already set
+        if not Model.HasObjective():
+            Model.Maximize(sum(shifts.values()))
+            solver = cp_model.CpSolver()
+            solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
+            status = solver.Solve(Model)
+    except Exception:
+        # if objective addition fails, continue with original status
+        pass
 
-        new_timetable = TimeTable(timetable_name=data.timetable_name, user_id=user_id)
+    if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        try:
+            total_assigned = sum(solver.Value(v) for v in shifts.values())
+            print(f"[Generate_Timetable] Total assigned vars = {total_assigned}")
+            print("[Generate_Timetable] Solution found — creating TimeTable")
+            new_timetable = TimeTable(timetable_name=data.timetable_name, user_id=user_id)
+            db.add(new_timetable)
+            db.flush()
+            db.refresh(new_timetable)
+            print(f"[Generate_Timetable] Created TimeTable id={new_timetable.id}")
 
-        db.add(new_timetable)
-        db.commit()
-        db.refresh(new_timetable)
+            created = 0
+            for d in day_indices:
+                for s in all_slotes:
+                    for assignment in assignments:
+                        if solver.Value(shifts[(assignment.id, d, s)]):
+                            # store WeekDay enum member (not string) to match DB enum type
+                            entry = TimeTableEntry(
+                                timetable_id=new_timetable.id,
+                                assignment_id=assignment.id,
+                                day=all_days[d],
+                                slot=s
+                            )
+                            db.add(entry)
+                            created += 1
+                            print(f"[Generate_Timetable] Queued entry: timetable_id={new_timetable.id} assignment_id={assignment.id} day={all_days[d]} slot={s}")
 
-        for d in all_days:
-            for s in all_slotes:
-                for assignment in assignments:
-                    # If the solver says "True", create the entry
-                    if solver.Value(shifts[(assignment.id, d, s)]):
-                        
-                        
-                        new_entry = TimeTableEntry(
-                            timetable_id = new_timetable.id, # The container ID
-                            assignment_id=assignment.id,
-                            day=all_days[d],
-                            slot=s
-                        )
-                        db.add(new_entry)
-                
-        db.commit()
-        
-        return True
+            # commit all changes at once
+            db.commit()
+            print(f"[Generate_Timetable] Committed {created} entries")
+            return True
+        except Exception:
+            db.rollback()
+            print("[Generate_Timetable] Exception during DB write", exc_info=True)
+            return False
     else:
         return False

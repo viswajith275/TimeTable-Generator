@@ -6,7 +6,7 @@ from pwdlib import PasswordHash
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from backend.database import get_user_by_username, get_user_by_id, SessionDep
-from backend.models import TokenData, UsersBase
+from backend.models import TokenData, UsersBase, User
 from fastapi.security import OAuth2PasswordBearer
 
 #initializing password hash and oauth2 password bearer
@@ -60,13 +60,13 @@ async def get_current_user(db : SessionDep, token: Annotated[str, Depends(oauth2
         raise credentials_exception
     return user
 
-#checking the user is not banned or revoked by the admin
+# checking the user is not banned or revoked by the admin
 async def get_current_active_user(
-    current_user: Annotated[UsersBase, Depends(get_current_user)],
+    current_user: Annotated[User, Depends(get_current_user)],
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-#User dedpendancy
-UserDep = Annotated[UsersBase, Depends(get_current_active_user)]
+# User dependency: return the SQLAlchemy User instance (not the Pydantic model)
+UserDep = Annotated[User, Depends(get_current_active_user)]

@@ -10,7 +10,22 @@ teacher_routes = APIRouter(tags=['Teachers'])
 def fetch_all_teachers(current_user: UserDep):
     teachers = current_user.teachers
     if teachers:
-        return teachers
+        result = []
+        for t in teachers:
+            result.append({
+                'id': t.id,
+                't_name': t.t_name,
+                'max_classes': t.max_classes,
+                'class_assignments': [{
+                    'assign_id': c.id,
+                    'c_name': c.class_.c_name,
+                    'r_name': c.class_.r_name,
+                    'subject': c.t_sub,
+                    'role': c.role
+                } for c in t.class_assignments]
+                    
+            })
+        return result
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teachers not found!")
 

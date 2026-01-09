@@ -36,6 +36,13 @@ class TokenData(BaseModel):
     id: int | None = None
 
 
+class ClassAssignedBase(BaseModel):
+    assign_id: int
+    c_name: str
+    r_name: str
+    subject: str
+    role: str
+
 class ClassBase(BaseModel):
     id: int
     c_name: str
@@ -46,7 +53,7 @@ class TeacherBase(BaseModel):
     id: int
     t_name: str
     max_classes: int
-    class_assignments: List[ClassBase]
+    class_assignments: List[ClassAssignedBase]
 
 class ClassCreate(BaseModel):
     c_name: str
@@ -83,6 +90,7 @@ class Generate_Data(BaseModel):
 
 class TimeTableEntryJson(BaseModel):
     id: int
+    assign_id: int
     day: str
     slot: int
     subject: str
