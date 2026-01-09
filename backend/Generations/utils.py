@@ -70,16 +70,12 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
         try:
-            total_assigned = sum(solver.Value(v) for v in shifts.values())
-            print(f"[Generate_Timetable] Total assigned vars = {total_assigned}")
-            print("[Generate_Timetable] Solution found — creating TimeTable")
             new_timetable = TimeTable(timetable_name=data.timetable_name, user_id=user_id)
             db.add(new_timetable)
             db.flush()
             db.refresh(new_timetable)
-            print(f"[Generate_Timetable] Created TimeTable id={new_timetable.id}")
-
-            created = 0
+            
+            
             for d in day_indices:
                 for s in all_slotes:
                     for assignment in assignments:
@@ -92,16 +88,12 @@ def Generate_Timetable(db, assignments, data, user_id):
                                 slot=s
                             )
                             db.add(entry)
-                            created += 1
-                            print(f"[Generate_Timetable] Queued entry: timetable_id={new_timetable.id} assignment_id={assignment.id} day={all_days[d]} slot={s}")
-
+                            
             # commit all changes at once
             db.commit()
-            print(f"[Generate_Timetable] Committed {created} entries")
             return True
         except Exception:
             db.rollback()
-            print("[Generate_Timetable] Exception during DB write", exc_info=True)
             return False
     else:
         return False

@@ -30,10 +30,15 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep):
 def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate):
 
     teacher = db.query(Teacher).filter_by(id=values.teacher_id, user_id=current_user.id).first()
+
+    if not teacher:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher or class does not exists!')
+    
     cur_class = db.query(Class).filter_by(id=values.class_id, user_id=current_user.id).first()
 
-    if not teacher or not cur_class:
+    if not cur_class:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher or class does not exists!')
+    
     
     exist = db.query(TeacherClassAssignment).filter(TeacherClassAssignment.teacher_id == teacher.id, TeacherClassAssignment.class_id == cur_class.id).first()
 
