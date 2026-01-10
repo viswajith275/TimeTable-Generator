@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List
 from backend.database import SessionDep
-from backend.oauth2 import UserDep
+from backend.oauth import UserDep
 from backend.models import Teacher, Class, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentDelete, TeacherClassAssignmentBase
 
 assign_routes = APIRouter(tags=['Teacher Assignment'])

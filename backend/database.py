@@ -30,13 +30,3 @@ def get_session():
 
 # database dependency type usable in route signatures
 SessionDep = Annotated[Session, Depends(get_session)]
-
-
-# helper: search user by id
-def get_user_by_id(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
-
-
-# helper: search user by username
-def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()

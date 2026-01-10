@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 from backend.database import SessionDep
-from backend.oauth2 import UserDep
+from backend.oauth import UserDep
 from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable
 from backend.Generations.utils import Generate_Timetable
 from typing import List
