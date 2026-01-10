@@ -1,7 +1,9 @@
 from sqlalchemy import Integer, String, ForeignKey, Enum
+from sqlalchemy.sql.sqltypes import DateTime
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 from pydantic import BaseModel, ConfigDict
-from typing import List
+from typing import List, Optional
+from datetime import datetime
 import enum
 
 class Base(DeclarativeBase):
@@ -27,14 +29,6 @@ class UsersBase(BaseModel):
 class UserCreate(BaseModel):
     username : str
     password : str
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-
-class TokenData(BaseModel):
-    id: int | None = None
-
 
 class ClassAssignedBase(BaseModel):
     assign_id: int
@@ -131,6 +125,20 @@ class User(Base):
     )
 
     timetables: Mapped[List["TimeTable"]] = relationship(back_populates='user')
+    tokens: Mapped[List["UserToken"]] = relationship(back_populates='user')
+
+class UserToken(Base):
+
+    __tablename__ = 'user_tokens'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    access_key: Mapped[Optional[str]] = mapped_column(nullable=True) #change when making access stateable object
+    refresh_key: Mapped[str] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
+    expires_at: Mapped[datetime] = mapped_column()
+
+    user: Mapped['User'] = relationship(back_populates='tokens')
  
 class Teacher(Base):
 

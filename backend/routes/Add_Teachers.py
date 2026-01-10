@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, HTTPException
 from typing import List
-from backend.oauth2 import UserDep
+from backend.oauth import UserDep
 from backend.database import SessionDep
 from backend.models import Teacher,TeacherCreate, TeacherBase
 
