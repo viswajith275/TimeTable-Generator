@@ -12,7 +12,7 @@ import secrets
 login_routes = APIRouter(tags=['login'])
 
 #login endpoint
-@login_routes.post('/login')
+@login_routes.post('/login', response_model=UsersBase)
 async def login_for_access_token(db: SessionDep,response: Response , form_data: Annotated[OAuth2PasswordRequestForm, Depends()],):
     
     user = db.query(User).filter(User.username == form_data.username).first()
@@ -51,7 +51,7 @@ async def login_for_access_token(db: SessionDep,response: Response , form_data: 
         key='refresh_token', value=refresh_token, httponly=True, secure=False, samesite='lax'
     )
 
-    return {'message': 'Login Successfull!'}
+    return user
 
 #sigh up endpoint
 @login_routes.post('/register', response_model=UsersBase)
