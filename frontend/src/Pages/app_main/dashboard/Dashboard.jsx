@@ -4,6 +4,7 @@ import Topbar from "../Components/topbar/Topbar";
 import { Plus } from "lucide-react";
 import TableItem from "./Components/TableItem/TableItem";
 import Loader from "../Components/loader/loader";
+import Filter from "../Components/filter/Filter";
 
 const Dashboard = () => {
   return (
@@ -22,6 +23,10 @@ const Dashboard = () => {
               <Plus />
               <p>Create New</p>
             </button>
+          </div>
+
+          <div>
+            <Filter></Filter>
           </div>
 
           <div className={styles.tablesPlaceholder}>

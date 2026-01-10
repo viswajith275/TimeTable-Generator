@@ -5,6 +5,8 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import ClassDetailsPopup from "./Components/ClassDetailsPopup";
 import ClassItem from "./Components/ClassItem";
+import Filter from "../Components/filter/Filter";
+
 const Classes = () => {
   const [popupShow, setPopupShow] = useState(false);
   return (
@@ -42,6 +44,10 @@ const Classes = () => {
               <p>Add Class</p>
             </button>
           </div>
+        </div>
+
+        <div className={styles.utilityPanel}>
+              <Filter></Filter>
         </div>
 
         <div className={styles.gridClasses}>
