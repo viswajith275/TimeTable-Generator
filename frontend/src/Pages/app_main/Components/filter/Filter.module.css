@@ -1,0 +1,18 @@
+.filter {
+    padding: 0.3rem 0.8rem 0.3rem 1rem;
+    width: fit-content;
+    border-radius: 1rem;
+    color: var(--color-grey-500);
+    border: 1px solid var(--color-grey-500);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    letter-spacing: 0.2px;
+    transition: background-color 0.3s ease;
+    gap: 0.3rem;
+    font-size: 16px;
+}
+.filter:hover {
+    background-color: var(--color-grey-100);
+    cursor: pointer;
+}

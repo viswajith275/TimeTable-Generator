@@ -21,6 +21,13 @@
   display: flex;
   justify-content: space-between;
 }
+.mainPanel__headings div p {
+  color: var(--color-grey-500);
+}
+
+.utilityPanel{
+  margin-bottom: 1rem;
+}
 
 .createBtn {
   display: flex;

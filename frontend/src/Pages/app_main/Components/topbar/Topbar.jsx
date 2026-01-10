@@ -1,10 +1,30 @@
 import styles from "./Topbar.module.css";
 import { Search, UserRound, ChevronDown, Menu } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import MobileNav from "../mobileNavbar/MobileNav";
+import ProfileDropdown from "../dropdown/profileDropdown/profileDropdown";
 
 const Topbar = () => {
   const [mobileNavShown, setMobileNavShown] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  let menuRef = useRef();
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handler);
+
+    return () => {
+      document.removeEventListener("click", handler);
+    };
+  }, []);
+
+
   return (
     <div className={styles.topbar}>
       <MobileNav
@@ -26,10 +46,12 @@ const Topbar = () => {
         </div>
       </div>
 
-      <div className={styles.profile}>
+      <div className={styles.profile} ref={menuRef} onClick={() => { setOpen(prev => !prev); }}>
         <UserRound size={20} />
         <p>Profile Name</p>
         <ChevronDown size={18} />
+
+        <ProfileDropdown isOpen = {open}></ProfileDropdown>
       </div>
     </div>
   );
