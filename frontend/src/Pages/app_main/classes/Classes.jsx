@@ -39,7 +39,7 @@ const Classes = () => {
               }}
             >
               <Plus />
-              <p>Create New</p>
+              <p>Add Class</p>
             </button>
           </div>
         </div>

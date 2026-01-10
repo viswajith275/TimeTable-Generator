@@ -22,6 +22,9 @@
   justify-content: space-between;
   flex-direction: row;
 }
+.mainPanel__headings div p {
+  color: var(--color-grey-500);
+}
 
 .createBtn {
   display: flex;

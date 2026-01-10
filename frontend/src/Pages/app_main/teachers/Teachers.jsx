@@ -42,7 +42,7 @@ const Teachers = () => {
               }}
             >
               <Plus />
-              <p>Create New</p>
+              <p>Add Teacher</p>
             </button>
           </div>
         </div>
