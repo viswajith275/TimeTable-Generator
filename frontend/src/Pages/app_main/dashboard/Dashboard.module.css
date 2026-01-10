@@ -25,6 +25,10 @@
   color: var(--color-grey-500);
 }
 
+.utilityPanel{
+  position: relative;
+}
+
 .createBtn {
   display: flex;
   justify-content: space-evenly;

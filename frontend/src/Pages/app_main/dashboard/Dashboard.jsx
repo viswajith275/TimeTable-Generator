@@ -25,7 +25,7 @@ const Dashboard = () => {
             </button>
           </div>
 
-          <div>
+          <div className={styles.utilityPanel}>
             <Filter></Filter>
           </div>
 

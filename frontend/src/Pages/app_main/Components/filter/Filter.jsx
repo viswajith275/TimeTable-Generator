@@ -5,7 +5,7 @@ const Filter = () => {
     return (
         <div className={styles.filter}>
             Filter
-            <FilterIcon />
+            <FilterIcon size={16}/>
         </div>
     );
 };
