@@ -1,5 +1,4 @@
 from sqlalchemy import Integer, String, ForeignKey, Enum
-from sqlalchemy.sql.sqltypes import DateTime
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
@@ -124,8 +123,8 @@ class User(Base):
         cascade="all, delete-orphan"
     )
 
-    timetables: Mapped[List["TimeTable"]] = relationship(back_populates='user')
-    tokens: Mapped[List["UserToken"]] = relationship(back_populates='user')
+    timetables: Mapped[List["TimeTable"]] = relationship(back_populates='user', cascade='all, delete-orphan')
+    tokens: Mapped[List["UserToken"]] = relationship(back_populates='user', cascade='all, delete-orphan')
 
 class UserToken(Base):
 

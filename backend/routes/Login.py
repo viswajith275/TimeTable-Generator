@@ -9,7 +9,23 @@ from backend.models import UserCreate, User, UsersBase, UserToken
 import secrets
 
 #creating a login route
-login_routes = APIRouter(tags=['login'])
+login_routes = APIRouter(tags=['Authentication'])
+
+#sigh up endpoint
+@login_routes.post('/register', response_model=UsersBase)
+def register_user(db: SessionDep, user: UserCreate):
+    
+    exists = db.query(User).filter(User.username == user.username).first()
+    if exists:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Username already registered!')
+    
+    hashed_pass = get_password_hash(user.password)
+    new_user = User(username=user.username, hashed_password=hashed_pass)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
 
 #login endpoint
 @login_routes.post('/login', response_model=UsersBase)
@@ -53,21 +69,6 @@ async def login_for_access_token(db: SessionDep,response: Response , form_data: 
 
     return user
 
-#sigh up endpoint
-@login_routes.post('/register', response_model=UsersBase)
-def register_user(db: SessionDep, user: UserCreate):
-    
-    exists = db.query(User).filter(User.username == user.username).first()
-    if exists:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Username already registered!')
-    
-    hashed_pass = get_password_hash(user.password)
-    new_user = User(username=user.username, hashed_password=hashed_pass)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return new_user
 
 @login_routes.post('/refresh')
 def refresh_tokens(request: Request, response: Response, db: SessionDep):

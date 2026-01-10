@@ -6,11 +6,7 @@ from pathlib import Path
 load_dotenv(dotenv_path=Path(__file__).parent / ".env")
 
 # accept common env names as fallback
-SQL_DATABASE_URL = (
-	os.getenv("SQL_DATABASE_URL")
-	or os.getenv("DATABASE_URL")
-	or os.getenv("Database_url")
-)
+SQL_DATABASE_URL = os.getenv("DATABASE_URL")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))

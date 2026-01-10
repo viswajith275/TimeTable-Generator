@@ -15,7 +15,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                 all_days[i] = WeekDay[d.upper()]
 
     day_indices = range(len(all_days))
-    all_slotes = range(data.slotes)
+    all_slotes = range(1,data.slotes+1)
 
     shifts = {}
     for assignment in assignments:
