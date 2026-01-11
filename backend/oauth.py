@@ -1,5 +1,5 @@
 import jwt
-from datetime import datetime,timedelta, timezone
+from datetime import datetime,timedelta
 from backend.config import SECRET_KEY, ALGORITHM
 from pwdlib import PasswordHash
 from typing import Annotated
