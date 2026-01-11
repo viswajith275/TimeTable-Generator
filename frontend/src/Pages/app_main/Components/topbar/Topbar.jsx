@@ -2,7 +2,7 @@ import styles from "./Topbar.module.css";
 import { Search, UserRound, ChevronDown, Menu } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import MobileNav from "../mobileNavbar/MobileNav";
-import ProfileDropdown from "../dropdown/profileDropdown/profileDropdown";
+import ProfileDropDown from "../dropdown/profileDropdown/ProfileDropdown";
 
 const Topbar = () => {
   const [mobileNavShown, setMobileNavShown] = useState(false);
@@ -23,7 +23,6 @@ const Topbar = () => {
       document.removeEventListener("click", handler);
     };
   }, []);
-
 
   return (
     <div className={styles.topbar}>
@@ -46,12 +45,18 @@ const Topbar = () => {
         </div>
       </div>
 
-      <div className={styles.profile} ref={menuRef} onClick={() => { setOpen(prev => !prev); }}>
+      <div
+        className={styles.profile}
+        ref={menuRef}
+        onClick={() => {
+          setOpen((prev) => !prev);
+        }}
+      >
         <UserRound size={20} />
         <p>Profile Name</p>
         <ChevronDown size={18} />
 
-        <ProfileDropdown isOpen = {open}></ProfileDropdown>
+        <ProfileDropDown isOpen={open}></ProfileDropDown>
       </div>
     </div>
   );

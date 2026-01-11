@@ -76,3 +76,11 @@ this shake animation is for error indication in inputfields */
 .hidden {
   display: none;
 }
+
+.loader_container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  align-items: center;
+}
