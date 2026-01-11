@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 from typing import List
 from backend.database import SessionDep
 from backend.oauth import UserDep
-from backend.models import Teacher, Class, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentDelete, TeacherClassAssignmentBase
+from backend.models import Teacher, Class, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentBase, TeacherClassAssignmentUpdate
 
 assign_routes = APIRouter(tags=['Teacher Assignment'])
 
@@ -16,6 +16,7 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep):
     result = []
     for a in assignments:
         result.append({
+            'id': a.id,
             'teacher_id': a.teacher_id,
             't_name': a.teacher.t_name,
             'class_id': a.class_id,
@@ -57,14 +58,13 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
 
     return {'message': 'assigned successfully'}
     
-@assign_routes.put('/assignments')
-def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate):
+@assign_routes.put('/assignments/{id}')
+def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentUpdate, id: int):
     assignment = (
         db.query(TeacherClassAssignment)
         .join(Teacher)
         .filter(Teacher.user_id == current_user.id)
-        .filter(TeacherClassAssignment.teacher_id == values.teacher_id)
-        .filter(TeacherClassAssignment.class_id == values.class_id)
+        .filter(TeacherClassAssignment.id == id)
         .first()
     )
     if not assignment:
@@ -77,10 +77,10 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
 
     return {'message': 'updated successfully'}
 
-@assign_routes.delete('/assignments')
-def delete_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentDelete):
+@assign_routes.delete('/assignments/{id}')
+def delete_assignment(current_user: UserDep, db: SessionDep, id: int):
 
-    assignment = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.id == current_user.id).filter(TeacherClassAssignment.teacher_id == values.teacher_id, TeacherClassAssignment.class_id == values.class_id).first()
+    assignment = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.id == current_user.id).filter(TeacherClassAssignment.id == id).first()
 
     if assignment:
         db.delete(assignment)

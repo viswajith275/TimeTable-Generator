@@ -38,10 +38,17 @@ class ClassAssignedBase(BaseModel):
     subject: str
     role: str
 
+class TeacherAssignedBase(BaseModel):
+    assign_id: int
+    t_name: str
+    subject: str
+    role: str
+
 class ClassBase(BaseModel):
     id: int
     c_name: str
     r_name: str
+    teacher_assignments: List[TeacherAssignedBase]
 
 
 class TeacherBase(BaseModel):
@@ -59,6 +66,7 @@ class TeacherCreate(BaseModel):
     max_classes: int
 
 class TeacherClassAssignmentBase(BaseModel):
+    id: int
     teacher_id: int
     t_name: str
     class_id: int
@@ -74,9 +82,10 @@ class TeacherClassAssignmentCreate(BaseModel):
     role: str
     subject: str
 
-class TeacherClassAssignmentDelete(BaseModel):
-    teacher_id: int
-    class_id: int
+class TeacherClassAssignmentUpdate(BaseModel):
+    role: str
+    subject: str
+
 
 class Generate_Data(BaseModel):
     timetable_name: str

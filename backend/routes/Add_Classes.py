@@ -11,7 +11,20 @@ class_routes = APIRouter(tags=['Classes'])
 def Fetch_All_Classes(current_user: UserDep):
     classes = current_user.classes
     if classes:
-        return classes
+        result = []
+        for c in classes:
+            result.append({
+                'id': c.id,
+                'c_name': c.c_name,
+                'r_name': c.r_name,
+                'teacher_assignments': [{
+                    'assign_id': a.id,
+                    't_name': a.teacher.t_name,
+                    'subject': a.t_sub,
+                    'role': a.role
+                } for a in c.teacher_assignments]
+            })
+        return result
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Classes not found!')
 
 @class_routes.get('/classes/{id}', response_model=ClassBase)
