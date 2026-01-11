@@ -1,6 +1,6 @@
 from sqlalchemy import Integer, String, ForeignKey, Enum
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import List, Optional
 from datetime import datetime
 import enum
@@ -21,12 +21,14 @@ class WeekDay(enum.Enum):
 #Base user model
 class UsersBase(BaseModel):
     username : str
+    email: str
     disabled : bool
     model_config = {"from_attributes": True}
 
 #user create model
 class UserCreate(BaseModel):
     username : str
+    email: EmailStr
     password : str
 
 class ClassAssignedBase(BaseModel):
@@ -109,6 +111,7 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    email: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     disabled: Mapped[bool] = mapped_column(default=False)
 
@@ -124,6 +127,7 @@ class User(Base):
     )
 
     timetables: Mapped[List["TimeTable"]] = relationship(back_populates='user', cascade='all, delete-orphan')
+
     tokens: Mapped[List["UserToken"]] = relationship(back_populates='user', cascade='all, delete-orphan')
 
 class UserToken(Base):

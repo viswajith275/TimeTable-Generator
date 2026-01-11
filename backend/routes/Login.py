@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from typing import Annotated
+from sqlalchemy import or_
 from datetime import datetime, timedelta
 from backend.database import SessionDep
 from fastapi.security import OAuth2PasswordRequestForm
@@ -15,12 +16,12 @@ login_routes = APIRouter(tags=['Authentication'])
 @login_routes.post('/register', response_model=UsersBase)
 def register_user(db: SessionDep, user: UserCreate):
     
-    exists = db.query(User).filter(User.username == user.username).first()
+    exists = db.query(User).filter(or_(User.username == user.username, User.email == user.email)).first()
     if exists:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Username already registered!')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Username or email already registered!')
     
     hashed_pass = get_password_hash(user.password)
-    new_user = User(username=user.username, hashed_password=hashed_pass)
+    new_user = User(username=user.username, hashed_password=hashed_pass, email=user.email)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
