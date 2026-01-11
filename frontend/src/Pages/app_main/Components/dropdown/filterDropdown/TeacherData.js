@@ -9,6 +9,7 @@ const TeacherData = [
     {
         label : 'Subject',
         children : [
+            { label: 'All'},
             { label: 'Physics' },
             { label: 'Chemistry' },
             { label: 'Maths' },
@@ -18,9 +19,10 @@ const TeacherData = [
     {
         label: 'Working Hours',
         children: [
-            { label: '< 3hr / week' },
-            { label: '< 5hr / week' },
-            { label: '> 5hr / week' },
+            { label: 'All' },
+            { label: '< 3hr' },
+            { label: '< 5hr' },
+            { label: '> 5hr' },
         ]
     }
 ];
