@@ -2,10 +2,9 @@
     padding: 0.5rem;
     background-color: var(--color-bg);
     position: absolute;
-    z-index: 100;
     border-radius: 7px;
-    bottom: -12rem;
-    right: -1rem;
+    bottom: -7rem;
+    right: -7rem;
     min-width: 200px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.04);
     display: flex;
@@ -19,10 +18,9 @@
     content: '';
     position: absolute;
     top: -9px;
-    right: 40%;
+    left: 2rem;
     height: 15px;
     width: 15px;
-    z-index: -1;
     background-color: var(--color-bg);
     transform: rotate(45deg);
     border-top: 1px solid #ddd;
@@ -43,7 +41,7 @@
     transition: 0.3s ease;
 }
 
-.listItem{
+.listItem {
     width: 100%;
     padding: 0.6rem;
     color: var(--color-grey-900);
@@ -55,10 +53,28 @@
     font-size: 16px;
     gap: 0.6rem;
 }
-.listItem:hover{
+
+.listItem:hover {
     background-color: var(--color-grey-100);
 }
 
-.logoutBtn{
-    color: var(--color-danger);
+.menuItemWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    min-width: 180px;
+    z-index: 10;
+    padding: 0.5rem;
+}
+
+.arrow {
+    margin-left: auto;
 }
