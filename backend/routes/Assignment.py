@@ -22,7 +22,11 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep):
             'class_id': a.class_id,
             'c_name': a.class_.c_name,
             'role': a.role,
-            'subject': a.t_sub
+            'subject': a.t_sub,
+            'min_per_day': a.min_per_day,
+            'max_per_day': a.max_per_day,
+            'min_per_week': a.min_per_week,
+            'max_per_week': a.max_per_week
         })
     
     return result
@@ -50,7 +54,11 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
         teacher_id=teacher.id,
         class_id=cur_class.id,
         role=values.role,
-        t_sub=values.subject
+        t_sub=values.subject,
+        min_per_day=values.min_per_day,
+        max_per_day=values.max_per_day,
+        min_per_week=values.min_per_week,
+        max_per_week=values.max_per_week
     )
 
     db.add(new_assignment)
@@ -72,6 +80,10 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
 
     assignment.role = values.role
     assignment.t_sub = values.subject
+    assignment.min_per_day = values.min_per_day
+    assignment.max_per_day = values.max_per_day
+    assignment.min_per_week = values.min_per_week
+    assignment.max_per_week = values.max_per_week
 
     db.commit()
 

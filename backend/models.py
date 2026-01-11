@@ -73,6 +73,10 @@ class TeacherClassAssignmentBase(BaseModel):
     c_name: str
     role: str
     subject: str
+    min_per_day: Optional[int]
+    max_per_day: Optional[int]
+    min_per_week: Optional[int]
+    max_per_week: Optional[int]
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -81,11 +85,18 @@ class TeacherClassAssignmentCreate(BaseModel):
     class_id: int
     role: str
     subject: str
+    min_per_day: Optional[int]
+    max_per_day: Optional[int]
+    min_per_week: Optional[int]
+    max_per_week: Optional[int]
 
 class TeacherClassAssignmentUpdate(BaseModel):
     role: str
     subject: str
-
+    min_per_day: Optional[int]
+    max_per_day: Optional[int]
+    min_per_week: Optional[int]
+    max_per_week: Optional[int]
 
 class Generate_Data(BaseModel):
     timetable_name: str
@@ -196,6 +207,10 @@ class TeacherClassAssignment(Base):
 
     role: Mapped[str] = mapped_column(String(30), nullable=False)  # "class_teacher","subject_teacher"
     t_sub: Mapped[str] = mapped_column(String(50), nullable=False)
+    min_per_day: Mapped[Optional[int]] = mapped_column()
+    max_per_day: Mapped[Optional[int]] = mapped_column()
+    min_per_week: Mapped[Optional[int]] = mapped_column()
+    max_per_week: Mapped[Optional[int]] = mapped_column()
 
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
