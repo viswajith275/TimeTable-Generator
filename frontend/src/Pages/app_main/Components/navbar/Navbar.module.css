@@ -4,7 +4,8 @@
   flex-direction: column;
   gap: 2rem;
   height: 100vh;
-  padding: 2rem;
+  padding-right: 1rem;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
 
   flex: 0 0 190px;
 }
@@ -12,7 +13,7 @@
 .linkGroups {
   display: flex;
   flex-direction: column;
-  gap: 1.5em;
+  gap: 0.6em;
 }
 .linkContainer {
   justify-content: space-between;
@@ -23,12 +24,28 @@
   flex-direction: row;
   gap: 0.5rem;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   color: var(--color-grey-900);
+  align-items: center;
+  padding: 0.8rem;
+  padding-left: 2rem;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  width: 100%;
+}
+.navBar img{
+  margin-left: 2rem;
+  margin-top: 2rem;
+}
+
+.selected{
+  background-color: var(--color-primary);
+  color: var(--color-bg);
 }
 
 .linkItem:hover {
-  transform: translateX(2px);
+  padding-left: 2.3rem;
+  width: calc(100% + 0.3rem);
 }
 
 /* media queries */

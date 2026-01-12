@@ -14,7 +14,7 @@ const Navbar = () => {
       <img src={logoSmall} width={50} alt="" />
       <div className={styles.linkContainer}>
         <div className={styles.linkGroups}>
-          <div className={styles.linkItem}>
+          <div className={`${styles.linkItem} ${styles.selected}`}>
             <LayoutDashboard /> <p>Dashboard</p>
           </div>
 
