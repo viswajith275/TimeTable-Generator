@@ -78,7 +78,10 @@ function App() {
         />
       </Routes>
 
-      <div className="loader_container">
+      <div
+        className="loader_container"
+        style={{ display: !isLoading ? "none" : "flex" }}
+      >
         <Loader></Loader>
       </div>
     </>

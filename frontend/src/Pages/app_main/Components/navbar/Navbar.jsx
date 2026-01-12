@@ -18,16 +18,12 @@ const Navbar = () => {
       <img src={logoSmall} width={50} alt="" />
       <div className={styles.linkContainer}>
         <div className={styles.linkGroups}>
-<<<<<<< HEAD
-          <div className={`${styles.linkItem} ${styles.selected}`}>
-=======
           <div
-            className={styles.linkItem}
+            className={`${styles.linkItem} ${styles.selected}`}
             onClick={() => {
               navigate("/dashboard");
             }}
           >
->>>>>>> 6a37c97 (added basic routing : tofix flickering)
             <LayoutDashboard /> <p>Dashboard</p>
           </div>
 
