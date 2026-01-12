@@ -33,7 +33,19 @@ def fetch_all_teachers(current_user: UserDep):
 def fetch_teacher(id: int, current_user: UserDep, db: SessionDep):
     teacher = db.query(Teacher).filter(Teacher.id == id and Teacher.user_id == current_user.id).first()
     if teacher:
-        return teacher
+        return {
+                'id': teacher.id,
+                't_name': teacher.t_name,
+                'max_classes': teacher.max_classes,
+                'class_assignments': [{
+                    'assign_id': c.id,
+                    'c_name': c.class_.c_name,
+                    'r_name': c.class_.r_name,
+                    'subject': c.t_sub,
+                    'role': c.role
+                } for c in teacher.class_assignments]
+                    
+            }
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
     
     
