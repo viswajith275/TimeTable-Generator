@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from backend.database import SessionDep
 from fastapi.security import OAuth2PasswordRequestForm
 from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
-from backend.oauth import create_token, get_password_hash, verify_password, decode_token
+from backend.oauth import create_token, get_password_hash, verify_password, decode_token, UserDep
 from backend.models import UserCreate, User, UsersBase, UserToken
 import secrets
 
@@ -62,11 +62,11 @@ async def login_for_access_token(db: SessionDep,response: Response , form_data: 
     )
 
     response.set_cookie(
-        key='access_token', value=f"Bearer {access_token}", httponly=True, secure=False, samesite='lax'
+        key='access_token', value=f"Bearer {access_token}", httponly=True, secure=False, samesite="lax"
     )
 
     response.set_cookie(
-        key='refresh_token', value=refresh_token, httponly=True, secure=False, samesite='lax'
+        key='refresh_token', value=refresh_token, httponly=True, secure=False, samesite="lax", max_age= 60 * 60 * 24 * REFRESH_TOKEN_EXPIRE_DAYS
     )
 
     return user
@@ -119,11 +119,11 @@ def refresh_tokens(request: Request, response: Response, db: SessionDep):
         )
 
         response.set_cookie(
-            key='access_token', value=f"Bearer {access_token}", httponly=True, secure=False, samesite='lax'
+            key='access_token', value=f"Bearer {access_token}", httponly=True, secure=False, samesite="lax"
         )
 
         response.set_cookie(
-            key='refresh_token', value=refresh_token, httponly=True, secure=False, samesite='lax'
+            key='refresh_token', value=refresh_token, httponly=True, secure=False ,samesite="lax", max_age= 60 * 60 * 24 * REFRESH_TOKEN_EXPIRE_DAYS
         )
 
         return {'message': 'Token refreshed'}
@@ -148,3 +148,7 @@ def logout_user(request: Request, response: Response, db: SessionDep):
     response.delete_cookie('refresh_token')
 
     return {'message': "Logged out successfully"}
+
+@login_routes.get('/username')
+def fetch_username(current_user: UserDep):
+    return {'username': current_user.username}

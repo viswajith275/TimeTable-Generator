@@ -3,8 +3,10 @@ import { Search, UserRound, ChevronDown, Menu } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import MobileNav from "../mobileNavbar/MobileNav";
 import ProfileDropDown from "../dropdown/profileDropdown/ProfileDropdown";
+import { useAuth } from "../../../../Context/AuthProvider";
 
 const Topbar = () => {
+  const {user}=useAuth();
   const [mobileNavShown, setMobileNavShown] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -53,7 +55,7 @@ const Topbar = () => {
         }}
       >
         <UserRound size={20} />
-        <p>Profile Name</p>
+        <p>{user}</p>
         <ChevronDown size={18} />
 
         <ProfileDropDown isOpen={open}></ProfileDropDown>

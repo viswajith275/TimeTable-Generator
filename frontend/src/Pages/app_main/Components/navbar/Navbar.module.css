@@ -15,6 +15,10 @@
   flex-direction: column;
   gap: 0.6em;
 }
+.linkTag {
+  color: var(--color-primary);
+  text-decoration: none;
+}
 .linkContainer {
   justify-content: space-between;
   height: 100%;

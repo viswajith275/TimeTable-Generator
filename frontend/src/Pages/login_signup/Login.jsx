@@ -3,8 +3,12 @@ import styles from "./Login.module.css";
 import { User, LockKeyhole, Eye, EyeOff } from "lucide-react";
 import logoSmall from "../../assets/logo_small.png";
 import googleImg from "./img/googlel.webp";
+import { useAuth } from "../../Context/AuthProvider";
 
+import axios from "axios"
 const Login = () => {
+
+  const {confirmLogin} = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
@@ -60,8 +64,34 @@ const Login = () => {
 
     try {
       setSubmitLoading(true);
-      console.log("Login payload:", form);
-      // JWT login API call goes here
+
+    const formData = new URLSearchParams();
+    formData.append("username", form.username);
+    formData.append("password", form.password);
+    formData.append("grant_type", "password");
+    formData.append("scope", "");
+    formData.append("client_id", "");
+    formData.append("client_secret", "");
+    const response = await axios.post(
+      "/api/login",
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        withCredentials: true,
+      }
+    );
+  console.log(response.data);
+
+    if(response.status==200){
+      confirmLogin(form.username);
+    } else if(response.status==422){
+      //email password wrong
+    } else{
+      //
+    }
+
     } finally {
       setSubmitLoading(false);
     }

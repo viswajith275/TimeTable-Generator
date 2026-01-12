@@ -25,6 +25,10 @@
 .linkItem {
   cursor: pointer;
 }
+.linkTag {
+  color: var(--color-primary);
+  text-decoration: none;
+}
 .navMain {
   width: 100%;
   display: flex;
