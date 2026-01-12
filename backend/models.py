@@ -31,6 +31,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password : str
 
+#Teacher class relation model
 class ClassAssignedBase(BaseModel):
     assign_id: int
     c_name: str
@@ -38,33 +39,38 @@ class ClassAssignedBase(BaseModel):
     subject: str
     role: str
 
+#class teacher relation model
 class TeacherAssignedBase(BaseModel):
     assign_id: int
     t_name: str
     subject: str
     role: str
 
+#Returning class data model
 class ClassBase(BaseModel):
     id: int
     c_name: str
     r_name: str
     teacher_assignments: List[TeacherAssignedBase]
 
-
+#Returning teacher data model
 class TeacherBase(BaseModel):
     id: int
     t_name: str
     max_classes: int
     class_assignments: List[ClassAssignedBase]
 
+#Class creation details model
 class ClassCreate(BaseModel):
     c_name: str
     r_name: str
 
+#Teacher creation detail model
 class TeacherCreate(BaseModel):
     t_name: str
     max_classes: int
 
+#Teacher class assignment returning model
 class TeacherClassAssignmentBase(BaseModel):
     id: int
     teacher_id: int
@@ -80,6 +86,7 @@ class TeacherClassAssignmentBase(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+#Teacher class assignment creation data model
 class TeacherClassAssignmentCreate(BaseModel):
     teacher_id: int
     class_id: int
@@ -90,6 +97,7 @@ class TeacherClassAssignmentCreate(BaseModel):
     min_per_week: Optional[int]
     max_per_week: Optional[int]
 
+#Teacher class assignment update data model
 class TeacherClassAssignmentUpdate(BaseModel):
     role: str
     subject: str
@@ -98,11 +106,13 @@ class TeacherClassAssignmentUpdate(BaseModel):
     min_per_week: Optional[int]
     max_per_week: Optional[int]
 
+#Timetable generation data model
 class Generate_Data(BaseModel):
     timetable_name: str
     slotes: int
     days: List[WeekDay]
 
+#Timetable Entries of an timetable data model
 class TimeTableEntryJson(BaseModel):
     id: int
     assign_id: int
@@ -114,6 +124,7 @@ class TimeTableEntryJson(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+#Timetable Return structure
 class TimeTableJson(BaseModel):
     id: int
     name: str
@@ -125,6 +136,7 @@ class TimeTableJson(BaseModel):
 
 #table structures
 
+#user table schemas
 class User(Base):
 
     __tablename__ = 'users'
@@ -135,7 +147,7 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     disabled: Mapped[bool] = mapped_column(default=False)
 
-    #relationship with teachers, class, timetables
+    #relationship with teachers, class, timetables, tokens
     teachers: Mapped[List["Teacher"]] = relationship(
             back_populates="user", 
             cascade="all, delete-orphan"
@@ -150,6 +162,7 @@ class User(Base):
 
     tokens: Mapped[List["UserToken"]] = relationship(back_populates='user', cascade='all, delete-orphan')
 
+#User Token data dumping table (have to make a auto cleanup script to clear every week or so)
 class UserToken(Base):
 
     __tablename__ = 'user_tokens'
@@ -163,6 +176,7 @@ class UserToken(Base):
 
     user: Mapped['User'] = relationship(back_populates='tokens')
  
+ #Teacher table schema
 class Teacher(Base):
 
     __tablename__ = 'teachers'
@@ -179,6 +193,7 @@ class Teacher(Base):
         cascade="all, delete-orphan" 
     )
 
+#Class table schema
 class Class(Base):
 
     __tablename__ = 'classes'
@@ -195,7 +210,7 @@ class Class(Base):
         cascade="all, delete-orphan"
     )
 
-
+#Teacher Class Assignment Table Schema
 class TeacherClassAssignment(Base):
 
     __tablename__ = "teacher_class_assignments"
@@ -216,6 +231,7 @@ class TeacherClassAssignment(Base):
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
     timetable_entries: Mapped[List["TimeTableEntry"]] = relationship(back_populates="assignment")
 
+#TimeTable Entry Table data (Assigns date and slot for teacher class assignments)
 class TimeTableEntry(Base):
 
     __tablename__ = 'timetable_entries'
@@ -232,7 +248,7 @@ class TimeTableEntry(Base):
     assignment: Mapped["TeacherClassAssignment"] = relationship(back_populates="timetable_entries")
     timetable: Mapped["TimeTable"] = relationship(back_populates='entries')
 
-
+#Timetable table schema (Maps Timetable entries under a single name)
 class TimeTable(Base):
     
     __tablename__ = 'timetables'

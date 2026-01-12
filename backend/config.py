@@ -5,7 +5,7 @@ from pathlib import Path
 # load .env located next to this file
 load_dotenv(dotenv_path=Path(__file__).parent / ".env")
 
-# accept common env names as fallback
+#Fetching the env variables
 SQL_DATABASE_URL = os.getenv("DATABASE_URL")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"

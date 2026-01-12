@@ -15,8 +15,9 @@ login_routes = APIRouter(tags=['Authentication'])
 #sigh up endpoint
 @login_routes.post('/register', response_model=UsersBase)
 def register_user(db: SessionDep, user: UserCreate):
-    
     exists = db.query(User).filter(or_(User.username == user.username, User.email == user.email)).first()
+
+    #checking if the user exists
     if exists:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Username or email already registered!')
     
@@ -70,7 +71,7 @@ async def login_for_access_token(db: SessionDep,response: Response , form_data: 
 
     return user
 
-
+#refreshing the access and refresh tokens
 @login_routes.post('/refresh')
 def refresh_tokens(request: Request, response: Response, db: SessionDep):
     
