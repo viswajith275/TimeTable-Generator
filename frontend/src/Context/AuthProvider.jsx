@@ -9,7 +9,6 @@ import axios from "axios";
 // if there is no token in cookie, it throws a 401 error.. this means that the token got expired..
 // so fix it by logouting / using refresh token
 
-
 /* 
 This AuthProvider Checks
 */
@@ -48,6 +47,7 @@ const AuthProvider = ({ children }) => {
           confirmLogin(response.data.username);
         }
       } catch (error) {
+        console.log("AuthProvider Error: ", error);
         logout(); //run refresh token here instead of this logout
       } finally {
         setIsLoading(false);

@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
@@ -13,7 +13,7 @@ COPY . /app/backend
 
 RUN pip install --upgrade pip \
  && if [ -f /app/backend/requirements.txt ]; then pip install --no-cache-dir -r /app/backend/requirements.txt; fi \
- && pip install --no-cache-dir fastapi "uvicorn[standard]" psycopg[binary]
+ && pip install --no-cache-dir fastapi "uvicorn[standard]" psycopg[binary] pyjwt
 
 EXPOSE 8000
 
