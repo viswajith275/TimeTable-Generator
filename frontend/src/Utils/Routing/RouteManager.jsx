@@ -7,6 +7,8 @@ import ForgotPass from "../../Pages/login_signup/ForgotPass";
 import Dashboard from "../../Pages/app_main/dashboard/Dashboard";
 import Classes from "../../Pages/app_main/classes/Classes";
 import Teachers from "../../Pages/app_main/teachers/Teachers";
+import Error404 from "../../Pages/error/Error404";
+
 const RouteManager = () => {
   return (
     <Routes>
@@ -68,11 +70,17 @@ const RouteManager = () => {
             <Dashboard />
           </ProtectedRoutes>
         }
-      ></Route>
+      />
 
-      <Route path="*" element={<div>404 Not Found</div>} />
+      <Route
+        path="*"
+        element={
+          <Error404 />
+        }
+      />
+
     </Routes>
   );
 };
-//asif funde edit the * route.. make a 404 page
+
 export default RouteManager;
