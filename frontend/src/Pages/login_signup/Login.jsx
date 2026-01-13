@@ -5,7 +5,6 @@ import logoSmall from "../../assets/logo_small.png";
 import googleImg from "./img/googlel.webp";
 import { useAuth } from "../../Context/AuthProvider";
 import { Link } from "react-router-dom";
-
 import axios from "axios";
 const Login = () => {
   const { confirmLogin } = useAuth();
@@ -80,15 +79,21 @@ const Login = () => {
         },
         withCredentials: true,
       });
-      console.log(response.data);
 
       if (response.status == 200) {
         confirmLogin(form.username);
-      } else if (response.status == 422) {
-        //email password wrong
-        // handle notifying thingies..
-      } else {
-        //
+      }
+    } catch (err) {
+      console.log(err.detail);
+      if (err.status === 400) {
+        setErrorStates({
+          username: true,
+          password: true,
+        });
+        setErrors({
+          username: "Incorrect username or password",
+          password: "Incorrect username or password",
+        });
       }
     } finally {
       setSubmitLoading(false);

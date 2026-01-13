@@ -1,223 +1,226 @@
 .container {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
 
-    background-color: #ffffff;
-    background-image: radial-gradient(rgba(160, 160, 160, 0.3) 1.5px,
-            transparent 0);
-    background-size: 28px 28px;
-    background-position: -6px -6px;
+  background-color: #ffffff;
+  background-image: radial-gradient(
+    rgba(160, 160, 160, 0.3) 1.5px,
+    transparent 0
+  );
+  background-size: 28px 28px;
+  background-position: -6px -6px;
 }
 
 /* ---------------- NAV ---------------- */
 
 .nav {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 2rem 4rem;
-    z-index: 10;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2rem 4rem;
+  z-index: 10;
 }
 
 .nav a {
-    text-decoration: none;
-    color: var(--color-primary);
-    padding: 0.8rem 1rem;
-    font-weight: 600;
-    letter-spacing: 0.6px;
-    transition: opacity 0.2s ease;
-    cursor: pointer;
+  text-decoration: none;
+  color: var(--color-primary);
+  padding: 0.8rem 1rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
 }
 
 .nav a:hover {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 
 /* ---------------- SECTIONS ---------------- */
 
 .left,
 .right {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ---------------- LEFT ---------------- */
 
 .left {
-    position: relative;
+  position: relative;
 }
 
 .left img {
-    max-width: 80%;
-    transform: scale(0.75);
-    z-index: 3;
-    animation: float 6s ease-in-out infinite;
+  max-width: 80%;
+  transform: scale(0.75);
+  z-index: 3;
+  animation: float 6s ease-in-out infinite;
 }
 
 /* SVG blobs */
 .left svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    pointer-events: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .s1 {
-    fill: rgba(0, 0, 0, 0.06);
-    animation: clockwise 90s linear infinite;
+  fill: rgba(0, 0, 0, 0.06);
+  animation: clockwise 90s linear infinite;
 }
 
 .s2 {
-    fill: rgba(0, 0, 0, 0.04);
-    animation: counterClockwise 90s linear infinite;
+  fill: rgba(0, 0, 0, 0.04);
+  animation: counterClockwise 90s linear infinite;
 }
 
 /* ---------------- RIGHT ---------------- */
 
 .right {
-    flex-direction: column;
-    align-items: flex-end;
-    text-align: right;
-    padding-right: 8rem;
-    z-index: 2;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  padding-right: 8rem;
+  z-index: 2;
 }
 
 .right h1 {
-    font-size: 6rem;
-    margin: 0;
-    line-height: 1;
-    color: var(--color-primary);
+  font-size: 6rem;
+  margin: 0;
+  line-height: 1;
+  color: var(--color-primary);
 }
 
 .right h2 {
-    margin: 0.6rem 0 1.2rem;
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 1px;
+  margin: 0.6rem 0 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .right p {
-    max-width: 380px;
-    line-height: 1.6;
-    margin: 0;
+  max-width: 380px;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .right p span {
-    display: block;
-    margin-top: 0.5rem;
-    color: var(--color-grey-300);
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--color-grey-300);
 }
 
 /* ---------------- ACTION BUTTONS ---------------- */
 
 .actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 button {
-    padding: 0.55rem 1.7rem;
-    background-color: transparent;
-    border: 2px solid var(--color-primary);
-    border-radius: 6px;
-    cursor: pointer;
+  padding: 0.55rem 1.7rem;
+  background-color: transparent;
+  border: 2px solid var(--color-primary);
+  border-radius: 6px;
+  cursor: pointer;
 
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 
-    font-weight: 600;
-    transition: all 0.25s ease;
+  font-weight: 600;
+  transition: all 0.25s ease;
 }
 
 button:hover {
-    transform: translateY(-2px);
-    background-color: var(--color-primary);
-    color: #fff;
+  transform: translateY(-2px);
+  background-color: var(--color-primary);
+  color: #fff;
 }
 
 .primary {
-    background-color: var(--color-primary);
-    color: #fff;
+  background-color: var(--color-primary);
+  color: #fff;
 }
 
 .primary:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 /* ---------------- ANIMATIONS ---------------- */
 
 @keyframes clockwise {
-    from {
-        transform: rotate(0deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
 
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes counterClockwise {
-    from {
-        transform: rotate(360deg);
-    }
+  from {
+    transform: rotate(360deg);
+  }
 
-    to {
-        transform: rotate(0deg);
-    }
+  to {
+    transform: rotate(0deg);
+  }
 }
 
 @keyframes float {
-    0% {
-        transform: translateY(0) scale(0.75);
-    }
+  0% {
+    transform: translateY(0) scale(0.75);
+  }
 
-    50% {
-        transform: translateY(-12px) scale(0.75);
-    }
+  50% {
+    transform: translateY(-12px) scale(0.75);
+  }
 
-    100% {
-        transform: translateY(0) scale(0.75);
-    }
+  100% {
+    transform: translateY(0) scale(0.75);
+  }
 }
 
 /* ---------------- RESPONSIVE ---------------- */
 
 @media (max-width: 964px) {
-    .container {
-        flex-direction: column;
-        overflow-y: auto;
-    }
+  .container {
+    padding-top: 5rem;
+    flex-direction: column-reverse;
+    overflow-y: auto;
+  }
 
-    .left {
-        flex: 2;
-    }
+  .left {
+    flex: 2;
+  }
 
-    .left img {
-        transform: scale(0.55);
-    }
+  .left img {
+    transform: scale(0.55);
+  }
 
-    .right {
-        align-items: center;
-        text-align: center;
-        padding: 0 1.5rem 2.5rem;
-        flex: 1;
-    }
+  .right {
+    align-items: center;
+    text-align: center;
+    padding: 0 1.5rem 2.5rem;
+    flex: 1;
+  }
 
-    .right h1{
-        font-size: 5rem;
-    }
+  .right h1 {
+    font-size: 5rem;
+  }
 
-    .nav {
-        padding: 1.5rem;
-    }
+  .nav {
+    padding: 1.5rem;
+  }
 }

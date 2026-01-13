@@ -1,6 +1,9 @@
 import { useAuth } from "./Context/AuthProvider";
 import "./App.css";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Loader from "./Pages/app_main/Components/loader/Loader";
 import RouteManager from "./Utils/Routing/RouteManager";
 function App() {
@@ -10,12 +13,30 @@ function App() {
     return (
       <div className="loader_container">
         <Loader />
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="light"
+        />
       </div>
     );
   }
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="light"
+      />
       <RouteManager />
     </>
   );

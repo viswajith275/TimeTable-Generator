@@ -5,7 +5,11 @@ import logoSmall from "../../assets/logo_small.png";
 import { Link } from "react-router-dom";
 import googleImg from "./img/googlel.webp";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 const Register = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
@@ -96,18 +100,24 @@ const Register = () => {
     try {
       setSubmitLoading(true);
 
-      // console.log("Register payload:", {
-      //   username: form.username.trim(),
-      //   email: form.email.trim().toLowerCase(),
-      //   password: form.password,
-      // });
-
       // backend integration here
       const { confirmPassword, ...formData } = form;
       const response = await axios.post("/api/register", formData);
 
       if (response.status === 200) {
-        console.log("Registeration success!");
+        toast.success("Registration successful, now please login!");
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      }
+    } catch (err) {
+      if (err.status === 400) {
+        setErrorStates({ ...errorStates, username: true, email: true });
+        setErrors({
+          ...errors,
+          username: "Username or mail already in use.",
+          email: "Username or mail already in use.",
+        });
       }
     } finally {
       setSubmitLoading(false);
