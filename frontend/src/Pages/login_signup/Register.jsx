@@ -1,27 +1,30 @@
 import { useState } from "react";
 import styles from "./Login.module.css";
-import { LockKeyhole, Eye, EyeOff, User } from "lucide-react";
+import { LockKeyhole, Eye, EyeOff, User, Mail } from "lucide-react";
 import logoSmall from "../../assets/logo_small.png";
-import logoBig from "../../assets/logo_full_width.png";
+import { Link } from "react-router-dom";
 import googleImg from "./img/googlel.webp";
-
+import axios from "axios";
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
     username: "",
+    email: "",
     password: "",
     confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({
     username: "",
+    email: "",
     password: "",
     confirmPassword: "",
   });
 
   const [errorStates, setErrorStates] = useState({
     username: false,
+    email: false,
     password: false,
     confirmPassword: false,
   });
@@ -35,6 +38,7 @@ const Register = () => {
     const newErrors = { ...errors };
     const newErrorStates = { ...errorStates };
 
+    // USERNAME
     if (!form.username.trim()) {
       newErrors.username = "Username is required";
       newErrorStates.username = true;
@@ -43,6 +47,22 @@ const Register = () => {
       newErrorStates.username = false;
     }
 
+    // EMAIL
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+      newErrorStates.email = true;
+      hasError = true;
+    } else if (!emailRegex.test(form.email)) {
+      newErrors.email = "Invalid email address";
+      newErrorStates.email = true;
+      hasError = true;
+    } else {
+      newErrorStates.email = false;
+    }
+
+    // PASSWORD
     if (!form.password) {
       newErrors.password = "Enter a password";
       newErrorStates.password = true;
@@ -55,6 +75,7 @@ const Register = () => {
       newErrorStates.password = false;
     }
 
+    // CONFIRM PASSWORD
     if (!form.confirmPassword) {
       newErrors.confirmPassword = "Confirm your password";
       newErrorStates.confirmPassword = true;
@@ -74,7 +95,20 @@ const Register = () => {
 
     try {
       setSubmitLoading(true);
-      console.log("Register payload:", form);
+
+      // console.log("Register payload:", {
+      //   username: form.username.trim(),
+      //   email: form.email.trim().toLowerCase(),
+      //   password: form.password,
+      // });
+
+      // backend integration here
+      const { confirmPassword, ...formData } = form;
+      const response = await axios.post("/api/register", formData);
+
+      if (response.status === 200) {
+        console.log("Registeration success!");
+      }
     } finally {
       setSubmitLoading(false);
     }
@@ -125,6 +159,35 @@ const Register = () => {
                 placeholder="Username"
                 value={form.username}
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* EMAIL */}
+          <div className={styles.inputContainer}>
+            <label htmlFor="email-register-page" className={styles.label}>
+              <p>Email</p>
+              <p
+                className={`${styles.errorLabel} ${
+                  errorStates.email ? "" : styles.hidden
+                }`}
+              >
+                {errors.email}
+              </p>
+            </label>
+
+            <div
+              className={`${styles.inputField} ${
+                errorStates.email ? styles.errorInputField : ""
+              }`}
+            >
+              <Mail size={16} strokeWidth={1.75} />
+              <input
+                type="email"
+                id="email-register-page"
+                placeholder="example@email.com"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </div>
           </div>
@@ -199,16 +262,6 @@ const Register = () => {
                   setForm({ ...form, confirmPassword: e.target.value })
                 }
               />
-              <span
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ cursor: "pointer" }}
-              >
-                {showPassword ? (
-                  <EyeOff size={16} strokeWidth={1.75} />
-                ) : (
-                  <Eye size={16} strokeWidth={1.75} />
-                )}
-              </span>
             </div>
           </div>
 
@@ -231,10 +284,10 @@ const Register = () => {
         </button>
 
         <p className={styles.newHere}>
-          New here?{" "}
-          <a href="#register" className={styles.newHereLink}>
-            Sign up
-          </a>
+          Already have an account?{" "}
+          <Link to="/login" className={styles.newHereLink}>
+            Login
+          </Link>
         </p>
       </div>
     </section>

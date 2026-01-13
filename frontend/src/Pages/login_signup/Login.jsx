@@ -4,11 +4,11 @@ import { User, LockKeyhole, Eye, EyeOff } from "lucide-react";
 import logoSmall from "../../assets/logo_small.png";
 import googleImg from "./img/googlel.webp";
 import { useAuth } from "../../Context/AuthProvider";
+import { Link } from "react-router-dom";
 
-import axios from "axios"
+import axios from "axios";
 const Login = () => {
-
-  const {confirmLogin} = useAuth();
+  const { confirmLogin } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
@@ -65,33 +65,31 @@ const Login = () => {
     try {
       setSubmitLoading(true);
 
-    const formData = new URLSearchParams();
-    formData.append("username", form.username);
-    formData.append("password", form.password);
-    formData.append("grant_type", "password");
-    formData.append("scope", "");
-    formData.append("client_id", "");
-    formData.append("client_secret", "");
-    const response = await axios.post(
-      "/api/login",
-      formData,
-      {
+      const formData = new URLSearchParams();
+      /*URL search params thingy is used here coz the application 
+      accepts only url encoded stuff.. it doesnt accepts json type shit here.*/
+      formData.append("username", form.username);
+      formData.append("password", form.password);
+      formData.append("grant_type", "password");
+      formData.append("scope", "");
+      formData.append("client_id", "");
+      formData.append("client_secret", "");
+      const response = await axios.post("/api/login", formData, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         withCredentials: true,
+      });
+      console.log(response.data);
+
+      if (response.status == 200) {
+        confirmLogin(form.username);
+      } else if (response.status == 422) {
+        //email password wrong
+        // handle notifying thingies..
+      } else {
+        //
       }
-    );
-  console.log(response.data);
-
-    if(response.status==200){
-      confirmLogin(form.username);
-    } else if(response.status==422){
-      //email password wrong
-    } else{
-      //
-    }
-
     } finally {
       setSubmitLoading(false);
     }
@@ -210,10 +208,10 @@ const Login = () => {
         </button>
 
         <p className={styles.newHere}>
-          New here?{" "}
-          <a href="#register" className={styles.newHereLink}>
+          New here?
+          <Link to={"/register"} className={styles.newHereLink}>
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </section>
