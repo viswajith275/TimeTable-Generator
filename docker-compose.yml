@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: fastapitimetable
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/fastapitimetable
+      SECRET_KEY: f6ef82446b940077e6c35222a4a2ea00bdf13e17ee091a02e1b1d2afae076fa2e7a7accd7c277f13a250c173ed87771da62225b3898b877e2a5b460eee4d705d
+      ACCESS_TOKEN_EXPIRE_MINUTES: "15"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
+    depends_on:
+      - db
+    restart: on-failure
+
+volumes:
+  pgdata:
