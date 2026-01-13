@@ -8,10 +8,12 @@ import {
 } from "lucide-react";
 
 import logoSmall from "../../../../assets/logo_small.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname.replace("/", "");
 
   return (
     <div className={styles.navBar}>
@@ -19,7 +21,11 @@ const Navbar = () => {
       <div className={styles.linkContainer}>
         <div className={styles.linkGroups}>
           <div
-            className={`${styles.linkItem} ${styles.selected}`}
+            className={`${styles.linkItem} ${
+              currentPath.startsWith("dashboard") || currentPath.trim() === ""
+                ? styles.selected
+                : ""
+            }`}
             onClick={() => {
               navigate("/dashboard");
             }}
@@ -28,7 +34,9 @@ const Navbar = () => {
           </div>
 
           <div
-            className={styles.linkItem}
+            className={`${styles.linkItem} ${
+              currentPath.startsWith("classes") ? styles.selected : ""
+            }`}
             onClick={() => {
               navigate("/classes");
             }}
@@ -41,7 +49,9 @@ const Navbar = () => {
           </div>
 
           <div
-            className={styles.linkItem}
+            className={`${styles.linkItem} ${
+              currentPath.startsWith("teacher") ? styles.selected : ""
+            }`}
             onClick={() => {
               navigate("/teachers");
             }}

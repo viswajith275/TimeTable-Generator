@@ -24,12 +24,13 @@
   height: 100%;
 }
 .linkItem {
+  color: var(--color-grey-500);
+
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  color: var(--color-grey-900);
   align-items: center;
   padding: 0.8rem;
   padding-left: 2rem;
@@ -37,14 +38,13 @@
   border-bottom-right-radius: 8px;
   width: 100%;
 }
-.navBar img{
+.navBar img {
   margin-left: 2rem;
   margin-top: 2rem;
 }
 
-.selected{
-  background-color: var(--color-primary);
-  color: var(--color-bg);
+.selected {
+  color: var(--color-primary);
 }
 
 .linkItem:hover {
