@@ -126,7 +126,7 @@
   margin-top: 2rem;
 }
 
-button {
+/* button {
   padding: 0.55rem 1.7rem;
   background-color: transparent;
   border: 2px solid var(--color-primary);
@@ -145,7 +145,7 @@ button:hover {
   transform: translateY(-2px);
   background-color: var(--color-primary);
   color: #fff;
-}
+} */
 
 .primary {
   background-color: var(--color-primary);
