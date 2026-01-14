@@ -79,7 +79,6 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
 
       addClass(response.data);
       toast.success(`${className} added successfully !!`);
-      closeBtnClickHandler(); // optional: close after success
     } catch (error) {
       toast.error("Failed to add class");
       console.error(error);
