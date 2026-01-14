@@ -83,6 +83,7 @@ class TeacherClassAssignmentBase(BaseModel):
     max_per_day: Optional[int]
     min_per_week: Optional[int]
     max_per_week: Optional[int]
+    max_consecutive_class: Optional[int]
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -96,6 +97,7 @@ class TeacherClassAssignmentCreate(BaseModel):
     max_per_day: Optional[int]
     min_per_week: Optional[int]
     max_per_week: Optional[int]
+    max_consecutive_class: Optional[int]
 
 #Teacher class assignment update data model
 class TeacherClassAssignmentUpdate(BaseModel):
@@ -105,6 +107,7 @@ class TeacherClassAssignmentUpdate(BaseModel):
     max_per_day: Optional[int]
     min_per_week: Optional[int]
     max_per_week: Optional[int]
+    max_consecutive_class: Optional[int]
 
 #Timetable generation data model
 class Generate_Data(BaseModel):
@@ -226,6 +229,7 @@ class TeacherClassAssignment(Base):
     max_per_day: Mapped[Optional[int]] = mapped_column()
     min_per_week: Mapped[Optional[int]] = mapped_column()
     max_per_week: Mapped[Optional[int]] = mapped_column()
+    max_consecutive_class: Mapped[Optional[int]] = mapped_column()
 
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")

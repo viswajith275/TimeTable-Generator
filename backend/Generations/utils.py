@@ -74,6 +74,27 @@ def Generate_Timetable(db, assignments, data, user_id):
         if max_classes_per_week is not None:
             Model.Add(sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes) <= max_classes_per_week)
 
+    #A teacher should not take more consecutive classes than max_consecutive_class
+    for assignment in assignments:
+        max_consecutive_class = getattr(assignment, 'max_consecutive_class', None)
+        if max_consecutive_class is not None:
+            
+            for d in day_indices:
+                days = []
+
+                for s in all_slotes:
+                    slot_vars = [shifts[(a.id, d, s)] for a in assignments]
+            
+                is_working_s = Model.NewBoolVar(f'working_t{assignment.teacher_id}_d{d}_s{s}')
+                Model.Add(sum(slot_vars) == 1).OnlyEnforceIf(is_working_s)
+                Model.Add(sum(slot_vars) == 0).OnlyEnforceIf(is_working_s.Not())
+            
+                days.append(is_working_s)
+            for i in range(len(all_slotes) - max_consecutive_class):
+                window = days[i : i + max_consecutive_class + 1]
+
+                Model.Add(sum(window) <= max_consecutive_class)
+
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
     status = solver.Solve(Model)
