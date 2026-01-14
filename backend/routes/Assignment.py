@@ -27,7 +27,8 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep):
             'max_per_day': a.max_per_day,
             'min_per_week': a.min_per_week,
             'max_per_week': a.max_per_week,
-            'max_consecutive_class': a.max_consecutive_class
+            'max_consecutive_class': a.max_consecutive_class,
+            'is_hard_sub': a.is_hard_sub
         })
     
     return result
@@ -56,11 +57,12 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
         class_id=cur_class.id,
         role=values.role,
         t_sub=values.subject,
-        min_per_day=values.min_per_day,
-        max_per_day=values.max_per_day,
-        min_per_week=values.min_per_week,
-        max_per_week=values.max_per_week,
-        max_consecutive_class=values.max_consecutive_class
+        min_per_day=values.min_per_day if values.min_per_day else None,
+        max_per_day=values.max_per_day if values.max_per_day else None,
+        min_per_week=values.min_per_week if values.min_per_week else None,
+        max_per_week=values.max_per_week if values.max_per_week else None,
+        max_consecutive_class=values.max_consecutive_class if values.max_consecutive_class else None,
+        is_hard_sub=values.is_hard_sub
     )
 
     db.add(new_assignment)
@@ -82,11 +84,12 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
 
     assignment.role = values.role
     assignment.t_sub = values.subject
-    assignment.min_per_day = values.min_per_day
-    assignment.max_per_day = values.max_per_day
-    assignment.min_per_week = values.min_per_week
-    assignment.max_per_week = values.max_per_week
-    assignment.max_consecutive_class = values.max_consecutive_class
+    assignment.min_per_day = values.min_per_day if values.min_per_day else None
+    assignment.max_per_day = values.max_per_day if values.max_per_day else None
+    assignment.min_per_week = values.min_per_week if values.min_per_week else None
+    assignment.max_per_week = values.max_per_week if values.max_per_week else None
+    assignment.max_consecutive_class = values.max_consecutive_class if values.max_consecutive_class else None
+    assignment.is_hard_sub = values.is_hard_sub
 
     db.commit()
 

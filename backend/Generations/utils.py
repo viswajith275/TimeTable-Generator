@@ -95,6 +95,28 @@ def Generate_Timetable(db, assignments, data, user_id):
 
                 Model.Add(sum(window) <= max_consecutive_class)
 
+    
+    #Priortising hard subject in the morning
+    slot_cost = {
+        {s:(s-1)*10} for s in all_slotes
+    }
+
+    total_penalty_terms = []
+
+    for assignment in assignments:
+        if assignment.is_hard_sub:
+
+            for d in day_indices:
+
+                for s in all_slotes:
+
+                    cur = shifts[(assignment.id, d, s)]
+                    cost = slot_cost[s]
+
+                    total_penalty_terms.append(cur * cost) #if the current slot is 0 then we append 0 else we append cost plan is to minimise cost
+
+    Model.Minimize(sum(total_penalty_terms))
+
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
     status = solver.Solve(Model)

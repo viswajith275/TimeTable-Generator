@@ -84,6 +84,7 @@ class TeacherClassAssignmentBase(BaseModel):
     min_per_week: Optional[int]
     max_per_week: Optional[int]
     max_consecutive_class: Optional[int]
+    is_hard_sub: bool  #Priortising in the front of day
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -98,6 +99,7 @@ class TeacherClassAssignmentCreate(BaseModel):
     min_per_week: Optional[int]
     max_per_week: Optional[int]
     max_consecutive_class: Optional[int]
+    is_hard_sub: bool
 
 #Teacher class assignment update data model
 class TeacherClassAssignmentUpdate(BaseModel):
@@ -108,6 +110,7 @@ class TeacherClassAssignmentUpdate(BaseModel):
     min_per_week: Optional[int]
     max_per_week: Optional[int]
     max_consecutive_class: Optional[int]
+    is_hard_sub: bool
 
 #Timetable generation data model
 class Generate_Data(BaseModel):
@@ -172,7 +175,7 @@ class UserToken(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    access_key: Mapped[Optional[str]] = mapped_column(nullable=True) #change when making access stateable object
+    access_key: Mapped[Optional[str]] = mapped_column(nullable=True) #change when making access statable object
     refresh_key: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
     expires_at: Mapped[datetime] = mapped_column()
@@ -185,8 +188,10 @@ class Teacher(Base):
     __tablename__ = 'teachers'
 
     id: Mapped[int] = mapped_column(primary_key=True)
+
     t_name: Mapped[str] = mapped_column(String(50))
     max_classes: Mapped[int] = mapped_column(Integer, nullable=False)
+
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
     user: Mapped["User"] = relationship(back_populates="teachers")
@@ -230,6 +235,7 @@ class TeacherClassAssignment(Base):
     min_per_week: Mapped[Optional[int]] = mapped_column()
     max_per_week: Mapped[Optional[int]] = mapped_column()
     max_consecutive_class: Mapped[Optional[int]] = mapped_column()
+    is_hard_sub: Mapped[bool] = mapped_column(default=False)
 
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
