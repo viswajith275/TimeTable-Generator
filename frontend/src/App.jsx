@@ -1,6 +1,8 @@
 import { useAuth } from "./Context/AuthProvider";
 import "./App.css";
 
+//react toastify bs for notification system
+//dont remove these imports
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

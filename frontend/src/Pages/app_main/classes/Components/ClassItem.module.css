@@ -21,7 +21,7 @@
 .actionBtns {
   display: flex;
   flex-direction: row;
-  gap: 0.8rem;
+  gap: 0.2rem;
 }
 
 .actionBtn__Item {
