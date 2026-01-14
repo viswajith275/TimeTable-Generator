@@ -14,8 +14,6 @@ const Classes = () => {
   const [popupShow, setPopupShow] = useState(false);
   const [classes, setClasses] = useState({});
   const [isClassesLoading, setIsClassesLoading] = useState(true);
-  const [classesLoadingErrorStates, setClassesLoadingErrorStates] =
-    useState(null);
 
   //fetches all the classes on mounting of component
   useEffect(() => {
@@ -36,12 +34,20 @@ const Classes = () => {
         const elapsed = Date.now() - start;
         setTimeout(() => {
           setIsClassesLoading(false);
+          console.log(classes);
         }, Math.max(MIN_TIME - elapsed, 0)); // to avoid negative numbers here..
       }
     };
 
     fetchAllClasses();
   }, []);
+
+  const deleteClassItem = (id) => {
+    setClasses((prev) => prev.filter((item) => item.id !== id));
+  };
+  const addClassItem = (data) => {
+    setClasses([...classes, data]);
+  };
   return (
     <div className={styles.classRoom}>
       <div
@@ -54,6 +60,7 @@ const Classes = () => {
       ></div>
 
       <ClassDetailsPopup
+        addClass={addClassItem}
         isPopupOpen={popupShow}
         popUpClose={() => setPopupShow(false)}
       />
@@ -94,14 +101,20 @@ const Classes = () => {
               return (
                 <ClassItem
                   key={value.id}
+                  id={value.id}
                   roomName={value.c_name}
                   roomNumber={value.r_name}
+                  deleteClass={deleteClassItem}
                 />
               );
             })
           )}
-
-          {classes.length == 0 ? console.log("ho") : ""}
+          {/* //Work in progress */}
+          {Object.values(classes).length == 0 && !isClassesLoading ? (
+            <ErrorLoadingStatesClasses state={"empty"} />
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>

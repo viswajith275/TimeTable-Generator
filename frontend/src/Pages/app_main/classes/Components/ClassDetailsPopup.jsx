@@ -1,7 +1,10 @@
 import styles from "./ClassDetails.module.css";
 import { X } from "lucide-react";
 import { useState } from "react";
-const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
+import axios from "axios";
+import { toast } from "react-toastify";
+
+const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
   const [errors, setErrors] = useState({
     classroom: "",
     roomno: "",
@@ -11,15 +14,13 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
     classroom: false,
     roomno: false,
   });
-  //two way binding stuff
+
+  // two way binding
   const [className, setClassName] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
 
-  //clic handlers
-
   const closeBtnClickHandler = () => {
-    // reseting all data once the user clicks close/cancel
-    // otherwise it is retained when user clicks and reopens the prompt..
+    // reset state on close
     setClassName("");
     setRoomNumber("");
     setErrors({
@@ -34,31 +35,31 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
     popUpClose();
   };
 
-  const addBtnClickHandler = () => {
+  const addBtnClickHandler = async () => {
     let hasError = false;
     const newErrors = { ...errors };
     const newErrorStates = { ...errorStates };
 
-    //classname validation
+    // classname validation
     if (!className.trim()) {
       newErrors.classroom = "Classname is required";
       newErrorStates.classroom = true;
       hasError = true;
-    } else if (className.length > 15) {
-      newErrors.classroom = "Maximum length is 15 characters.";
+    } else if (className.length > 30) {
+      newErrors.classroom = "Maximum length is 30 characters.";
       newErrorStates.classroom = true;
       hasError = true;
     } else {
       newErrorStates.classroom = false;
     }
 
-    //roomno validation
+    // room number validation
     if (!roomNumber.trim()) {
       newErrors.roomno = "Roomnumber is required";
       newErrorStates.roomno = true;
       hasError = true;
-    } else if (roomNumber.length > 10) {
-      newErrors.roomno = "Maximum length is 10 characters.";
+    } else if (roomNumber.length > 30) {
+      newErrors.roomno = "Maximum length is 30 characters.";
       newErrorStates.roomno = true;
       hasError = true;
     } else {
@@ -67,8 +68,22 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
 
     setErrors(newErrors);
     setErrorStates(newErrorStates);
+
     if (hasError) return;
-    // backend integration part here
+
+    try {
+      const response = await axios.post("/api/classes", {
+        c_name: className,
+        r_name: roomNumber,
+      });
+
+      addClass(response.data);
+      toast.success(`${className} added successfully !!`);
+      closeBtnClickHandler(); // optional: close after success
+    } catch (error) {
+      toast.error("Failed to add class");
+      console.error(error);
+    }
   };
 
   return (
@@ -78,19 +93,23 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
       <div className={`${styles.popupMain} ${isPopupOpen ? styles.open : ""}`}>
         <div className={styles.headingContainer}>
           <h4>Add Classroom</h4>
-          <button onClick={closeBtnClickHandler}>
-            <X></X>
+          <button type="button" onClick={closeBtnClickHandler}>
+            <X />
           </button>
         </div>
 
-        <div className={styles.formContainer}>
+        <form
+          className={styles.formContainer}
+          onSubmit={(e) => {
+            e.preventDefault();
+            addBtnClickHandler();
+          }}
+        >
           <div className={styles.inputContainer}>
-            {" "}
             <label htmlFor="class-name-entry-wa901">
               <p>Class Name</p>
-
               <p
-                className={`${styles.errorText}  ${
+                className={`${styles.errorText} ${
                   errorStates.classroom ? "" : "hidden"
                 }`}
               >
@@ -108,12 +127,10 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
           </div>
 
           <div className={styles.inputContainer}>
-            {" "}
             <label htmlFor="class-no-entry-wa902">
               <p>Room number</p>
-
               <p
-                className={`${styles.errorText}  ${
+                className={`${styles.errorText} ${
                   errorStates.roomno ? "" : "hidden"
                 }`}
               >
@@ -129,19 +146,23 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen }) => {
               id="class-no-entry-wa902"
             />
           </div>
-        </div>
 
-        <div className={styles.actionBtns}>
-          <button className={styles.btnItem} onClick={closeBtnClickHandler}>
-            Cancel
-          </button>
-          <button
-            className={`${styles.btnItem} ${styles.saveBtn}`}
-            onClick={addBtnClickHandler}
-          >
-            Add
-          </button>
-        </div>
+          <div className={styles.actionBtns}>
+            <button
+              type="button"
+              className={styles.btnItem}
+              onClick={closeBtnClickHandler}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`${styles.btnItem} ${styles.saveBtn}`}
+            >
+              Add
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
