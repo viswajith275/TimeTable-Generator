@@ -76,24 +76,78 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     #A teacher should not take more consecutive classes than max_consecutive_class
     for assignment in assignments:
+
         max_consecutive_class = getattr(assignment, 'max_consecutive_class', None)
+
         if max_consecutive_class is not None:
             
-            for d in day_indices:
-                days = []
+            for d in all_days:
 
-                for s in all_slotes:
-                    slot_vars = [shifts[(a.id, d, s)] for a in assignments]
-            
-                is_working_s = Model.NewBoolVar(f'working_t{assignment.teacher_id}_d{d}_s{s}')
-                Model.Add(sum(slot_vars) == 1).OnlyEnforceIf(is_working_s)
-                Model.Add(sum(slot_vars) == 0).OnlyEnforceIf(is_working_s.Not())
-            
-                days.append(is_working_s)
-            for i in range(len(all_slotes) - max_consecutive_class):
-                window = days[i : i + max_consecutive_class + 1]
+                slots = [shifts[(assignment.id, d, s)] for s in all_slotes]
 
-                Model.Add(sum(window) <= max_consecutive_class)
+                for i in range(len(slots) - max_consecutive_class):
+
+                    Model.Add(sum(slots[i : i + max_consecutive_class + 1]) <= max_consecutive_class)
+
+    #A teacher should take atleast min_consecutive_classes
+    for assignment in assignments:
+        
+        min_consecutive_class = getattr(assignment, 'min_consecutive_class', None)
+
+        if min_consecutive_class is not None:
+
+            if min_consecutive_class == 2:
+
+                for d in day_indices:
+
+                    slotes = [shifts[(assignment.id, d, s)] for s in all_slotes]
+
+                    for i in range(len(all_slotes)):
+
+                        cur = slotes[i]
+                        prev = slotes[i-1] if i > 0 else None
+                        next = slotes[i+1] if i < len(all_slotes) - 1 else None
+
+                        neighbors = []
+                        if prev:
+                            neighbors.append(prev)
+                        if next:
+                            neighbors.append(next)
+                        
+                        if neighbors:
+                            Model.AddBoolOr(neighbors).OnlyEnforceIf(cur)
+                        else:
+                            Model.Add(cur == 0)
+        else:
+            for d in all_days:
+                slots = [shifts[(assignment.id, d, s)] for s in all_slotes]
+
+                for s in range(len(all_slotes)):
+                    current = slots[s]
+                    prev = slots[s-1] if s > 0 else None
+
+                    # 1. Detect "Start of Block" (Current is ON, Prev is OFF)
+                    is_start = Model.NewBoolVar(f'start_{assignment.id}_{d}_{s}')
+                    
+                    if prev:
+                        # Start = Current AND (NOT Prev)
+                        Model.AddBoolAnd([current, prev.Not()]).OnlyEnforceIf(is_start)
+                        # Ensure is_start is False if condition isn't met (optional but safer)
+                        Model.AddBoolOr([current.Not(), prev]).OnlyEnforceIf(is_start.Not()) 
+                    else:
+                        # If first slot of the day, Start = Current
+                        Model.Add(is_start == current)
+
+                    # 2. Enforce: If this is a start, the next (Min-1) slots must be ON
+                    needed = min_consecutive_class - 1
+                    
+                    if s + needed < len(slots):
+                        for i in range(1, min_consecutive_class):
+                            # Force subsequent slots to 1
+                            Model.Add(slots[s+i] == 1).OnlyEnforceIf(is_start)
+                    else:
+                        # Not enough room left in the day to start a block here
+                        Model.Add(is_start == 0)
 
     
     #Priortising hard subject in the morning

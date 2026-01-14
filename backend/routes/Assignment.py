@@ -28,6 +28,7 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep):
             'min_per_week': a.min_per_week,
             'max_per_week': a.max_per_week,
             'max_consecutive_class': a.max_consecutive_class,
+            'min_consecutive_class': a.min_consecutive_class,
             'is_hard_sub': a.is_hard_sub
         })
     
@@ -62,6 +63,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
         min_per_week=values.min_per_week if values.min_per_week else None,
         max_per_week=values.max_per_week if values.max_per_week else None,
         max_consecutive_class=values.max_consecutive_class if values.max_consecutive_class else None,
+        min_consecutive_class=values.min_consecutive_class if values.min_consecutive_class else None,
         is_hard_sub=values.is_hard_sub
     )
 
@@ -89,6 +91,7 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
     assignment.min_per_week = values.min_per_week if values.min_per_week else None
     assignment.max_per_week = values.max_per_week if values.max_per_week else None
     assignment.max_consecutive_class = values.max_consecutive_class if values.max_consecutive_class else None
+    assignment.min_consecutive_class = values.min_consecutive_class if values.min_consecutive_class else None
     assignment.is_hard_sub = values.is_hard_sub
 
     db.commit()

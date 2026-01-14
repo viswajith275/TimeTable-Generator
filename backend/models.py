@@ -84,6 +84,7 @@ class TeacherClassAssignmentBase(BaseModel):
     min_per_week: Optional[int]
     max_per_week: Optional[int]
     max_consecutive_class: Optional[int]
+    min_consecutive_class: Optional[int]
     is_hard_sub: bool  #Priortising in the front of day
 
     model_config = ConfigDict(from_attributes=True)
@@ -99,6 +100,7 @@ class TeacherClassAssignmentCreate(BaseModel):
     min_per_week: Optional[int]
     max_per_week: Optional[int]
     max_consecutive_class: Optional[int]
+    min_consecutive_class: Optional[int]
     is_hard_sub: bool
 
 #Teacher class assignment update data model
@@ -110,6 +112,7 @@ class TeacherClassAssignmentUpdate(BaseModel):
     min_per_week: Optional[int]
     max_per_week: Optional[int]
     max_consecutive_class: Optional[int]
+    min_consecutive_class: Optional[int]
     is_hard_sub: bool
 
 #Timetable generation data model
@@ -235,6 +238,7 @@ class TeacherClassAssignment(Base):
     min_per_week: Mapped[Optional[int]] = mapped_column()
     max_per_week: Mapped[Optional[int]] = mapped_column()
     max_consecutive_class: Mapped[Optional[int]] = mapped_column()
+    min_consecutive_class: Mapped[Optional[int]] = mapped_column()
     is_hard_sub: Mapped[bool] = mapped_column(default=False)
 
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
