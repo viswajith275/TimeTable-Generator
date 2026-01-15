@@ -3,8 +3,9 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { useAuth } from "../../../../Context/AuthProvider";
 const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
+  const { refreshToken } = useAuth();
   const [errors, setErrors] = useState({
     classroom: "",
     roomno: "",
@@ -35,7 +36,7 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
     popUpClose();
   };
 
-  const addBtnClickHandler = async () => {
+  const addBtnClickHandler = async (hasRetried = false) => {
     let hasError = false;
     const newErrors = { ...errors };
     const newErrorStates = { ...errorStates };
@@ -80,8 +81,14 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
       addClass(response.data);
       toast.success(`${className} added successfully !!`);
     } catch (error) {
-      toast.error("Failed to add class");
       console.error(error);
+
+      if (error?.response?.status == 401 && !hasRetried) {
+        await refreshToken();
+        await addBtnClickHandler(true);
+        return;
+      }
+      toast.error("Failed to add class");
     }
   };
 
@@ -101,7 +108,7 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
           className={styles.formContainer}
           onSubmit={(e) => {
             e.preventDefault();
-            addBtnClickHandler();
+            addBtnClickHandler(false);
           }}
         >
           <div className={styles.inputContainer}>

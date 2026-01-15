@@ -8,8 +8,9 @@ import ClassItem from "./Components/ClassItem";
 import Filter from "../Components/filter/Filter";
 import ErrorLoadingStatesClasses from "./Components/ErrorLoadingStatesClasses";
 import axios from "axios";
-
+import { useAuth } from "../../../Context/AuthProvider";
 const Classes = () => {
+  const { refreshToken } = useAuth();
   //state variables needed
   const [popupShow, setPopupShow] = useState(false);
   const [classes, setClasses] = useState([]);
@@ -17,7 +18,7 @@ const Classes = () => {
 
   //fetches all the classes on mounting of component
   useEffect(() => {
-    const fetchAllClasses = async () => {
+    const fetchAllClasses = async (hasRetried = false) => {
       // Ensure the loader is visible for at least MIN_TIME.
       // If the API responds faster, we wait the remaining time.
       // If it takes longer, we stop loading immediately (no extra delay). Math.max is used to prevent that (in case of -ve delay, make it 0)
@@ -29,6 +30,10 @@ const Classes = () => {
         setClasses(data);
       } catch (err) {
         console.log(err);
+        if (err?.response?.status == 401 && !hasRetried) {
+          await refreshToken();
+          await fetchAllClasses(true); //hasRetried act as a retry guard preventing multiple recursion calls
+        }
       } finally {
         const MIN_TIME = 500; //in ms
         const elapsed = Date.now() - start;

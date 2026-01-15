@@ -1,9 +1,11 @@
 import styles from "./ClassItem.module.css";
 import { Pen, Trash2, X, Check } from "lucide-react";
 import axios from "axios";
+import { useAuth } from "../../../../Context/AuthProvider";
 import { useState } from "react";
 
 const ClassItem = ({ roomName, roomNumber, id, deleteClass, editClass }) => {
+  const { refreshToken } = useAuth();
   // resorting to snake case to try and match the backend api thingy
   const [formData, setFormData] = useState({
     c_name: roomName,
@@ -13,16 +15,21 @@ const ClassItem = ({ roomName, roomNumber, id, deleteClass, editClass }) => {
   let sizeActionItems = 18;
   // using this for trimming instead of using .trim everywhere..
   const normalize = (value) => value.trim();
-  const handleDelete = async () => {
+  const handleDelete = async (hasRetried = false) => {
     try {
       const { data } = await axios.delete(`/api/classes/${id}`);
       console.log(data);
       deleteClass(id);
     } catch (err) {
-      console.log(err);
+      console.log(err?.response?.status, hasRetried);
+
+      if (err?.response?.status == 401 && !hasRetried) {
+        await refreshToken();
+        await handleDelete(true);
+      }
     }
   };
-  const handleSave = async () => {
+  const handleSave = async (hasRetried = false) => {
     try {
       const payload = {
         c_name: normalize(formData.c_name),
@@ -33,6 +40,11 @@ const ClassItem = ({ roomName, roomNumber, id, deleteClass, editClass }) => {
       setIsEditMode(false);
     } catch (error) {
       console.log(error);
+
+      if (error?.response?.status == 401 && !hasRetried) {
+        await refreshToken();
+        await handleSave(true);
+      }
     }
   };
   //while cancelling we reset formdata also make edit mode false
@@ -89,7 +101,7 @@ const ClassItem = ({ roomName, roomNumber, id, deleteClass, editClass }) => {
 
             <button
               disabled={!canSave}
-              onClick={handleSave}
+              onClick={() => handleSave(false)}
               className={`${styles.actionBtn__Item} ${styles.tickBtn}`}
             >
               <Check size={sizeActionItems} />
@@ -125,7 +137,7 @@ const ClassItem = ({ roomName, roomNumber, id, deleteClass, editClass }) => {
 
           <button
             className={`${styles.actionBtn__Item} ${styles.deleteBtn}`}
-            onClick={handleDelete}
+            onClick={() => handleDelete(false)}
           >
             <Trash2 size={sizeActionItems} />
           </button>

@@ -29,12 +29,21 @@ const AuthProvider = ({ children }) => {
     setIsLoading(false);
   };
 
+  const refreshToken = async () => {
+    try {
+      await axios.post("/api/refresh");
+    } catch (err) {
+      logout();
+    }
+  };
+
   const value = {
     user,
     isLoading,
     isAuthenticated,
     confirmLogin,
     logout,
+    refreshToken,
   };
 
   useEffect(() => {
@@ -48,7 +57,7 @@ const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.log("AuthProvider Error: ", error);
-        logout(); //run refresh token here instead of this logout
+        refreshToken(); //run refresh token here instead of this logout
       } finally {
         setIsLoading(false);
       }
