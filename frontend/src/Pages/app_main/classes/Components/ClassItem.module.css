@@ -37,3 +37,19 @@
 .deleteBtn {
   color: var(--color-danger);
 }
+
+.tickBtn {
+  color: var(--color-success);
+  cursor: pointer;
+}
+.tickBtn:disabled {
+  color: var(--color-grey-500);
+  cursor: not-allowed;
+}
+.classItem input {
+  padding: 0rem 0.25rem;
+  border: none;
+  border-bottom: 1px solid var(--color-primary);
+  overflow-x: hidden;
+  width: fit-content;
+}

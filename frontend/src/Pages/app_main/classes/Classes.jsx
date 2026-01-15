@@ -12,7 +12,7 @@ import axios from "axios";
 const Classes = () => {
   //state variables needed
   const [popupShow, setPopupShow] = useState(false);
-  const [classes, setClasses] = useState({});
+  const [classes, setClasses] = useState([]);
   const [isClassesLoading, setIsClassesLoading] = useState(true);
 
   //fetches all the classes on mounting of component
@@ -34,7 +34,6 @@ const Classes = () => {
         const elapsed = Date.now() - start;
         setTimeout(() => {
           setIsClassesLoading(false);
-          console.log(classes);
         }, Math.max(MIN_TIME - elapsed, 0)); // to avoid negative numbers here..
       }
     };
@@ -48,6 +47,20 @@ const Classes = () => {
   const addClassItem = (data) => {
     setClasses([...classes, data]);
   };
+  const editClassItem = (data) => {
+    setClasses((prev) =>
+      prev.map((item) =>
+        item.id === data.id
+          ? {
+              ...item,
+              c_name: data.c_name,
+              r_name: data.r_name,
+            }
+          : item
+      )
+    );
+  };
+
   return (
     <div className={styles.classRoom}>
       <div
@@ -105,6 +118,7 @@ const Classes = () => {
                   roomName={value.c_name}
                   roomNumber={value.r_name}
                   deleteClass={deleteClassItem}
+                  editClass={editClassItem}
                 />
               );
             })
