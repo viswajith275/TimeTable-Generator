@@ -39,13 +39,13 @@ const Error404 = () => {
                 </p>
 
                 <div className={styles.actions}>
-                    <button onClick={() => navigate(-1)}>
+                    <button className={styles.actionBtn} onClick={() => navigate(-1)}>
                         <ArrowLeft size={16} />
                         Go Back
                     </button>
 
                     <button
-                        className={styles.primary}
+                        className={`${styles.primary} ${styles.actionBtn}`}
                         onClick={() => navigate('/dashboard')}
                     >
                         <Home size={16} />
