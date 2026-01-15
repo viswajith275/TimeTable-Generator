@@ -54,24 +54,39 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     #An assingned teacher should take the class for atleast min_per_day times
     #An assigned teacher should take the class atmost max_per_day times
+
     for assignment in assignments:
+
         min_classes_per_day = getattr(assignment, 'min_per_day', None)
         max_classes_per_day = getattr(assignment, 'max_per_day', None)
+
         if min_classes_per_day is not None or max_classes_per_day is not None:
+
             for d in day_indices:
+
                 if min_classes_per_day is not None:
+
                     Model.Add(sum(shifts[(assignment.id, d, s)] for s in all_slotes) >= min_classes_per_day)
+
                 if max_classes_per_day is not None:
+
                     Model.Add(sum(shifts[(assignment.id, d, s)] for s in all_slotes) <= max_classes_per_day)
+
 
     #An assigned teacher should take the class atleast min_per_week times
     #An assigned teacher should take the class atmost max_per_week times
+
     for assignment in assignments:
+
         min_classes_per_week = getattr(assignment, 'min_per_week', None)
         max_classes_per_week = getattr(assignment, 'max_per_week', None)
+
         if min_classes_per_week is not None:
+
             Model.Add(sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes) >= min_classes_per_week)
+
         if max_classes_per_week is not None:
+
             Model.Add(sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes) <= max_classes_per_week)
 
     #A teacher should not take more consecutive classes than max_consecutive_class
@@ -152,7 +167,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     
     #Priortising hard subject in the morning
     slot_cost = {
-        {s:(s-1)*10} for s in all_slotes
+        {s:(s-1) * 10 * 2 * (s-1)} for s in all_slotes
     }
 
     total_penalty_terms = []
