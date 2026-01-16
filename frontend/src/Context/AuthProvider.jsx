@@ -31,8 +31,11 @@ const AuthProvider = ({ children }) => {
 
   const refreshToken = async () => {
     try {
+      console.log("Refreshing");
       await axios.post("/api/refresh");
+      confirmLogin();
     } catch (err) {
+      console.log("Failed to refresh");
       logout();
     }
   };
@@ -49,6 +52,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkRouteState = async () => {
       try {
+        console.log("CHECKING IF LOGGED IN");
         const response = await axios.get("/api/username", {
           withCredentials: true,
         });
@@ -56,6 +60,7 @@ const AuthProvider = ({ children }) => {
           confirmLogin(response.data.username);
         }
       } catch (error) {
+        console.log("NOT LOGGED IN.");
         console.log("AuthProvider Error: ", error);
         refreshToken(); //run refresh token here instead of this logout
       } finally {

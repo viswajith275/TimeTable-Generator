@@ -53,7 +53,10 @@ const Teachers = () => {
         </div>
 
         <div className={styles.gridTeachers}>
-          <TeacherDetails teacherName={"Jithin Chandran"} subject={"Maths"}></TeacherDetails>
+          <TeacherDetails
+            teacherName={"Jithin Chandran"}
+            subject={"Maths"}
+          ></TeacherDetails>
         </div>
       </div>
     </div>

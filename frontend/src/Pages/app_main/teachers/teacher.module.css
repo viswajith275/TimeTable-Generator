@@ -8,6 +8,8 @@
 }
 .mainPanelPlaceholder {
   width: 100%;
+  max-height: 100vh;
+  overflow: auto;
 }
 
 .mainPanel {
@@ -25,7 +27,7 @@
   color: var(--color-grey-500);
 }
 
-.utilityPanel{
+.utilityPanel {
   margin-bottom: 1rem;
 }
 
@@ -62,10 +64,12 @@
 }
 
 @media (max-width: 615px) {
-  .mainPanel {
-    padding: 2rem;
-  }
+  .mainPanel,
   .gridTeachers {
     padding: 2rem;
+  }
+
+  .utilityPanel {
+    padding-left: 2rem;
   }
 }

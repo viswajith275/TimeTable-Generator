@@ -44,10 +44,6 @@ const Navbar = () => {
             <School /> <p>Classrooms</p>
           </div>
 
-          <div className={styles.linkItem}>
-            <LibraryBig /> <p>Subjects</p>
-          </div>
-
           <div
             className={`${styles.linkItem} ${
               currentPath.startsWith("teacher") ? styles.selected : ""

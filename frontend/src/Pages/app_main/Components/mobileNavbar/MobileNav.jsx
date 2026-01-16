@@ -38,7 +38,6 @@ const MobileNav = ({ closeNav, isNavOpen }) => {
           >
             Classrooms
           </p>
-          <p className={styles.linkItem}>Subjects</p>
           <p
             className={styles.linkItem}
             onClick={() => {
