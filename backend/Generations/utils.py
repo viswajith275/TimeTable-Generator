@@ -96,7 +96,7 @@ def Generate_Timetable(db, assignments, data, user_id):
 
         if max_consecutive_class is not None:
             
-            for d in all_days:
+            for d in day_indices:
 
                 slots = [shifts[(assignment.id, d, s)] for s in all_slotes]
 

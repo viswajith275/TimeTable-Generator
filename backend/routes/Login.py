@@ -69,7 +69,7 @@ async def login_for_access_token(db: SessionDep,response: Response , form_data: 
     )
 
     response.set_cookie(
-        key='refresh_token', value=refresh_token, httponly=True, secure=False, samesite="lax", max_age= 60 * 60 * 24 * REFRESH_TOKEN_EXPIRE_DAYS
+        key='refresh_token', value=refresh_token, httponly=True, secure=False, samesite="lax"
     )
 
     return user
@@ -84,9 +84,12 @@ def refresh_tokens(request: Request, response: Response, db: SessionDep):
     
     try:
         payload = decode_token(refresh_token)
+
+        token_type = payload.get('type')
         user_id = payload.get('uid')
         secret = payload.get('secret')
-        if payload.get('type') != 'refresh':
+
+        if token_type != 'refresh':
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Token')
         
         token_id = int(payload.get('jti'))
@@ -126,7 +129,7 @@ def refresh_tokens(request: Request, response: Response, db: SessionDep):
         )
 
         response.set_cookie(
-            key='refresh_token', value=refresh_token, httponly=True, secure=False ,samesite="lax", max_age= 60 * 60 * 24 * REFRESH_TOKEN_EXPIRE_DAYS
+            key='refresh_token', value=refresh_token, httponly=True, secure=False ,samesite="lax"
         )
 
         return {'message': 'Token refreshed'}
