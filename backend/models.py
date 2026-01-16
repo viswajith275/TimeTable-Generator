@@ -79,12 +79,12 @@ class TeacherClassAssignmentBase(BaseModel):
     c_name: str
     role: str
     subject: str
-    min_per_day: Optional[int]
-    max_per_day: Optional[int]
-    min_per_week: Optional[int]
-    max_per_week: Optional[int]
-    max_consecutive_class: Optional[int]
-    min_consecutive_class: Optional[int]
+    min_per_day: Optional[int] = None
+    max_per_day: Optional[int] = None
+    min_per_week: Optional[int] = None
+    max_per_week: Optional[int] = None
+    max_consecutive_class: Optional[int] = None
+    min_consecutive_class: Optional[int] = None
     is_hard_sub: bool  #Priortising in the front of day
 
     model_config = ConfigDict(from_attributes=True)
@@ -95,24 +95,24 @@ class TeacherClassAssignmentCreate(BaseModel):
     class_id: int
     role: str
     subject: str
-    min_per_day: Optional[int]
-    max_per_day: Optional[int]
-    min_per_week: Optional[int]
-    max_per_week: Optional[int]
-    max_consecutive_class: Optional[int]
-    min_consecutive_class: Optional[int]
+    min_per_day: Optional[int] = None
+    max_per_day: Optional[int] = None
+    min_per_week: Optional[int] = None
+    max_per_week: Optional[int] = None
+    max_consecutive_class: Optional[int] = None
+    min_consecutive_class: Optional[int] = None
     is_hard_sub: bool
 
 #Teacher class assignment update data model
 class TeacherClassAssignmentUpdate(BaseModel):
     role: str
     subject: str
-    min_per_day: Optional[int]
-    max_per_day: Optional[int]
-    min_per_week: Optional[int]
-    max_per_week: Optional[int]
-    max_consecutive_class: Optional[int]
-    min_consecutive_class: Optional[int]
+    min_per_day: Optional[int] = None
+    max_per_day: Optional[int] = None
+    min_per_week: Optional[int] = None
+    max_per_week: Optional[int] = None
+    max_consecutive_class: Optional[int] = None
+    min_consecutive_class: Optional[int] = None
     is_hard_sub: bool
 
 #Timetable generation data model

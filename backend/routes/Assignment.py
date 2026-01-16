@@ -86,12 +86,12 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
 
     assignment.role = values.role
     assignment.t_sub = values.subject
-    assignment.min_per_day = values.min_per_day if values.min_per_day else None
-    assignment.max_per_day = values.max_per_day if values.max_per_day else None
-    assignment.min_per_week = values.min_per_week if values.min_per_week else None
-    assignment.max_per_week = values.max_per_week if values.max_per_week else None
-    assignment.max_consecutive_class = values.max_consecutive_class if values.max_consecutive_class else None
-    assignment.min_consecutive_class = values.min_consecutive_class if values.min_consecutive_class else None
+    assignment.min_per_day = values.min_per_day
+    assignment.max_per_day = values.max_per_day
+    assignment.min_per_week = values.min_per_week
+    assignment.max_per_week = values.max_per_week
+    assignment.max_consecutive_class = values.max_consecutive_class
+    assignment.min_consecutive_class = values.min_consecutive_class
     assignment.is_hard_sub = values.is_hard_sub
 
     db.commit()
@@ -101,7 +101,7 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
 @assign_routes.delete('/assignments/{id}')
 def delete_assignment(current_user: UserDep, db: SessionDep, id: int):
 
-    assignment = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.id == current_user.id).filter(TeacherClassAssignment.id == id).first()
+    assignment = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).filter(TeacherClassAssignment.id == id).first()
 
     if assignment:
         db.delete(assignment)
