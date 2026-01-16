@@ -134,7 +134,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                         else:
                             Model.Add(cur == 0)
         else:
-            for d in all_days:
+            for d in day_indices:
                 slots = [shifts[(assignment.id, d, s)] for s in all_slotes]
 
                 for s in range(len(all_slotes)):

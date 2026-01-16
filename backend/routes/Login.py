@@ -78,7 +78,7 @@ async def login_for_access_token(db: SessionDep,response: Response , form_data: 
 @login_routes.post('/refresh')
 def refresh_tokens(request: Request, response: Response, db: SessionDep):
     
-    refresh_token = request.cookies.get("refresh_token")
+    refresh_token = request.cookies.get('refresh_token')
     if not refresh_token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Refresh token is missing!')
     
@@ -89,8 +89,8 @@ def refresh_tokens(request: Request, response: Response, db: SessionDep):
         user_id = payload.get('uid')
         secret = payload.get('secret')
 
-        if token_type != 'refresh':
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Token')
+        if token_type != "refresh":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f'Invalid Token {token_type}')
         
         token_id = int(payload.get('jti'))
 
@@ -118,9 +118,9 @@ def refresh_tokens(request: Request, response: Response, db: SessionDep):
 
         refresh_token = create_token(
             user_id=user_id,
-            token_type='refresh',
+            token_type="refresh",
             expires_time=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
-            unique_id=str(token.id),
+            unique_id=str(new_token.id),
             secret=session_secret
         )
 
