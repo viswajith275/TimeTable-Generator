@@ -72,13 +72,7 @@ const RouteManager = () => {
         }
       />
 
-      <Route
-        path="*"
-        element={
-          <Error404 />
-        }
-      />
-
+      <Route path="*" element={<Error404 />} />
     </Routes>
   );
 };
