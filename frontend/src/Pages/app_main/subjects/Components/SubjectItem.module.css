@@ -1,0 +1,55 @@
+.classItem {
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-radius: 0.7rem;
+  background-color: var(--color-bg);
+}
+.classItem p {
+  font-size: 16px;
+  color: var(--color-grey-500);
+}
+.itemHeading {
+  display: flex;
+  justify-content: space-between;
+}
+.itemHeading h3 {
+  color: var(--color-primary);
+  font-size: 20px;
+}
+.actionBtns {
+  display: flex;
+  flex-direction: row;
+  gap: 0.8rem;
+}
+
+.actionBtn__Item {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+
+  transition: all 0.2s ease-in-out;
+}
+.actionBtn__Item:hover {
+  opacity: 0.7;
+}
+.deleteBtn {
+  color: var(--color-danger);
+}
+
+.tickBtn {
+  color: var(--color-success);
+  cursor: pointer;
+}
+.tickBtn:disabled {
+  color: var(--color-grey-500);
+  cursor: not-allowed;
+}
+.classItem input {
+  padding: 0rem 0.25rem;
+  border: none;
+  border-bottom: 1px solid var(--color-primary);
+  overflow-x: hidden;
+  width: fit-content;
+}

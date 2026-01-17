@@ -8,7 +8,7 @@ import Dashboard from "../../Pages/app_main/dashboard/Dashboard";
 import Classes from "../../Pages/app_main/classes/Classes";
 import Teachers from "../../Pages/app_main/teachers/Teachers";
 import Error404 from "../../Pages/error/Error404";
-
+import Subjects from "../../Pages/app_main/subjects/Subjects";
 const RouteManager = () => {
   return (
     <Routes>
@@ -52,6 +52,14 @@ const RouteManager = () => {
         element={
           <ProtectedRoutes>
             <Classes />
+          </ProtectedRoutes>
+        }
+      />
+      <Route
+        path="/subjects"
+        element={
+          <ProtectedRoutes>
+            <Subjects />
           </ProtectedRoutes>
         }
       />
