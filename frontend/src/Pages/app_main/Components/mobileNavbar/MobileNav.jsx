@@ -41,6 +41,14 @@ const MobileNav = ({ closeNav, isNavOpen }) => {
           <p
             className={styles.linkItem}
             onClick={() => {
+              linkClickHandler("/subjects");
+            }}
+          >
+            Subjects
+          </p>
+          <p
+            className={styles.linkItem}
+            onClick={() => {
               linkClickHandler("/teachers");
             }}
           >

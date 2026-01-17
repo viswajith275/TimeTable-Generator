@@ -102,7 +102,7 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
               value={teacherName}
               onChange={(e) => setTeacherName(e.target.value)}
               type="text"
-              placeholder="Enter class name"
+              placeholder="Enter teacher name"
               id="class-name-entry-wa901"
             />
           </div>
@@ -125,7 +125,7 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
               value={maxPeriods}
               onChange={(e) => setMaxPeriods(e.target.value)}
               type="text"
-              placeholder="Enter Room number"
+              placeholder="Enter maximum periods"
               id="class-no-entry-wa902"
             />
           </div>

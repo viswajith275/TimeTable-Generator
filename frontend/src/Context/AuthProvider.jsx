@@ -1,74 +1,70 @@
-import { useContext, createContext, useState } from "react";
-
-const AuthContext = createContext(null);
-import { useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 
-// REMINDER FOR MYSELF
-// So /username end point returns the username if there's a token in the cookie
-// if there is no token in cookie, it throws a 401 error.. this means that the token got expired..
-// so fix it by logouting / using refresh token
+const AuthContext = createContext(null);
 
-/* 
-This AuthProvider Checks
+/*
+  Single responsibility:
+  - fetchCurrentUser: gets user if token is valid
+  - refreshToken: refreshes token then retries fetch
+  - confirmLogin / logout: state transitions
 */
+
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const confirmLogin = (userData) => {
-    setUser(userData);
+  const confirmLogin = (username) => {
+    setUser(username);
     setIsAuthenticated(true);
-    setIsLoading(false);
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    setIsLoading(false);
+  };
+
+  const fetchCurrentUser = async () => {
+    const response = await axios.get("/api/username", {
+      withCredentials: true,
+    });
+    return response.data.username;
   };
 
   const refreshToken = async () => {
-    try {
-      console.log("Refreshing");
-      await axios.post("/api/refresh");
-      confirmLogin();
-    } catch (err) {
-      console.log("Failed to refresh");
-      logout();
-    }
-  };
-
-  const value = {
-    user,
-    isLoading,
-    isAuthenticated,
-    confirmLogin,
-    logout,
-    refreshToken,
+    await axios.post("/api/refresh", { withCredentials: true });
+    return fetchCurrentUser();
   };
 
   useEffect(() => {
-    const checkRouteState = async () => {
+    const initAuth = async () => {
       try {
-        console.log("CHECKING IF LOGGED IN");
-        const response = await axios.get("/api/username", {
-          withCredentials: true,
-        });
-        if (response.status == 200) {
-          confirmLogin(response.data.username);
-        }
+        const username = await fetchCurrentUser();
+        confirmLogin(username);
       } catch (error) {
-        console.log("NOT LOGGED IN.");
-        console.log("AuthProvider Error: ", error);
-        refreshToken(); //run refresh token here instead of this logout
+        try {
+          const username = await refreshToken();
+          confirmLogin(username);
+        } catch (refreshError) {
+          logout();
+        }
       } finally {
         setIsLoading(false);
       }
     };
-    checkRouteState();
+
+    initAuth();
   }, []);
+
+  const value = {
+    user,
+    isAuthenticated,
+    isLoading,
+    confirmLogin,
+    logout,
+  };
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

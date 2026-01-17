@@ -46,6 +46,17 @@ const Navbar = () => {
 
           <div
             className={`${styles.linkItem} ${
+              currentPath.startsWith("subjects") ? styles.selected : ""
+            }`}
+            onClick={() => {
+              navigate("/subjects");
+            }}
+          >
+            <LibraryBig /> <p>Subjects</p>
+          </div>
+
+          <div
+            className={`${styles.linkItem} ${
               currentPath.startsWith("teacher") ? styles.selected : ""
             }`}
             onClick={() => {

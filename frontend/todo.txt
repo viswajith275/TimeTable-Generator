@@ -1,3 +1,4 @@
 TO DO
 
-ROUTING PROBLEMS : need to fix flicker
+ROUTING PROBLEMS : need to fix flicker 
+Landing page
