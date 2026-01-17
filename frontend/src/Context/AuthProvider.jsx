@@ -3,13 +3,6 @@ import axios from "axios";
 
 const AuthContext = createContext(null);
 
-/*
-  Single responsibility:
-  - fetchCurrentUser: gets user if token is valid
-  - refreshToken: refreshes token then retries fetch
-  - confirmLogin / logout: state transitions
-*/
-
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
