@@ -32,6 +32,9 @@
 
   /* Optional Glass UI */
   --color-glass: rgba(255, 255, 255, 0.1);
+
+  /* Layout */
+  --border-radius: 7px;
 }
 body {
   font-family: "acumin-pro", sans-serif;

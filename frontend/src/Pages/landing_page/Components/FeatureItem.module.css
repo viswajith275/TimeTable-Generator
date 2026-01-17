@@ -1,0 +1,138 @@
+.container{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    width: 80%;
+    border-radius: 1rem;
+    margin: -3rem;
+
+    /*This mf isnt supported in firefox*/
+    animation: appear linear;
+    animation-timeline: view();
+    animation-range: entry 0;
+}
+
+.reverse{
+    flex-direction: row-reverse;
+}
+
+.iconContainer{
+    width: 50%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: scale 0.3s ease;
+}
+
+.iconContainer:hover{
+    scale: 1.05;
+}
+
+.iconContainer div svg{
+    scale: 3.5;
+    stroke-width: 1px;
+}
+
+.s1, .s2{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    scale: 1.2;
+}
+
+.s1 {
+    fill: rgba(0, 0, 0, 0.06);
+    animation: clockwise 90s linear infinite;
+}
+
+.s2 {
+    fill: rgba(0, 0, 0, 0.04);
+    animation: counterClockwise 90s linear infinite;
+}
+
+.description{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.description h3{
+    font-size: 4rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+.description p{
+    color: var(--color-grey-500);
+    font-size: 1.3rem;
+    margin: 0;
+    padding: 0;
+}
+
+/*------------- Animations --------------*/
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        scale: 0.95;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+@keyframes clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes counterClockwise {
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@media (max-width: 615px) {
+    
+    .container{
+        flex-direction: column-reverse;
+        margin: 0;
+    }
+
+    .iconContainer{
+        width: 100%;
+    }
+
+    .iconContainer div svg {
+        scale: 3;
+    }
+
+    .description h3{
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .description p{
+        display: none;
+    }
+
+}

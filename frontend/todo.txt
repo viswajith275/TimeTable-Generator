@@ -1,4 +1,18 @@
 TO DO
 
 ROUTING PROBLEMS : need to fix flicker 
-Landing page
+
+# Landing Page:
+    # add working overview section
+    # login and signup routing
+    # sections for 
+        1.about 
+        2.contact
+        3.privacy
+        4.terms and conditions
+        5.cookie prefrenece
+        6.security
+        7.legal
+        8.help
+        9.explore
+    # github repo linking (for devs)

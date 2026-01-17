@@ -1,0 +1,287 @@
+.container{
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    position: relative;
+    background-color: var(--color-bg);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    letter-spacing: -0.5px;
+
+    background-color: #ffffff;
+    background-image: radial-gradient(rgba(160, 160, 160, 0.5) 1.5px, transparent 0);
+    background-size: 28px 28px;
+    background-position: -6px -6px;
+}
+
+.container p, .container h1, .container h2{
+    text-align: center;
+}
+
+/*------------- Header --------------*/
+
+.header{
+    width: 100%;
+    padding: 1rem 2.5%;
+    position: sticky;
+    top: 0;
+    background-color: var(--color-bg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    z-index: 999;
+}
+
+.header img{
+    height: 30px;
+}
+
+.header nav{
+    display: flex;
+    margin-left: auto;
+    font-weight: 500;
+    gap: 2rem;
+}
+
+.header nav a{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 0.3rem;
+    cursor: pointer;
+}
+
+.header nav a:hover{
+    text-decoration: underline;
+    text-underline-offset: 0.325rem;
+    text-decoration-thickness: 2px;
+    text-decoration-style: dotted;
+}
+
+/*------------- Main --------------*/
+
+.main{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+}
+
+.main h2 {
+    margin: 5rem 0 1rem 0;
+    width: 100%;
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: -1.5px;
+    text-decoration: underline;
+    text-underline-offset: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*----- Hero ------*/
+
+.hero{
+    width: 95%;
+    padding: 5rem 1rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero h1{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0 1rem 0;
+    font-size: 6rem;
+    font-weight: 600;
+    letter-spacing: -1.5px;
+}
+
+.hero p{
+    width: 50%;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 1rem 0 3rem 0;
+}
+
+.hero a{
+    text-decoration: underline;
+    text-underline-offset: 0.325rem;
+    cursor: pointer;
+}
+
+/*----- Problem-Solution ------*/
+
+.problemSolution{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.problemSolution .left, .problemSolution .right{
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-primary);
+    padding: 2rem 4rem;
+    border-radius: 0.5rem;
+    position: relative;
+    box-shadow: 2px 2px 0 var(--color-grey-900);
+    transition: all 0.25s ease;
+    min-width: 300px;
+}
+
+.problemSolution .left:hover{
+    transform: scale(1.1);
+}
+.problemSolution .right:hover {
+    transform: scale(1.1);
+}
+
+.floatingSymbol{
+    position: absolute;
+    top: -1rem;
+    right: -1rem;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-primary);
+    border-radius: 50%;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.problemSolution .left .floatingSymbol{
+    background-color: tomato;
+}
+.problemSolution .right .floatingSymbol{
+    background-color: yellowgreen;
+}
+
+/*----- Feature ------*/
+
+.features{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/*------------- Action buttons --------------*/
+
+.action{
+    padding: 0.5rem 2rem 0.5rem 2rem;
+    border: none;
+    outline: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.primary{
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+}
+
+.secondary{
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+}
+
+.action:hover{
+    transform: translateY(-2px);
+}
+
+.secondary:hover{
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+}
+
+/*------------- Specific --------------*/
+
+.B1{
+    padding: 1rem 3rem 1rem 3rem;
+    font-size: 1.2rem;
+}
+
+.header .N2{
+    display: flex;
+    gap: 1rem;
+}
+
+/*------------- Footer --------------*/
+
+.footer{
+    width: 100%;
+    padding: 2rem;
+    background-color: var(--color-bg-muted);
+    color: var(--color-grey-500);
+    position: relative;
+    z-index: 10;
+}
+
+.footer img{
+    height: 30px;
+}
+
+.footer nav{
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.footer nav a:hover, .extras a:hover{
+    text-decoration: underline;
+    text-underline-offset: 0.325rem;
+    cursor: pointer;
+}
+
+.footer span{
+    font-family: monospace;
+    display: flex;
+    gap: 1rem;
+}
+
+.extras{
+    float: right;
+}
+
+
+
+/*------------- Overlay --------------*/
+
+.overflowOverlay{
+    width: 100%;
+    height: 20%;
+    position: fixed;
+    bottom: 0;
+    background: linear-gradient(to top, var(--color-bg-muted), transparent);
+}
+
+/*------------- Responsive --------------*/
+
+@media (max-width: 964px) {
+    
+}
+
+@media (max-width: 615px) {
+
+    .header nav, .header .N2{
+        display: none;
+    }
+}

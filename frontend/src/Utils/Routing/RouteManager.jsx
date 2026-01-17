@@ -9,6 +9,8 @@ import Classes from "../../Pages/app_main/classes/Classes";
 import Teachers from "../../Pages/app_main/teachers/Teachers";
 import Error404 from "../../Pages/error/Error404";
 import Subjects from "../../Pages/app_main/subjects/Subjects";
+import LandingPage from "../../Pages/landing_page/LandingPage";
+
 const RouteManager = () => {
   return (
     <Routes>
@@ -75,7 +77,7 @@ const RouteManager = () => {
         path="/"
         element={
           <ProtectedRoutes>
-            <Dashboard />
+            <LandingPage />
           </ProtectedRoutes>
         }
       />
