@@ -20,7 +20,7 @@ def fetch_all_teachers(current_user: UserDep):
                     'assign_id': c.id,
                     'c_name': c.class_.c_name,
                     'r_name': c.class_.r_name,
-                    'subject': c.t_sub,
+                    'subject': c.subject.subject_name,
                     'role': c.role
                 } for c in t.class_assignments]
                     
@@ -41,7 +41,7 @@ def fetch_teacher(id: int, current_user: UserDep, db: SessionDep):
                     'assign_id': c.id,
                     'c_name': c.class_.c_name,
                     'r_name': c.class_.r_name,
-                    'subject': c.t_sub,
+                    'subject': c.subject.subject_name,
                     'role': c.role
                 } for c in teacher.class_assignments]
                     
@@ -69,7 +69,19 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
         db.commit()
         db.refresh(updated_teacher)
 
-        return updated_teacher
+        return {
+                'id': updated_teacher.id,
+                't_name': updated_teacher.t_name,
+                'max_classes': updated_teacher.max_classes,
+                'class_assignments': [{
+                    'assign_id': c.id,
+                    'c_name': c.class_.c_name,
+                    'r_name': c.class_.r_name,
+                    'subject': c.subject.subject_name,
+                    'role': c.role
+                } for c in updated_teacher.class_assignments]
+                    
+            }
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
 
 @teacher_routes.delete('/teachers/{id}')

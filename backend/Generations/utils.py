@@ -16,6 +16,11 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     day_indices = range(len(all_days))
     all_slotes = range(1,data.slotes+1)
+    Hardness_maping = {
+        'Low': 1,
+        'Med': 2,
+        'High': 3,
+    }
 
     shifts = {}
     for assignment in assignments:
@@ -57,8 +62,8 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     for assignment in assignments:
 
-        min_classes_per_day = getattr(assignment, 'min_per_day', None)
-        max_classes_per_day = getattr(assignment, 'max_per_day', None)
+        min_classes_per_day = getattr(assignment.subject, 'min_per_day', None)
+        max_classes_per_day = getattr(assignment.subject, 'max_per_day', None)
 
         if min_classes_per_day is not None or max_classes_per_day is not None:
 
@@ -78,8 +83,8 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     for assignment in assignments:
 
-        min_classes_per_week = getattr(assignment, 'min_per_week', None)
-        max_classes_per_week = getattr(assignment, 'max_per_week', None)
+        min_classes_per_week = getattr(assignment.subject, 'min_per_week', None)
+        max_classes_per_week = getattr(assignment.subject, 'max_per_week', None)
 
         if min_classes_per_week is not None:
 
@@ -92,7 +97,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     #A teacher should not take more consecutive classes than max_consecutive_class
     for assignment in assignments:
 
-        max_consecutive_class = getattr(assignment, 'max_consecutive_class', None)
+        max_consecutive_class = getattr(assignment.subject, 'max_consecutive_class', None)
 
         if max_consecutive_class is not None:
             
@@ -107,7 +112,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     #A teacher should take atleast min_consecutive_classes
     for assignment in assignments:
         
-        min_consecutive_class = getattr(assignment, 'min_consecutive_class', None)
+        min_consecutive_class = getattr(assignment.subject, 'min_consecutive_class', None)
 
         if min_consecutive_class is not None:
 
@@ -173,16 +178,13 @@ def Generate_Timetable(db, assignments, data, user_id):
     total_penalty_terms = []
 
     for assignment in assignments:
-        if assignment.is_hard_sub:
+        for d in day_indices:
 
-            for d in day_indices:
+            for s in all_slotes:
 
-                for s in all_slotes:
-
-                    cur = shifts[(assignment.id, d, s)]
-                    cost = slot_cost[s]
-
-                    total_penalty_terms.append(cur * cost) #if the current slot is 0 then we append 0 else we append cost plan is to minimise cost
+                cur = shifts[(assignment.id, d, s)]
+                cost = slot_cost[s]
+                total_penalty_terms.append(cur * cost * Hardness_maping[assignment.subject.is_hard_sub]) #if the current slot is 0 then we append 0 else we append cost plan is to minimise cost
 
     Model.Minimize(sum(total_penalty_terms))
 

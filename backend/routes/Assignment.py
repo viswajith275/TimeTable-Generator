@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 from typing import List
 from backend.database import SessionDep
 from backend.oauth import UserDep
-from backend.models import Teacher, Class, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentBase, TeacherClassAssignmentUpdate
+from backend.models import Teacher, Class, Subject, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentBase, TeacherClassAssignmentUpdate
 
 assign_routes = APIRouter(tags=['Teacher Assignment'])
 
@@ -22,57 +22,58 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep):
             'class_id': a.class_id,
             'c_name': a.class_.c_name,
             'role': a.role,
-            'subject': a.t_sub,
-            'min_per_day': a.min_per_day,
-            'max_per_day': a.max_per_day,
-            'min_per_week': a.min_per_week,
-            'max_per_week': a.max_per_week,
-            'max_consecutive_class': a.max_consecutive_class,
-            'min_consecutive_class': a.min_consecutive_class,
-            'is_hard_sub': a.is_hard_sub
+            'subject_id': a.subject_id,
+            'subject_name': a.subject.subject_name,
         })
     
     return result
 
-@assign_routes.post('/assignments')
+@assign_routes.post('/assignments', response_model=TeacherClassAssignmentBase)
 def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate):
 
     teacher = db.query(Teacher).filter_by(id=values.teacher_id, user_id=current_user.id).first()
 
     if not teacher:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher or class does not exists!')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher does not exists!')
     
     cur_class = db.query(Class).filter_by(id=values.class_id, user_id=current_user.id).first()
 
     if not cur_class:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher or class does not exists!')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='class does not exists!')
     
+    subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == values.subject_id).first()
+
+    if not subject:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='subject does not exists!')
     
-    exist = db.query(TeacherClassAssignment).filter(TeacherClassAssignment.teacher_id == teacher.id, TeacherClassAssignment.class_id == cur_class.id).first()
+    exist = db.query(TeacherClassAssignment).filter(TeacherClassAssignment.class_id == cur_class.id, TeacherClassAssignment.subject_id == subject.id).first()
 
     if exist:
-        return {'message': 'Already Exists'}
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Already exists!')
     
     new_assignment = TeacherClassAssignment(
         teacher_id=teacher.id,
         class_id=cur_class.id,
         role=values.role,
-        t_sub=values.subject,
-        min_per_day=values.min_per_day if values.min_per_day else None,
-        max_per_day=values.max_per_day if values.max_per_day else None,
-        min_per_week=values.min_per_week if values.min_per_week else None,
-        max_per_week=values.max_per_week if values.max_per_week else None,
-        max_consecutive_class=values.max_consecutive_class if values.max_consecutive_class else None,
-        min_consecutive_class=values.min_consecutive_class if values.min_consecutive_class else None,
-        is_hard_sub=values.is_hard_sub
+        subject_id=subject.id
     )
 
     db.add(new_assignment)
     db.commit()
+    db.refresh(new_assignment)
 
-    return {'message': 'assigned successfully'}
+    return {
+            'id': new_assignment.id,
+            'teacher_id': new_assignment.teacher_id,
+            't_name': new_assignment.teacher.t_name,
+            'class_id': new_assignment.class_id,
+            'c_name': new_assignment.class_.c_name,
+            'role': new_assignment.role,
+            'subject_id': new_assignment.subject_id,
+            'subject_name': new_assignment.subject.subject_name,
+        }
     
-@assign_routes.put('/assignments/{id}')
+@assign_routes.put('/assignments/{id}', response_model=TeacherClassAssignmentBase)
 def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentUpdate, id: int):
     assignment = (
         db.query(TeacherClassAssignment)
@@ -85,18 +86,19 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
 
     assignment.role = values.role
-    assignment.t_sub = values.subject
-    assignment.min_per_day = values.min_per_day
-    assignment.max_per_day = values.max_per_day
-    assignment.min_per_week = values.min_per_week
-    assignment.max_per_week = values.max_per_week
-    assignment.max_consecutive_class = values.max_consecutive_class
-    assignment.min_consecutive_class = values.min_consecutive_class
-    assignment.is_hard_sub = values.is_hard_sub
 
     db.commit()
 
-    return {'message': 'updated successfully'}
+    return {
+            'id': assignment.id,
+            'teacher_id': assignment.teacher_id,
+            't_name': assignment.teacher.t_name,
+            'class_id': assignment.class_id,
+            'c_name': assignment.class_.c_name,
+            'role': assignment.role,
+            'subject_id': assignment.subject_id,
+            'subject_name': assignment.subject.subject_name,
+        }
 
 @assign_routes.delete('/assignments/{id}')
 def delete_assignment(current_user: UserDep, db: SessionDep, id: int):

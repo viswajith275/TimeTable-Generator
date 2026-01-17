@@ -26,7 +26,7 @@ def Fetch_All_TimeTables(current_user: UserDep, db: SessionDep):
                 'assign_id': entry.assignment_id,
                 'day': entry.day,
                 'slot': entry.slot,
-                'subject': entry.assignment.t_sub,
+                'subject': entry.assignment.subject.subject_name,
                 'teacher_name': entry.assignment.teacher.t_name,
                 'class_name':  entry.assignment.class_.c_name
             })

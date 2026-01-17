@@ -20,7 +20,7 @@ def Fetch_All_Classes(current_user: UserDep):
                 'teacher_assignments': [{
                     'assign_id': a.id,
                     't_name': a.teacher.t_name,
-                    'subject': a.t_sub,
+                    'subject': a.subject.subject_name,
                     'role': a.role
                 } for a in c.teacher_assignments]
             })
@@ -38,7 +38,7 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep):
                 'teacher_assignments': [{
                     'assign_id': a.id,
                     't_name': a.teacher.t_name,
-                    'subject': a.t_sub,
+                    'subject': a.subject.subject_name,
                     'role': a.role
                 } for a in cur_class.teacher_assignments]
             }
@@ -64,7 +64,17 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
         cur_class.r_name = updated_class.r_name
         db.commit()
         db.refresh(cur_class)
-        return cur_class
+        return {
+                'id': cur_class.id,
+                'c_name': cur_class.c_name,
+                'r_name': cur_class.r_name,
+                'teacher_assignments': [{
+                    'assign_id': a.id,
+                    't_name': a.teacher.t_name,
+                    'subject': a.subject.subject_name,
+                    'role': a.role
+                } for a in cur_class.teacher_assignments]
+            }
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
 

@@ -11,4 +11,5 @@ dependencies = [
     "psycopg2",
     "psycopg2-binary",
     "pwdlib>=0.3.0",
+    "slowapi",
 ]

@@ -17,7 +17,10 @@ class WeekDay(enum.Enum):
     SATURDAY = "Saturday"
     SUNDAY = "Sunday"
 
-
+class Hardness(enum.Enum):
+    HARD = "High"
+    MED = "Med"
+    LOW = "Low"
 #Base user model
 class UsersBase(BaseModel):
     username : str
@@ -70,6 +73,39 @@ class TeacherCreate(BaseModel):
     t_name: str
     max_classes: int
 
+class SubjectBase(BaseModel):
+    id: int
+    subject: str
+    min_per_day: Optional[int] = None
+    max_per_day: Optional[int] = None
+    min_per_week: Optional[int] = None
+    max_per_week: Optional[int] = None
+    max_consecutive_class: Optional[int] = None
+    min_consecutive_class: Optional[int] = None
+    is_hard_sub: Hardness
+
+    model_config = ConfigDict(from_attributes=True)
+
+class SubjectCreate(BaseModel):
+    subject: str
+    min_per_day: Optional[int] = None
+    max_per_day: Optional[int] = None
+    min_per_week: Optional[int] = None
+    max_per_week: Optional[int] = None
+    max_consecutive_class: Optional[int] = None
+    min_consecutive_class: Optional[int] = None
+    is_hard_sub: Hardness
+
+class SubjectUpdate(BaseModel):
+    subject: str
+    min_per_day: Optional[int] = None
+    max_per_day: Optional[int] = None
+    min_per_week: Optional[int] = None
+    max_per_week: Optional[int] = None
+    max_consecutive_class: Optional[int] = None
+    min_consecutive_class: Optional[int] = None
+    is_hard_sub: Hardness
+
 #Teacher class assignment returning model
 class TeacherClassAssignmentBase(BaseModel):
     id: int
@@ -78,42 +114,19 @@ class TeacherClassAssignmentBase(BaseModel):
     class_id: int
     c_name: str
     role: str
-    subject: str
-    min_per_day: Optional[int] = None
-    max_per_day: Optional[int] = None
-    min_per_week: Optional[int] = None
-    max_per_week: Optional[int] = None
-    max_consecutive_class: Optional[int] = None
-    min_consecutive_class: Optional[int] = None
-    is_hard_sub: bool  #Priortising in the front of day
-
-    model_config = ConfigDict(from_attributes=True)
+    subject_id: int
+    subject_name: str
 
 #Teacher class assignment creation data model
 class TeacherClassAssignmentCreate(BaseModel):
     teacher_id: int
     class_id: int
     role: str
-    subject: str
-    min_per_day: Optional[int] = None
-    max_per_day: Optional[int] = None
-    min_per_week: Optional[int] = None
-    max_per_week: Optional[int] = None
-    max_consecutive_class: Optional[int] = None
-    min_consecutive_class: Optional[int] = None
-    is_hard_sub: bool
+    subject_id: int
 
 #Teacher class assignment update data model
 class TeacherClassAssignmentUpdate(BaseModel):
     role: str
-    subject: str
-    min_per_day: Optional[int] = None
-    max_per_day: Optional[int] = None
-    min_per_week: Optional[int] = None
-    max_per_week: Optional[int] = None
-    max_consecutive_class: Optional[int] = None
-    min_consecutive_class: Optional[int] = None
-    is_hard_sub: bool
 
 #Timetable generation data model
 class Generate_Data(BaseModel):
@@ -163,6 +176,10 @@ class User(Base):
         )
     
     classes: Mapped[List["Class"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    subjects: Mapped[List["Subject"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan"
     )
@@ -221,6 +238,25 @@ class Class(Base):
         cascade="all, delete-orphan"
     )
 
+class Subject(Base):
+
+    __tablename__ = 'subjects'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    subject_name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+
+    min_per_day: Mapped[Optional[int]] = mapped_column()
+    max_per_day: Mapped[Optional[int]] = mapped_column()
+    min_per_week: Mapped[Optional[int]] = mapped_column()
+    max_per_week: Mapped[Optional[int]] = mapped_column()
+    max_consecutive_class: Mapped[Optional[int]] = mapped_column()
+    min_consecutive_class: Mapped[Optional[int]] = mapped_column()
+    is_hard_sub: Mapped[str] = mapped_column(default='Low')
+
+    subject_assignments: Mapped[List["TeacherClassAssignment"]] = relationship(back_populates="subject", cascade="all, delete-orphan")
+    user: Mapped['User'] = relationship(back_populates='subjects')
+
 #Teacher Class Assignment Table Schema
 class TeacherClassAssignment(Base):
 
@@ -230,19 +266,14 @@ class TeacherClassAssignment(Base):
 
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"))
     class_id: Mapped[int] = mapped_column(ForeignKey("classes.id"))
+    subject_id: Mapped[int] = mapped_column(ForeignKey("subjects.id"))
 
     role: Mapped[str] = mapped_column(String(30), nullable=False)  # "class_teacher","subject_teacher"
-    t_sub: Mapped[str] = mapped_column(String(50), nullable=False)
-    min_per_day: Mapped[Optional[int]] = mapped_column()
-    max_per_day: Mapped[Optional[int]] = mapped_column()
-    min_per_week: Mapped[Optional[int]] = mapped_column()
-    max_per_week: Mapped[Optional[int]] = mapped_column()
-    max_consecutive_class: Mapped[Optional[int]] = mapped_column()
-    min_consecutive_class: Mapped[Optional[int]] = mapped_column()
-    is_hard_sub: Mapped[bool] = mapped_column(default=False)
+
 
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
+    subject: Mapped["Subject"] = relationship(back_populates="subject_assignments") 
     timetable_entries: Mapped[List["TimeTableEntry"]] = relationship(back_populates="assignment")
 
 #TimeTable Entry Table data (Assigns date and slot for teacher class assignments)
