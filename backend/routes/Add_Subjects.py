@@ -1,14 +1,15 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 from typing import List
 from backend.oauth import UserDep
 from backend.database import SessionDep
+from backend.rate_limiter_deps import limiter
 from backend.models import Subject, SubjectBase, SubjectCreate, SubjectUpdate, Hardness
 
 
 subject_routes = APIRouter(tags=['Subjects'])
 
 @subject_routes.get('/subjects', response_model=List[SubjectBase])
-def Fetch_all_subjects(current_user: UserDep):
+def Fetch_all_subjects(current_user: UserDep, request: Request):
     subjects = current_user.subjects
 
     if subjects:
@@ -31,7 +32,7 @@ def Fetch_all_subjects(current_user: UserDep):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
 
 @subject_routes.get('/subjects/{id}', response_model=SubjectBase)
-def Fetch_subject(current_user: UserDep, db: SessionDep, id: int):
+def Fetch_subject(current_user: UserDep, db: SessionDep, id: int, request: Request):
 
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
 
@@ -51,7 +52,7 @@ def Fetch_subject(current_user: UserDep, db: SessionDep, id: int):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
 
 @subject_routes.post('/subjects', response_model=SubjectBase)
-def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate):
+def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate, request: Request):
     exists = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.subject_name == values.subject).first()
 
     if exists:
@@ -76,7 +77,7 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate)
     return subject
 
 @subject_routes.put('/subjects/{id}', response_model=SubjectBase)
-def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate, id: int):
+def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate, id: int, request: Request):
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
     if subject:
         subject.subject_name = values.subject
@@ -106,7 +107,7 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
     
 
 @subject_routes.delete('/subjects/{id}')
-def Delete_subjects(current_user: UserDep, db: SessionDep, id: int):
+def Delete_subjects(current_user: UserDep, db: SessionDep, id: int, request: Request):
 
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
 

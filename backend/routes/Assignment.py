@@ -1,13 +1,14 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 from typing import List
 from backend.database import SessionDep
 from backend.oauth import UserDep
+from backend.rate_limiter_deps import limiter
 from backend.models import Teacher, Class, Subject, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentBase, TeacherClassAssignmentUpdate
 
 assign_routes = APIRouter(tags=['Teacher Assignment'])
 
 @assign_routes.get('/assignments', response_model=List[TeacherClassAssignmentBase])
-def fetch_all_assignments(current_user: UserDep, db: SessionDep):
+def fetch_all_assignments(current_user: UserDep, db: SessionDep, request: Request):
 
     assignments = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).all()
     if not assignments:
@@ -29,7 +30,7 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep):
     return result
 
 @assign_routes.post('/assignments', response_model=TeacherClassAssignmentBase)
-def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate):
+def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate, request: Request):
 
     teacher = db.query(Teacher).filter_by(id=values.teacher_id, user_id=current_user.id).first()
 
@@ -74,7 +75,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
         }
     
 @assign_routes.put('/assignments/{id}', response_model=TeacherClassAssignmentBase)
-def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentUpdate, id: int):
+def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentUpdate, id: int, request: Request):
     assignment = (
         db.query(TeacherClassAssignment)
         .join(Teacher)
@@ -101,7 +102,7 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
         }
 
 @assign_routes.delete('/assignments/{id}')
-def delete_assignment(current_user: UserDep, db: SessionDep, id: int):
+def delete_assignment(current_user: UserDep, db: SessionDep, id: int, request: Request):
 
     assignment = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).filter(TeacherClassAssignment.id == id).first()
 

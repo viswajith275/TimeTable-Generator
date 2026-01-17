@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi.errors import RateLimitExceeded
+from slowapi.extension import _rate_limit_exceeded_handler
+from backend.rate_limiter_deps import limiter
 from .routes.Login import login_routes
 from .routes.Add_Teachers import teacher_routes
 from .routes.Add_Classes import class_routes
@@ -11,6 +14,9 @@ from backend.database import create_db_and_tables
 
 app = FastAPI()
 
+app.state.limiter = limiter
+
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 #starting the server and creating tables
 @app.on_event('startup')

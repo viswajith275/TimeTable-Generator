@@ -1,14 +1,15 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 from typing import List
 from backend.oauth import UserDep
 from backend.database import SessionDep
+from backend.rate_limiter_deps import limiter
 from backend.models import Class, ClassBase, ClassCreate
 
 
 class_routes = APIRouter(tags=['Classes'])
 
 @class_routes.get('/classes', response_model=List[ClassBase])
-def Fetch_All_Classes(current_user: UserDep):
+def Fetch_All_Classes(current_user: UserDep, request: Request):
     classes = current_user.classes
     if classes:
         result = []
@@ -28,7 +29,7 @@ def Fetch_All_Classes(current_user: UserDep):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Classes not found!')
 
 @class_routes.get('/classes/{id}', response_model=ClassBase)
-def Fetch_Class(id: int, current_user: UserDep, db: SessionDep):
+def Fetch_Class(id: int, current_user: UserDep, db: SessionDep, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
     if cur_class:
         return {
@@ -46,7 +47,7 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep):
 
 
 @class_routes.post('/classes', response_model=ClassBase)
-def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep):
+def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, request: Request):
     new_class = Class(c_name=classes.c_name, r_name=classes.r_name, user_id=current_user.id)
 
     db.add(new_class)
@@ -57,7 +58,7 @@ def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep):
 
 
 @class_routes.put('/classes/{id}', response_model=ClassBase)
-def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: ClassCreate):
+def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: ClassCreate, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
     if cur_class:
         cur_class.c_name = updated_class.c_name
@@ -80,7 +81,7 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
 
 
 @class_routes.delete('/classes/{id}')
-def delete_class(id: int, current_user: UserDep, db: SessionDep):
+def delete_class(id: int, current_user: UserDep, db: SessionDep, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
     if cur_class:
         db.delete(cur_class)

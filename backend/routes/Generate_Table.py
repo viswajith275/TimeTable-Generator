@@ -1,15 +1,16 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 from backend.database import SessionDep
 from backend.oauth import UserDep
 from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable
 from backend.Generations.utils import Generate_Timetable
+from backend.rate_limiter_deps import limiter
 from typing import List
 
 generate_routes = APIRouter(tags=['Generate TimeTable'])
 
 
 @generate_routes.get('/timetables', response_model=List[TimeTableJson])
-def Fetch_All_TimeTables(current_user: UserDep, db: SessionDep):
+def Fetch_All_TimeTables(current_user: UserDep, request: Request):
     #timetables fetching
     timetables = current_user.timetables
 
@@ -41,7 +42,8 @@ def Fetch_All_TimeTables(current_user: UserDep, db: SessionDep):
  
 
 @generate_routes.post('/generate')
-def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Data):
+@limiter.limit('3/hour')
+def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Data, request: Request):
 
     # select assignments for teachers that belong to the current user
     teacher_class_assignments = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).all()
@@ -58,7 +60,7 @@ def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Dat
 
 
 @generate_routes.delete('/timetables/{id}')
-def Delete_TimeTable(current_user: UserDep, db: SessionDep, id: int):
+def Delete_TimeTable(current_user: UserDep, db: SessionDep, id: int, request: Request):
 
     timetable = db.query(TimeTable).filter(TimeTable.id == id, TimeTable.user_id == current_user.id).first()
 

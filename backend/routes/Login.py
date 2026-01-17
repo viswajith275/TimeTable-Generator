@@ -7,6 +7,7 @@ from backend.config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAY
 from backend.oauth import create_token, get_password_hash, verify_password, decode_token, UserDep
 from backend.models import UserCreate, User, UsersBase, UserToken
 from backend.database import SessionDep
+from backend.rate_limiter_deps import limiter
 import secrets
 
 #creating a login route
@@ -14,7 +15,7 @@ login_routes = APIRouter(tags=['Authentication'])
 
 #sigh up endpoint
 @login_routes.post('/register', response_model=UsersBase)
-def register_user(db: SessionDep, user: UserCreate):
+def register_user(db: SessionDep, user: UserCreate, request: Request):
     exists = db.query(User).filter(or_(User.username == user.username, User.email == user.email)).first()
 
     #checking if the user exists
@@ -34,7 +35,7 @@ def register_user(db: SessionDep, user: UserCreate):
 
 #login endpoint
 @login_routes.post('/login', response_model=UsersBase)
-async def login_for_access_token(db: SessionDep,response: Response , form_data: Annotated[OAuth2PasswordRequestForm, Depends()],):
+async def login_for_access_token(db: SessionDep,response: Response , form_data: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request):
     
     user = db.query(User).filter(User.username == form_data.username).first()
 
