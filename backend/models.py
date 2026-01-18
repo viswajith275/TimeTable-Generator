@@ -274,7 +274,7 @@ class TeacherClassAssignment(Base):
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
     subject: Mapped["Subject"] = relationship(back_populates="subject_assignments") 
-    timetable_entries: Mapped[List["TimeTableEntry"]] = relationship(back_populates="assignment")
+    timetable_entries: Mapped[List["TimeTableEntry"]] = relationship(back_populates="assignment", cascade="all, delete-orphan")
 
 #TimeTable Entry Table data (Assigns date and slot for teacher class assignments)
 class TimeTableEntry(Base):

@@ -138,36 +138,36 @@ def Generate_Timetable(db, assignments, data, user_id):
                             Model.AddBoolOr(neighbors).OnlyEnforceIf(cur)
                         else:
                             Model.Add(cur == 0)
-        else:
-            for d in day_indices:
-                slots = [shifts[(assignment.id, d, s)] for s in all_slotes]
+            else:
+                for d in day_indices:
+                    slots = [shifts[(assignment.id, d, s)] for s in all_slotes]
 
-                for s in range(len(all_slotes)):
-                    current = slots[s]
-                    prev = slots[s-1] if s > 0 else None
+                    for s in range(len(all_slotes)):
+                        current = slots[s]
+                        prev = slots[s-1] if s > 0 else None
 
-                    # 1. Detect "Start of Block" (Current is ON, Prev is OFF)
-                    is_start = Model.NewBoolVar(f'start_{assignment.id}_{d}_{s}')
-                    
-                    if prev:
-                        # Start = Current AND (NOT Prev)
-                        Model.AddBoolAnd([current, prev.Not()]).OnlyEnforceIf(is_start)
-                        # Ensure is_start is False if condition isn't met (optional but safer)
-                        Model.AddBoolOr([current.Not(), prev]).OnlyEnforceIf(is_start.Not()) 
-                    else:
-                        # If first slot of the day, Start = Current
-                        Model.Add(is_start == current)
+                        # 1. Detect "Start of Block" (Current is ON, Prev is OFF)
+                        is_start = Model.NewBoolVar(f'start_{assignment.id}_{d}_{s}')
+                        
+                        if prev:
+                            # Start = Current AND (NOT Prev)
+                            Model.AddBoolAnd([current, prev.Not()]).OnlyEnforceIf(is_start)
+                            # Ensure is_start is False if condition isn't met (optional but safer)
+                            Model.AddBoolOr([current.Not(), prev]).OnlyEnforceIf(is_start.Not()) 
+                        else:
+                            # If first slot of the day, Start = Current
+                            Model.Add(is_start == current)
 
-                    # 2. Enforce: If this is a start, the next (Min-1) slots must be ON
-                    needed = min_consecutive_class - 1
-                    
-                    if s + needed < len(slots):
-                        for i in range(1, min_consecutive_class):
-                            # Force subsequent slots to 1
-                            Model.Add(slots[s+i] == 1).OnlyEnforceIf(is_start)
-                    else:
-                        # Not enough room left in the day to start a block here
-                        Model.Add(is_start == 0)
+                        # 2. Enforce: If this is a start, the next (Min-1) slots must be ON
+                        needed = min_consecutive_class - 1
+                        
+                        if s + needed < len(slots):
+                            for i in range(1, min_consecutive_class):
+                                # Force subsequent slots to 1
+                                Model.Add(slots[s+i] == 1).OnlyEnforceIf(is_start)
+                        else:
+                            # Not enough room left in the day to start a block here
+                            Model.Add(is_start == 0)
 
     
     #Priortising hard subject in the morning
