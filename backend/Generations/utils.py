@@ -172,7 +172,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     
     #Priortising hard subject in the morning
     slot_cost = {
-        {s:(s-1) * 10 * 2 * (s-1)} for s in all_slotes
+        s: (s-1) * 10 * 2 for s in all_slotes
     }
 
     total_penalty_terms = []

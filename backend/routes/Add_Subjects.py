@@ -74,7 +74,17 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate,
     db.commit()
     db.refresh(subject)
 
-    return subject
+    return {
+                'id': subject.id,
+                'subject':subject.subject_name,
+                'min_per_day': subject.min_per_day,
+                'max_per_day': subject.max_per_day,
+                'min_per_week': subject.min_per_week,
+                'max_per_week': subject.max_per_week,
+                'min_consecutive_class': subject.min_consecutive_class,
+                'max_consecutive_class': subject.max_consecutive_class,
+                'is_hard_sub': subject.is_hard_sub
+            }
 
 @subject_routes.put('/subjects/{id}', response_model=SubjectBase)
 def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate, id: int, request: Request):
