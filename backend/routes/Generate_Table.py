@@ -42,7 +42,6 @@ def Fetch_All_TimeTables(current_user: UserDep, request: Request):
  
 
 @generate_routes.post('/generate')
-@limiter.limit('3/hour')
 def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Data, request: Request):
 
     # select assignments for teachers that belong to the current user
