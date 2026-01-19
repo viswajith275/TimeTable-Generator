@@ -1,10 +1,10 @@
 .container {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  position: relative;
   overflow-x: hidden;
   box-sizing: border-box;
-  position: relative;
-  background-color: var(--color-bg);
+
   font-family:
     system-ui,
     -apple-system,
@@ -17,8 +17,8 @@
     "Open Sans",
     "Helvetica Neue",
     sans-serif;
-  letter-spacing: -0.5px;
 
+  letter-spacing: -0.5px;
   background-color: #ffffff;
   background-image: radial-gradient(
     rgba(160, 160, 160, 0.5) 1.5px,
@@ -28,24 +28,35 @@
   background-position: -6px -6px;
 }
 
-.container p,
-.container h1,
-.container h2 {
-  text-align: center;
+.header,
+.main,
+.footer {
+  z-index: 100;
+}
+
+/* ================= Utilities ================= */
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* ================= Header ================= */
 
 .header {
-  width: 100%;
-  padding: 1rem 2.5%;
   position: sticky;
   top: 0;
-  background-color: var(--color-bg);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+
+  width: 100%;
+  padding: 1rem 2.5%;
+
   display: flex;
   align-items: center;
-  z-index: 999;
+
+  background-color: var(--color-bg);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .header img {
@@ -53,25 +64,28 @@
 }
 
 .header nav {
-  display: flex;
   margin-left: auto;
-  font-weight: 500;
+  display: flex;
   gap: 2rem;
+  font-weight: 500;
 }
 
 .header nav a {
   display: flex;
-  justify-content: center;
   align-items: flex-end;
   gap: 0.3rem;
   cursor: pointer;
+  position: relative;
 }
 
 .header nav a:hover {
   text-decoration: underline;
   text-underline-offset: 0.325rem;
-  text-decoration-thickness: 2px;
-  text-decoration-style: dotted;
+}
+
+.header .N2 {
+  display: flex;
+  gap: 1rem;
 }
 
 /* ================= Main ================= */
@@ -79,134 +93,143 @@
 .main {
   width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   position: relative;
 }
 
 .main h2 {
-  margin: 5rem 0 1rem 0;
-  width: 100%;
+  margin: 5rem 0 1rem;
   font-size: 3rem;
   font-weight: 600;
   letter-spacing: -1.5px;
   text-decoration: underline;
   text-underline-offset: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
 }
 
 /* ================= Hero ================= */
 
 .hero {
   width: 95%;
-  padding: 5rem 1rem 1rem 1rem;
+  padding: 5rem 1rem 1rem;
+
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .hero h1 {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 1rem 0 1rem 0;
   font-size: 6rem;
   font-weight: 600;
   letter-spacing: -1.5px;
+  line-height: 0.85;
+  margin: 1rem 0;
 }
 
 .hero p {
-  width: 50%;
+  width: min(40%, 600px);
   font-size: 1.2rem;
   font-weight: 500;
-  margin: 1rem 0 3rem 0;
+  margin: 1rem 0 3rem;
+}
+
+.hero p u {
+  position: relative;
 }
 
 .hero a {
+  cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 0.325rem;
-  cursor: pointer;
 }
 
-/*----- Problem-Solution ------*/
+/* ================= Features ================= */
 
-.problemSolution {
+.features {
+  width: 100%;
+  padding: 2rem;
+
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 2rem;
-  padding: 2rem;
   flex-wrap: wrap;
+}
+
+/* ================= Problem / Solution ================= */
+
+.problemSolution {
   width: 100%;
+  padding: 2rem;
+
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .problemSolution .left,
 .problemSolution .right {
+  min-width: 300px;
+  padding: 2rem 4rem;
+
+  position: relative;
+  border-radius: 0.5rem;
+
   background-color: var(--color-bg);
   border: 2px solid var(--color-primary);
-  padding: 2rem 4rem;
-  border-radius: 0.5rem;
-  position: relative;
   box-shadow: 2px 2px 0 var(--color-grey-900);
-  transition: all 0.25s ease;
-  min-width: 300px;
+
+  transition: transform 0.25s ease;
 }
 
-.problemSolution .left:hover {
-  transform: scale(1.1);
-}
+.problemSolution .left:hover,
 .problemSolution .right:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .floatingSymbol {
   position: absolute;
   top: -1rem;
   right: -1rem;
+
+  padding: 0.5rem;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   background-color: var(--color-bg);
   border: 2px solid var(--color-primary);
-  border-radius: 50%;
-  padding: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .problemSolution .left .floatingSymbol {
   background-color: tomato;
 }
+
 .problemSolution .right .floatingSymbol {
   background-color: yellowgreen;
 }
 
-/*----- Feature ------*/
-
-.features {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  padding: 2rem;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-/*------------- Action buttons --------------*/
+/* ================= Buttons ================= */
 
 .action {
-  padding: 0.5rem 2rem 0.5rem 2rem;
-  border: none;
-  outline: none;
+  padding: 0.5rem 2rem;
   border-radius: var(--border-radius);
+  border: none;
   cursor: pointer;
-  transition: all 0.25s ease;
-  display: flex;
-  justify-content: center;
+
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+
+  transition: transform 0.25s ease;
+}
+
+.action:hover {
+  transform: translateY(-2px);
 }
 
 .primary {
@@ -220,36 +243,24 @@
   color: var(--color-primary);
 }
 
-.action:hover {
-  transform: translateY(-2px);
-}
-
 .secondary:hover {
   background-color: var(--color-primary);
   color: var(--color-bg);
 }
 
-/*------------- Specific --------------*/
-
 .B1 {
-  padding: 1rem 3rem 1rem 3rem;
+  padding: 1rem 3rem;
   font-size: 1.2rem;
 }
 
-.header .N2 {
-  display: flex;
-  gap: 1rem;
-}
-
-/*------------- Footer --------------*/
+/* ================= Footer ================= */
 
 .footer {
+  position: relative;
   width: 100%;
   padding: 2rem;
   background-color: var(--color-bg-muted);
   color: var(--color-grey-500);
-  position: relative;
-  z-index: 10;
 }
 
 .footer img {
@@ -265,38 +276,87 @@
 .footer nav a:hover,
 .extras a:hover {
   text-decoration: underline;
-  text-underline-offset: 0.325rem;
   cursor: pointer;
 }
 
 .footer span {
-  font-family: monospace;
   display: flex;
   gap: 1rem;
+  font-family: monospace;
 }
 
 .extras {
   float: right;
 }
 
-/*------------- Overlay --------------*/
+/* ================= Overlay ================= */
 
 .overflowOverlay {
-  width: 100%;
-  height: 20%;
   position: fixed;
   bottom: 0;
+  width: 100%;
+  height: 20%;
   background: linear-gradient(to top, var(--color-bg-muted), transparent);
 }
 
-/*------------- Responsive --------------*/
+/* ================= Illustrations ================= */
 
-@media (max-width: 964px) {
+.illustrationContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
 }
+
+.leftSymbol,
+.rightSymbol,
+.line1 {
+  position: absolute;
+  color: var(--color-grey-900);
+  transform: scale(25);
+  stroke-linecap: butt;
+  opacity: 1;
+}
+
+.leftSymbol {
+  left: 3vw;
+  top: 90vh;
+  scale: 1.2;
+}
+
+.rightSymbol {
+  right: 1vw;
+  top: 15vh;
+  scale: 0.5;
+}
+
+.line1 {
+  right: 4vw;
+  top: 200vh;
+  rotate: -90deg;
+}
+
+.line1 svg {
+  stroke-linecap: butt;
+  transform: scale(35);
+  stroke-width: 0.1rem;
+  opacity: 1;
+}
+
+/* ================= Responsive ================= */
 
 @media (max-width: 615px) {
   .header nav,
-  .header .N2 {
+  .header .N2,
+  .illustrationContainer {
     display: none;
+  }
+
+  .hero h1 {
+    font-size: 4rem;
+  }
+
+  .hero p {
+    width: 90%;
   }
 }
