@@ -16,7 +16,7 @@ import {
     Sheet,
     MonitorSmartphone,
 } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 import FeatureItem from "./Components/FeatureItem";
 
 const FEATURES = [
@@ -51,6 +51,8 @@ const FEATURES = [
 
 const LandingPage = () => {
 
+    const navigate = useNavigate();
+
     const { scrollYProgress } = useScroll();
 
     const leftY = useTransform(scrollYProgress, [0, 0.4], [0, 400]);
@@ -80,10 +82,16 @@ const LandingPage = () => {
                 </nav>
 
                 <nav className={styles.N2}>
-                    <button className={`${styles.secondary} ${styles.action}`}>
+                    <button 
+                        className={`${styles.secondary} ${styles.action}`}
+                        onClick={() => navigate("/login")}
+                    >
                         Log in
                     </button>
-                    <button className={`${styles.primary} ${styles.action}`}>
+                    <button 
+                        className={`${styles.primary} ${styles.action}`}
+                        onClick={() => navigate("/register")}
+                    >
                         Sign up
                     </button>
                 </nav>
@@ -107,12 +115,15 @@ const LandingPage = () => {
                         </u>
                     </p>
 
-                    <button className={`${styles.action} ${styles.primary} ${styles.B1}`}>
+                    <button 
+                        className={`${styles.action} ${styles.primary} ${styles.B1}`}
+                        onClick={() => navigate("/register")}
+                    >
                         Get Started <ArrowUpRight />
                     </button>
 
                     <p>
-                        already have an account? <a>Log in</a>
+                        already have an account? <a onClick={() => navigate("/login")} style={{ cursor: 'pointer' }}>Log in</a>
                     </p>
                 </section>
 
