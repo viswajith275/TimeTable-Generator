@@ -1,4 +1,4 @@
-.classItem {
+.subjectItem {
   padding: 1rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -6,18 +6,22 @@
   border-radius: 0.7rem;
   background-color: var(--color-bg);
 }
-.classItem p {
+
+.subjectItem p {
   font-size: 16px;
   color: var(--color-grey-500);
 }
+
 .itemHeading {
   display: flex;
   justify-content: space-between;
 }
+
 .itemHeading h3 {
   color: var(--color-primary);
   font-size: 20px;
 }
+
 .actionBtns {
   display: flex;
   flex-direction: row;
@@ -28,28 +32,40 @@
   border: none;
   background-color: transparent;
   cursor: pointer;
-
   transition: all 0.2s ease-in-out;
 }
+
 .actionBtn__Item:hover {
   opacity: 0.7;
 }
+
 .deleteBtn {
   color: var(--color-danger);
 }
 
-.tickBtn {
-  color: var(--color-success);
-  cursor: pointer;
-}
-.tickBtn:disabled {
-  color: var(--color-grey-500);
-  cursor: not-allowed;
-}
-.classItem input {
-  padding: 0rem 0.25rem;
-  border: none;
-  border-bottom: 1px solid var(--color-primary);
-  overflow-x: hidden;
+.subjectDifficulty {
   width: fit-content;
+  padding: 0.35rem 0.9rem;
+
+  border-radius: 10rem;
+
+  border: 2px solid tomato;
+  color: tomato;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.viewDetails {
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.3rem;
+  color: var(--color-grey-700);
+  cursor: pointer;
+  width: fit-content;
+  transition: gap 0.15s ease;
+}
+
+.viewDetails:hover {
+  gap: 0.5rem;
 }

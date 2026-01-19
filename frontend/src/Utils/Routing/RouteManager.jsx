@@ -10,11 +10,20 @@ import Teachers from "../../Pages/app_main/teachers/Teachers";
 import Error404 from "../../Pages/error/Error404";
 import Subjects from "../../Pages/app_main/subjects/Subjects";
 import LandingPage from "../../Pages/landing_page/LandingPage";
+import SubjectCreatePage from "../../Pages/app_main/subjects/Pages/SubjectCreatePage/SubjectCreatePage";
 
 const RouteManager = () => {
   return (
     <Routes>
       {/* Public */}
+      <Route
+        path="/"
+        element={
+          <PublicRoutes>
+            <LandingPage />
+          </PublicRoutes>
+        }
+      />
       <Route
         path="/login"
         element={
@@ -66,18 +75,18 @@ const RouteManager = () => {
         }
       />
       <Route
-        path="/teachers"
+        path="/subjects/new"
         element={
           <ProtectedRoutes>
-            <Teachers />
+            <SubjectCreatePage />
           </ProtectedRoutes>
         }
       />
       <Route
-        path="/"
+        path="/teachers"
         element={
           <ProtectedRoutes>
-            <LandingPage />
+            <Teachers />
           </ProtectedRoutes>
         }
       />

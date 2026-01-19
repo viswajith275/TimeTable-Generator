@@ -1,0 +1,162 @@
+.subjects {
+  background-color: var(--color-bg-muted);
+  min-height: 100vh;
+  display: flex;
+  gap: 2rem;
+}
+
+.mainPanelPlaceholder {
+  width: 100%;
+  max-height: 100vh;
+  overflow: auto;
+}
+
+.mainPanel {
+  padding: 5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.pageHeader h2 {
+  font-size: 26px;
+}
+
+.pageHeader p {
+  color: var(--color-grey-500);
+  margin-top: 0.3rem;
+}
+
+.formWrapper {
+  width: 100%;
+  display: flex;
+}
+
+.form {
+  width: 100%;
+  max-width: 900px;
+  background-color: var(--color-bg);
+  padding: 2rem;
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.section div h4 {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-grey-600);
+}
+.section div {
+  line-height: 1.5rem;
+}
+.section div p {
+  font-size: 14px;
+  color: var(--color-grey-500);
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+}
+/* .label span:first-child {
+  font-weight: 600;
+} */
+
+.subjects input {
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--color-grey-300);
+  font-size: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.subjects input.errorField {
+  background-color: var(--danger-bg);
+  border: 1px solid var(--color-danger);
+}
+.errorField::placeholder {
+  color: var(--color-danger);
+}
+.errorText {
+  font-size: 14px;
+  color: var(--color-danger);
+}
+
+.toughnessGroup {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.toughnessBtn {
+  padding: 0.45rem 0.9rem;
+  border: 1.7px solid var(--color-grey-500);
+  background-color: transparent;
+  color: var(--color-grey-500);
+  font-weight: 600;
+  border-radius: 0.35rem;
+  cursor: pointer;
+}
+
+.toughnessBtn.selected {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+.goBackBtn {
+  display: inline-flex;
+  width: fit-content;
+  gap: 0.3rem;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.goBackBtn:hover {
+  gap: 0.4rem;
+}
+.saveBtn {
+  padding: 0.65rem 1.4rem;
+  border-radius: 0.35rem;
+  border: none;
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  font-size: 15px;
+  cursor: pointer;
+}
+.subjects input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(174, 184, 194, 0.2);
+}
+@media (max-width: 768px) {
+  .mainPanel {
+    padding: 2rem;
+  }
+
+  .form {
+    padding: 1.5rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -3,17 +3,17 @@ import Navbar from "../Components/navbar/Navbar";
 import Topbar from "../Components/topbar/Topbar";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import SubjectDetailsPopup from "./Components/SubjectDetailsPopup";
 import SubjectItem from "./Components/SubjectItem";
+
+import { useNavigate } from "react-router-dom";
 import Filter from "../Components/filter/Filter";
 import axios from "axios";
 import { useAuth } from "../../../Context/AuthProvider";
-
 import ErrorLoadingStates from "../Components/ErrorLoadingStates/ErrorLoadingStates";
 const Subjects = () => {
+  const navigate = useNavigate();
   const { refreshToken } = useAuth();
   //state variables needed
-  const [popupShow, setPopupShow] = useState(false);
   const [subjects, setSubjects] = useState([]);
   const [isSubjectsLoading, setIsSubjectsLoading] = useState(true);
 
@@ -32,6 +32,7 @@ const Subjects = () => {
       } catch (err) {
         console.log(err);
         if (err?.response?.status == 401 && !hasRetried) {
+          console.log("hoho");
           await refreshToken();
           await fetchAllSubjects(true); //hasRetried act as a retry guard preventing multiple recursion calls
         }
@@ -42,7 +43,7 @@ const Subjects = () => {
           () => {
             setIsSubjectsLoading(false);
           },
-          Math.max(MIN_TIME - elapsed, 0)
+          Math.max(MIN_TIME - elapsed, 0),
         ); // to avoid negative numbers here..
       }
     };
@@ -50,6 +51,9 @@ const Subjects = () => {
     fetchAllSubjects();
   }, []);
 
+  useEffect(() => {
+    console.log(subjects);
+  }, [subjects]);
   const deleteSubjectItem = (id) => {
     setSubjects((prev) => prev.filter((item) => item.id !== id));
   };
@@ -65,27 +69,13 @@ const Subjects = () => {
               c_name: data.c_name,
               r_name: data.r_name,
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
   return (
     <div className={styles.subjects}>
-      <div
-        style={{
-          pointerEvents: popupShow ? "auto" : "none",
-          opacity: popupShow ? 0.7 : 0,
-        }}
-        className="popup_overlay"
-        onClick={() => setPopupShow(false)}
-      ></div>
-
-      <SubjectDetailsPopup
-        addSubject={addSubjectItem}
-        isPopupOpen={popupShow}
-        popUpClose={() => setPopupShow(false)}
-      />
       <Navbar></Navbar>
       <div className={styles.mainPanelPlaceholder}>
         <Topbar></Topbar>
@@ -98,9 +88,7 @@ const Subjects = () => {
 
             <button
               className={styles.createBtn}
-              onClick={() => {
-                setPopupShow(true);
-              }}
+              onClick={() => navigate("/subjects/new")}
             >
               <Plus />
               <p>Add Subject</p>
@@ -121,15 +109,21 @@ const Subjects = () => {
                 <SubjectItem
                   key={value.id}
                   id={value.id}
-                  roomName={value.c_name}
-                  roomNumber={value.r_name}
+                  subjectName={value.subject}
+                  daily={{ min: value.min_per_day, max: value.max_per_day }}
+                  weekly={{ min: value.min_per_week, max: value.max_per_week }}
+                  consecutive={{
+                    min: value.min_consecutive_class,
+                    max: value.max_consecutive_class,
+                  }}
                   deleteSubject={deleteSubjectItem}
                   editSubject={editSubjectItem}
+                  toughnessLevel={value.is_hard_sub}
                 />
               );
             })
           )}
-          {/* //Work in progress */}
+
           {Object.values(subjects).length == 0 && !isSubjectsLoading ? (
             <ErrorLoadingStates
               state={"empty"}

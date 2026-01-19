@@ -26,6 +26,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const refreshToken = async () => {
+    console.log("REFRESHING TOKEN!!");
     await axios.post("/api/refresh", { withCredentials: true });
     return fetchCurrentUser();
   };
@@ -56,6 +57,7 @@ const AuthProvider = ({ children }) => {
     isLoading,
     confirmLogin,
     logout,
+    refreshToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
