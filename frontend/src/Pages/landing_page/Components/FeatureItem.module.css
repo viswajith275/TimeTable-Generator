@@ -4,12 +4,7 @@
     gap: 2rem;
     width: 80%;
     border-radius: 1rem;
-    margin: -3rem;
-
-    /*This mf isnt supported in firefox*/
-    animation: appear linear;
-    animation-timeline: view();
-    animation-range: entry 0;
+    margin: -5rem;
 }
 
 .reverse{
@@ -30,9 +25,11 @@
     scale: 1.05;
 }
 
-.iconContainer div svg{
+.iconContainer .mainIcon svg{
     scale: 3.5;
     stroke-width: 1px;
+    position: absolute;
+    z-index: 1;
 }
 
 .s1, .s2{
@@ -42,7 +39,6 @@
     height: 100%;
     z-index: 1;
     pointer-events: none;
-    scale: 1.2;
 }
 
 .s1 {
@@ -61,10 +57,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    animation: breathe 10s linear infinite;
 }
 
 .description h3{
-    font-size: 4rem;
+    font-size: 3.5rem;
     font-weight: 600;
     margin: 0;
     padding: 0;
@@ -78,18 +75,6 @@
 }
 
 /*------------- Animations --------------*/
-
-@keyframes appear {
-    from {
-        opacity: 0;
-        scale: 0.95;
-    }
-
-    to {
-        opacity: 1;
-        scale: 1;
-    }
-}
 
 @keyframes clockwise {
     from {
@@ -108,6 +93,24 @@
 
     to {
         transform: rotate(0deg);
+    }
+}
+
+@keyframes breathe {
+    0%{
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(0.2rem);
+    }
+    50% {
+        transform: translateY(0);
+    }
+    75% {
+        transform: translateY(-0.2rem);
+    }
+    100% {
+        transform: translateY(0);
     }
 }
 

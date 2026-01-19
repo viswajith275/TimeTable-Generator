@@ -1,0 +1,30 @@
+.container{
+    position: absolute;
+    width: max-content;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-bg);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.13);
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    left: 0;
+    bottom: calc(-100% - 2rem);
+    display: none;
+    z-index: 10;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 0.5rem;
+    width: 15px;
+    height: 15px;
+    background-color: var(--color-bg);
+    transform: rotate(45deg);
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+}
+
+.container.show{
+    display: flex;
+}

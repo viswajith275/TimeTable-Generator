@@ -36,6 +36,27 @@
   /* Layout */
   --border-radius: 7px;
 }
+
+/*Firefox*/
+@supports (-moz-appearance: none) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-grey-700) transparent;
+  }
+}
+
+/*Chromium, Safari ...*/
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: var(--color-grey-700);
+}
+html::-webkit-scrollbar-thumb:hover{
+  background-color: var(--color-grey-900);
+}
+
 body {
   font-family: "acumin-pro", sans-serif;
 }
