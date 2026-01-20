@@ -6,6 +6,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../../Context/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { TriangleAlert } from "lucide-react";
 
 const SubjectCreatePage = () => {
   const navigate = useNavigate();
@@ -13,12 +14,12 @@ const SubjectCreatePage = () => {
 
   const [form, setForm] = useState({
     subject: "",
-    min_per_day: 1,
-    max_per_day: 2,
-    min_per_week: 3,
-    max_per_week: 6,
-    min_consecutive_class: 1,
-    max_consecutive_class: 2,
+    min_per_day: "1",
+    max_per_day: "2",
+    min_per_week: "3",
+    max_per_week: "6",
+    min_consecutive_class: "1",
+    max_consecutive_class: "2",
     is_hard_sub: "Med",
   });
 
@@ -31,15 +32,39 @@ const SubjectCreatePage = () => {
   const validate = () => {
     const e = {};
 
-    if (!form.subject.trim()) e.subject = "Required";
-    else if (form.subject.length > 30) e.subject = "Max 30 characters";
+    const minDay = Number(form.min_per_day);
+    const maxDay = Number(form.max_per_day);
+    const minWeek = Number(form.min_per_week);
+    const maxWeek = Number(form.max_per_week);
+    const minCon = Number(form.min_consecutive_class);
+    const maxCon = Number(form.max_consecutive_class);
 
-    if (form.min_per_day > form.max_per_day) e.min_per_day = "Min > Max";
+    if (!form.subject.trim()) {
+      e.subject = "Required";
+    } else if (form.subject.length > 30) {
+      e.subject = "Subject name must not exceed 30 characters.";
+    }
 
-    if (form.min_per_week > form.max_per_week) e.min_per_week = "Min > Max";
+    if (minDay > maxDay) {
+      e.min_per_day =
+        "The minimum number of classes per day cannot be greater than the maximum.";
+    }
 
-    if (form.min_consecutive_class > form.max_consecutive_class)
-      e.min_consecutive_class = "Min > Max";
+    if (minWeek > maxWeek) {
+      e.min_per_week =
+        "The minimum number of classes per week cannot be greater than the maximum.";
+    } else if (minWeek < minDay) {
+      e.min_per_week =
+        "The minimum weekly classes cannot be less than the minimum daily classes.";
+    } else if (maxWeek > maxDay * 5) {
+      e.min_per_week =
+        "The maximum weekly classes exceed what is possible based on daily limits.";
+    }
+
+    if (minCon > maxCon) {
+      e.min_consecutive_class =
+        "The minimum consecutive classes cannot be greater than the maximum.";
+    }
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -49,20 +74,30 @@ const SubjectCreatePage = () => {
     if (!validate()) return;
 
     try {
-      console.log(form);
-      await axios.post("/api/subjects", form);
+      await axios.post("/api/subjects", {
+        ...form,
+        min_per_day: Number(form.min_per_day),
+        max_per_day: Number(form.max_per_day),
+        min_per_week: Number(form.min_per_week),
+        max_per_week: Number(form.max_per_week),
+        min_consecutive_class: Number(form.min_consecutive_class),
+        max_consecutive_class: Number(form.max_consecutive_class),
+      });
+
       toast.success("Subject created");
 
       setForm({
         subject: "",
-        min_per_day: 1,
-        max_per_day: 2,
-        min_per_week: 3,
-        max_per_week: 6,
-        min_consecutive_class: 1,
-        max_consecutive_class: 2,
+        min_per_day: "1",
+        max_per_day: "2",
+        min_per_week: "3",
+        max_per_week: "6",
+        min_consecutive_class: "1",
+        max_consecutive_class: "2",
         is_hard_sub: "Med",
       });
+
+      setErrors({});
     } catch (err) {
       if (err?.response?.status === 401 && !hasRetried) {
         await refreshToken();
@@ -118,9 +153,8 @@ const SubjectCreatePage = () => {
                     min="0"
                     value={form.min_per_day}
                     onChange={(e) =>
-                      handleChange("min_per_day", Number(e.target.value))
+                      handleChange("min_per_day", e.target.value)
                     }
-                    placeholder="Min / Day"
                     className={errors.min_per_day ? styles.errorField : ""}
                   />
                   <input
@@ -128,11 +162,16 @@ const SubjectCreatePage = () => {
                     min="0"
                     value={form.max_per_day}
                     onChange={(e) =>
-                      handleChange("max_per_day", Number(e.target.value))
+                      handleChange("max_per_day", e.target.value)
                     }
-                    placeholder="Max / Day"
                   />
                 </div>
+                {errors.min_per_day && (
+                  <div className={styles.errorBox}>
+                    <TriangleAlert size={14} />
+                    <h4>{errors.min_per_day}</h4>
+                  </div>
+                )}
               </div>
 
               <div className={styles.section}>
@@ -149,9 +188,8 @@ const SubjectCreatePage = () => {
                     min="0"
                     value={form.min_per_week}
                     onChange={(e) =>
-                      handleChange("min_per_week", Number(e.target.value))
+                      handleChange("min_per_week", e.target.value)
                     }
-                    placeholder="Min / Week"
                     className={errors.min_per_week ? styles.errorField : ""}
                   />
                   <input
@@ -159,11 +197,16 @@ const SubjectCreatePage = () => {
                     min="0"
                     value={form.max_per_week}
                     onChange={(e) =>
-                      handleChange("max_per_week", Number(e.target.value))
+                      handleChange("max_per_week", e.target.value)
                     }
-                    placeholder="Max / Week"
                   />
                 </div>
+                {errors.min_per_week && (
+                  <div className={styles.errorBox}>
+                    <TriangleAlert size={14} />
+                    <h4>{errors.min_per_week}</h4>
+                  </div>
+                )}
               </div>
 
               <div className={styles.section}>
@@ -181,12 +224,8 @@ const SubjectCreatePage = () => {
                     min="0"
                     value={form.min_consecutive_class}
                     onChange={(e) =>
-                      handleChange(
-                        "min_consecutive_class",
-                        Number(e.target.value),
-                      )
+                      handleChange("min_consecutive_class", e.target.value)
                     }
-                    placeholder="Min Consecutive"
                     className={
                       errors.min_consecutive_class ? styles.errorField : ""
                     }
@@ -196,19 +235,20 @@ const SubjectCreatePage = () => {
                     min="0"
                     value={form.max_consecutive_class}
                     onChange={(e) =>
-                      handleChange(
-                        "max_consecutive_class",
-                        Number(e.target.value),
-                      )
+                      handleChange("max_consecutive_class", e.target.value)
                     }
-                    placeholder="Max Consecutive"
                   />
                 </div>
+                {errors.min_consecutive_class && (
+                  <div className={styles.errorBox}>
+                    <TriangleAlert size={14} />
+                    <h4>{errors.min_consecutive_class}</h4>
+                  </div>
+                )}
               </div>
 
               <div className={styles.section}>
                 <div>
-                  {" "}
                   <h4>Subject Difficulty</h4>
                 </div>
                 <div className={styles.toughnessGroup}>
@@ -221,7 +261,7 @@ const SubjectCreatePage = () => {
                         form.is_hard_sub === lvl ? styles.selected : ""
                       }`}
                     >
-                      {lvl == "Med" ? "Medium" : lvl}
+                      {lvl === "Med" ? "Medium" : lvl}
                     </button>
                   ))}
                 </div>
@@ -232,11 +272,7 @@ const SubjectCreatePage = () => {
                   className={styles.goBackBtn}
                   onClick={() => navigate("/subjects")}
                 >
-                  <ChevronLeft
-                    strokeWidth={3}
-                    size={16}
-                    style={{ color: "#1c1c1e" }}
-                  />
+                  <ChevronLeft strokeWidth={3} size={16} />
                   <p>Go back</p>
                 </div>
                 <button type="submit" className={styles.saveBtn}>

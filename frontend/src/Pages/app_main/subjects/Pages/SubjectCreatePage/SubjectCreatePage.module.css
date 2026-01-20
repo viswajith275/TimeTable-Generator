@@ -147,6 +147,19 @@
   outline: none;
   box-shadow: 0 0 0 2px rgba(174, 184, 194, 0.2);
 }
+
+.errorBox {
+  margin-top: -0.5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.2rem;
+  align-items: center;
+  color: var(--color-danger);
+  font-size: 10px;
+}
+.section .errorBox h4 {
+  font-size: 14px;
+}
 @media (max-width: 768px) {
   .mainPanel {
     padding: 2rem;
