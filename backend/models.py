@@ -93,12 +93,16 @@ class ClassBase(BaseModel):
     r_name: str
     teacher_assignments: List[TeacherAssignedBase]
 
+    model_config = ConfigDict(from_attributes=True)
+
 #Returning teacher data model
 class TeacherBase(BaseModel):
     id: int
     t_name: str
     max_classes: int
     class_assignments: List[ClassAssignedBase]
+
+    model_config = ConfigDict(from_attributes=True)
 
 #Class creation details model
 class ClassCreate(BaseModel):
@@ -161,6 +165,8 @@ class TeacherClassAssignmentBase(BaseModel):
     role: str
     subject_id: int
     subject_name: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 #Teacher class assignment creation data model
 class TeacherClassAssignmentCreate(BaseModel):

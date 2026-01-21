@@ -9,6 +9,7 @@ from backend.models import Subject, SubjectBase, SubjectCreate, SubjectUpdate, H
 subject_routes = APIRouter(tags=['Subjects'])
 
 @subject_routes.get('/subjects', response_model=List[SubjectBase])
+@limiter.limit('5/minute')
 def Fetch_all_subjects(current_user: UserDep, request: Request):
     subjects = current_user.subjects
 
@@ -32,6 +33,7 @@ def Fetch_all_subjects(current_user: UserDep, request: Request):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
 
 @subject_routes.get('/subjects/{id}', response_model=SubjectBase)
+@limiter.limit('10/minute')
 def Fetch_subject(current_user: UserDep, db: SessionDep, id: int, request: Request):
 
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
@@ -52,6 +54,7 @@ def Fetch_subject(current_user: UserDep, db: SessionDep, id: int, request: Reque
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
 
 @subject_routes.post('/subjects', response_model=SubjectBase)
+@limiter.limit('6/minute')
 def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate, request: Request):
     exists = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.subject_name == values.subject).first()
 
@@ -87,6 +90,7 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate,
             }
 
 @subject_routes.put('/subjects/{id}', response_model=SubjectBase)
+@limiter.limit('10/minute')
 def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate, id: int, request: Request):
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
     if subject:
@@ -117,6 +121,7 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
     
 
 @subject_routes.delete('/subjects/{id}')
+@limiter.limit('40/minute')
 def Delete_subjects(current_user: UserDep, db: SessionDep, id: int, request: Request):
 
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()

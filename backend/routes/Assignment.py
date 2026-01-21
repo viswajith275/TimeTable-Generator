@@ -8,6 +8,7 @@ from backend.models import Teacher, Class, Subject, TeacherClassAssignment, Teac
 assign_routes = APIRouter(tags=['Teacher Assignment'])
 
 @assign_routes.get('/assignments', response_model=List[TeacherClassAssignmentBase])
+@limiter.limit('10/minute')
 def fetch_all_assignments(current_user: UserDep, db: SessionDep, request: Request):
 
     assignments = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).all()
@@ -30,6 +31,7 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep, request: Reques
     return result
 
 @assign_routes.post('/assignments', response_model=TeacherClassAssignmentBase)
+@limiter.limit('10/minute')
 def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate, request: Request):
 
     teacher = db.query(Teacher).filter_by(id=values.teacher_id, user_id=current_user.id).first()
@@ -75,6 +77,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
         }
     
 @assign_routes.put('/assignments/{id}', response_model=TeacherClassAssignmentBase)
+@limiter.limit('10/minute')
 def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentUpdate, id: int, request: Request):
     assignment = (
         db.query(TeacherClassAssignment)
@@ -102,6 +105,7 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
         }
 
 @assign_routes.delete('/assignments/{id}')
+@limiter.limit('40/minute')
 def delete_assignment(current_user: UserDep, db: SessionDep, id: int, request: Request):
 
     assignment = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).filter(TeacherClassAssignment.id == id).first()

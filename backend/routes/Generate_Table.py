@@ -10,6 +10,7 @@ generate_routes = APIRouter(tags=['Generate TimeTable'])
 
 
 @generate_routes.get('/timetables', response_model=List[TimeTableJson])
+@limiter.limit('3/minute')
 def Fetch_All_TimeTables(current_user: UserDep, request: Request):
     #timetables fetching
     timetables = current_user.timetables
@@ -42,6 +43,7 @@ def Fetch_All_TimeTables(current_user: UserDep, request: Request):
  
 
 @generate_routes.post('/generate')
+@limiter.limit('4/hour')
 def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Data, request: Request):
 
     # select assignments for teachers that belong to the current user
@@ -59,6 +61,7 @@ def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Dat
 
 
 @generate_routes.delete('/timetables/{id}')
+@limiter.limit('20/minute')
 def Delete_TimeTable(current_user: UserDep, db: SessionDep, id: int, request: Request):
 
     timetable = db.query(TimeTable).filter(TimeTable.id == id, TimeTable.user_id == current_user.id).first()
