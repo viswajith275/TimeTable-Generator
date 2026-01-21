@@ -49,8 +49,10 @@ class UserCreate(BaseModel):
     def password_constraints(cls, v: str) -> None:
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters long')
-        if len(v) < 8:
+        if len(v) > 20:
             raise ValueError('Password must be at most 20 characters long')
+        if ' ' in v:
+            raise ValueError('Password must not contain a space')
         if not re.search(r'[A-Z]', v):
             raise ValueError('Password must contain at least one uppercase letter')
         if not re.search(r'[a-z]', v):
