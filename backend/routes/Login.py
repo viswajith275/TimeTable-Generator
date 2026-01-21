@@ -22,9 +22,6 @@ def register_user(db: SessionDep, user: UserCreate, request: Request):
     if exists:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Username or email already registered!')
     
-    if ' ' in user.username:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid Username!')
-    
     hashed_pass = get_password_hash(user.password)
     new_user = User(username=user.username, hashed_password=hashed_pass, email=user.email)
     db.add(new_user)

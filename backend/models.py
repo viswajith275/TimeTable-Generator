@@ -1,9 +1,10 @@
 from sqlalchemy import Integer, String, ForeignKey, Enum
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator, model_validator
 from typing import List, Optional
 from datetime import datetime
 import enum
+import re
 
 class Base(DeclarativeBase):
     pass
@@ -26,13 +27,47 @@ class UsersBase(BaseModel):
     username : str
     email: str
     disabled : bool
-    model_config = {"from_attributes": True}
+
+    model_config = ConfigDict(from_attributes=True)
 
 #user create model
 class UserCreate(BaseModel):
     username : str
     email: EmailStr
     password : str
+    confirm_password: str
+
+    @field_validator('username')
+    @classmethod
+    def username_validation(cls, u: str) -> str:
+        if ' ' in u:
+            raise ValueError('Username cannot contain spaces')
+        return u
+        
+    @field_validator('password')
+    @classmethod
+    def password_constraints(cls, v: str) -> None:
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        if len(v) < 8:
+            raise ValueError('Password must be at most 20 characters long')
+        if not re.search(r'[A-Z]', v):
+            raise ValueError('Password must contain at least one uppercase letter')
+        if not re.search(r'[a-z]', v):
+            raise ValueError('Password must contain at least one lowercase letter')
+        if not re.search(r'\d', v):
+            raise ValueError('Password must contain at least one digit')
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', v):
+            raise ValueError('Password must contain at least one special character')
+        return v   
+        
+    
+    @model_validator(mode='after')
+    def check_password_match(self) -> 'UserCreate':
+        if self.password != self.confirm_password:
+            raise ValueError('Confirm password should be same as password!')
+        return self
+    
 
 #Teacher class relation model
 class ClassAssignedBase(BaseModel):
@@ -96,15 +131,23 @@ class SubjectCreate(BaseModel):
     min_consecutive_class: Optional[int] = None
     is_hard_sub: Hardness
 
-class SubjectUpdate(BaseModel):
-    subject: str
-    min_per_day: Optional[int] = None
-    max_per_day: Optional[int] = None
-    min_per_week: Optional[int] = None
-    max_per_week: Optional[int] = None
-    max_consecutive_class: Optional[int] = None
-    min_consecutive_class: Optional[int] = None
-    is_hard_sub: Hardness
+    @model_validator(mode='after')
+    def max_min_validation(self):
+        if self.min_per_day is not None and self.max_per_day is not None:
+            if self.min_per_day > self.max_per_day:
+                raise ValueError("The max value should be greater than min value!")
+            
+        if self.min_per_week is not None and self.max_per_week is not None:
+            if self.min_per_week > self.max_per_week:
+                raise ValueError("The max value should be greater than min value!")
+            
+        if self.min_consecutive_class is not None and self.max_consecutive_class is not None:
+            if self.min_consecutive_class > self.max_consecutive_class:
+                raise ValueError("The max value should be greater than min value!")
+
+
+class SubjectUpdate(SubjectCreate):
+    pass
 
 #Teacher class assignment returning model
 class TeacherClassAssignmentBase(BaseModel):
