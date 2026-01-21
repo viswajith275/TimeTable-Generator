@@ -8,62 +8,58 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import ErrorLoadingStates from "../../../Components/ErrorLoadingStates/ErrorLoadingStates";
 import EditTeachersPopup from "./Components/EditTeachersPopup";
+import AssignmentItem from "./Components/AssignmentItem";
+import TeacherAssignPopup from "./Components/TeacherAssignPopup";
 
 const TeacherDetailsEditPage = () => {
-  const { teacherid } = useParams(); //fetches ID from URL
+  const { teacherid } = useParams();
   const { refreshToken } = useAuth();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [teacherInfo, setTeacherInfo] = useState([]);
+  const [teacherInfo, setTeacherInfo] = useState({});
   const [error, setError] = useState(null);
 
+  // Edit teacher popup
+  const [popupShow, setPopupShow] = useState(false);
   const [editTargetElm, setEditTargetElm] = useState(null);
 
-  const [popupShow, setPopupShow] = useState(false);
+  // Assign class popup
+  const [assignPopupShow, setAssignPopupShow] = useState(false);
 
   useEffect(() => {
     const fetchCurrentTeacher = async (hasRetried = false) => {
-      // Ensure the loader is visible for at least MIN_TIME.
-      // If the API responds faster, we wait the remaining time.
-      // If it takes longer, we stop loading immediately (no extra delay). Math.max is used to prevent that (in case of -ve delay, make it 0)
-      // this prevents that flickering problem.. so kind of a smooth transition
       const start = Date.now();
+
       try {
         const { data } = await axios.get(`/api/teachers/${teacherid}`);
-        console.log(data);
         setTeacherInfo(data);
       } catch (err) {
-        console.log(err);
-        if (err?.response?.status == 404) {
+        if (err?.response?.status === 404) {
           setError(404);
         }
 
-        if (err?.response?.status == 401 && !hasRetried) {
+        if (err?.response?.status === 401 && !hasRetried) {
           await refreshToken();
-          await fetchCurrentTeacher(true); //hasRetried act as a retry guard preventing multiple recursion calls
+          await fetchCurrentTeacher(true);
         }
       } finally {
-        const MIN_TIME = 500; //in ms
+        const MIN_TIME = 500;
         const elapsed = Date.now() - start;
-        setTimeout(
-          () => {
-            setIsLoading(false);
-          },
-          Math.max(MIN_TIME - elapsed, 0),
-        ); // to avoid negative numbers here..
+
+        setTimeout(() => setIsLoading(false), Math.max(MIN_TIME - elapsed, 0));
       }
     };
 
     fetchCurrentTeacher();
-  }, []);
+  }, [teacherid, refreshToken]);
 
-  if (error == 404) {
+  if (error === 404) {
     return (
       <div className={styles.teacher}>
-        <Navbar></Navbar>
+        <Navbar />
         <div className={styles.mainPanelPlaceholder}>
           <div className={styles.mainPanel}>
-            <ErrorLoadingStates state={"error"}></ErrorLoadingStates>
+            <ErrorLoadingStates state="error" />
           </div>
         </div>
       </div>
@@ -73,7 +69,7 @@ const TeacherDetailsEditPage = () => {
   if (isLoading) {
     return (
       <div className="loader_container">
-        <Loader></Loader>
+        <Loader />
       </div>
     );
   }
@@ -81,36 +77,50 @@ const TeacherDetailsEditPage = () => {
   return (
     <div className={styles.teacher}>
       <div
-        style={{
-          pointerEvents: popupShow ? "auto" : "none",
-          opacity: popupShow ? 0.7 : 0,
-        }}
         className="popup_overlay"
-        onClick={() => setPopupShow(false)}
-      ></div>
+        style={{
+          pointerEvents: popupShow || assignPopupShow ? "auto" : "none",
+          opacity: popupShow || assignPopupShow ? 0.7 : 0,
+        }}
+        onClick={() => {
+          setPopupShow(false);
+          setAssignPopupShow(false);
+        }}
+      />
+
       <EditTeachersPopup
         isPopupOpen={popupShow}
         targetElm={editTargetElm}
         popUpClose={() => setPopupShow(false)}
         initialData={teacherInfo}
         updateMain={setTeacherInfo}
-      ></EditTeachersPopup>
+      />
 
-      <Navbar></Navbar>
+      <TeacherAssignPopup
+        isPopupOpen={assignPopupShow}
+        popUpClose={() => setAssignPopupShow(false)}
+        teacherId={teacherid}
+      />
+
+      <Navbar />
+
       <div className={styles.mainPanelPlaceholder}>
         <div className={styles.mainPanel}>
           <div className={styles.mainPanel__headings}>
             <h2>Edit Teacher Details</h2>
           </div>
+
           <div className={styles.mainContent}>
             <div className={styles.teacherInfo}>
               <h4>Teacher Information</h4>
+
               <div className={styles.grid__teacherInfo}>
                 <div className={styles.gridItem__teacherInfo}>
                   <div>
                     <p>Teacher Name</p>
                     <h4>{teacherInfo.t_name}</h4>
                   </div>
+
                   <button
                     className={styles.editBtn__teacherInfo}
                     onClick={() => {
@@ -118,7 +128,8 @@ const TeacherDetailsEditPage = () => {
                       setPopupShow(true);
                     }}
                   >
-                    <Pen size={16} strokeWidth={2} /> Edit
+                    <Pen size={16} strokeWidth={2} />
+                    Edit
                   </button>
                 </div>
 
@@ -127,6 +138,7 @@ const TeacherDetailsEditPage = () => {
                     <p>Max Classes Per Week</p>
                     <h4>{teacherInfo.max_classes}</h4>
                   </div>
+
                   <button
                     className={styles.editBtn__teacherInfo}
                     onClick={() => {
@@ -134,8 +146,8 @@ const TeacherDetailsEditPage = () => {
                       setPopupShow(true);
                     }}
                   >
-                    {" "}
-                    <Pen size={16} strokeWidth={2} /> Edit
+                    <Pen size={16} strokeWidth={2} />
+                    Edit
                   </button>
                 </div>
               </div>
@@ -143,10 +155,16 @@ const TeacherDetailsEditPage = () => {
 
             <div className={styles.assigments}>
               <div className={styles.assigments__headingPanel}>
-                <h4>Class Assigments</h4>
-                <button>
-                  <Plus /> Assign Class
+                <h4>Class Assignments</h4>
+                <button onClick={() => setAssignPopupShow(true)}>
+                  <Plus />
+                  Assign Class
                 </button>
+              </div>
+
+              <div className={styles.assigments___container}>
+                <AssignmentItem />
+                <AssignmentItem />
               </div>
             </div>
           </div>

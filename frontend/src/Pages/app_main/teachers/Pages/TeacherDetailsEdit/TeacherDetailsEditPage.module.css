@@ -93,3 +93,20 @@
   align-items: center;
   cursor: pointer;
 }
+.assigments___container {
+  margin-top: 2rem;
+
+  /* display: flex;
+  flex-direction: column;
+  gap: 1rem; */
+
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+@media (max-width: 1000px) {
+  .grid__teacherInfo {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+}
