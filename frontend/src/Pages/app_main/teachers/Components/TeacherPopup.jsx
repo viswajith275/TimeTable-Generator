@@ -1,7 +1,10 @@
 import styles from "./TeacherPopup.module.css";
 import { useState } from "react";
 import { X } from "lucide-react";
-const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
+import { toast } from "react-toastify";
+import axios from "axios";
+
+const TeacherPopup = ({ popUpClose, isPopupOpen, addTeacher }) => {
   const [errors, setErrors] = useState({
     teacherName: "",
     maxPeriods: "",
@@ -11,17 +14,13 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
     teacherName: false,
     maxPeriods: false,
   });
-  //two way binding stuff
-  const [teacherName, setTeacherName] = useState("");
-  const [maxPeriods, setMaxPeriods] = useState("");
 
-  //clic handlers
+  const [teacherName, setTeacherName] = useState("");
+  const [maxPeriods, setMaxPeriods] = useState("1");
 
   const closeBtnClickHandler = () => {
-    // reseting all data once the user clicks close/cancel
-    // otherwise it is retained when user clicks and reopens the prompt..
     setTeacherName("");
-    setMaxPeriods("");
+    setMaxPeriods("1");
     setErrors({
       teacherName: "",
       maxPeriods: "",
@@ -34,31 +33,35 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
     popUpClose();
   };
 
-  const addBtnClickHandler = () => {
+  const addBtnClickHandler = async (hasRetried = false) => {
     let hasError = false;
-    const newErrors = { ...errors };
-    const newErrorStates = { ...errorStates };
+    const newErrors = {};
+    const newErrorStates = {};
 
-    //classname validation
     if (!teacherName.trim()) {
-      newErrors.teacherName = "Teacher Name is required";
+      newErrors.teacherName = "Teacher name is required.";
       newErrorStates.teacherName = true;
       hasError = true;
-    } else if (teacherName.length > 15) {
-      newErrors.teacherName = "Maximum length is 30 characters.";
+    } else if (teacherName.length > 30) {
+      newErrors.teacherName = "Teacher name must be under 30 characters.";
       newErrorStates.teacherName = true;
       hasError = true;
     } else {
       newErrorStates.teacherName = false;
     }
 
-    //maxPeriods validation
+    const maxPeriodsNum = Number(maxPeriods);
+
     if (!maxPeriods.trim()) {
-      newErrors.maxPeriods = "Max periods is required";
+      newErrors.maxPeriods = "Maximum periods is required.";
       newErrorStates.maxPeriods = true;
       hasError = true;
-    } else if (maxPeriods.length > 10) {
-      newErrors.maxPeriods = "Maximum length is 10 characters.";
+    } else if (Number.isNaN(maxPeriodsNum)) {
+      newErrors.maxPeriods = "Maximum periods must be a valid number.";
+      newErrorStates.maxPeriods = true;
+      hasError = true;
+    } else if (maxPeriodsNum < 1) {
+      newErrors.maxPeriods = "Maximum periods must be at least 1.";
       newErrorStates.maxPeriods = true;
       hasError = true;
     } else {
@@ -67,8 +70,26 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
 
     setErrors(newErrors);
     setErrorStates(newErrorStates);
+
     if (hasError) return;
-    // backend integration part here
+
+    // backend integration here
+    try {
+      const payload = {
+        t_name: teacherName,
+        max_classes: maxPeriodsNum,
+      };
+      const { data } = await axios.post("/api/teachers", payload);
+      addTeacher(data);
+      toast.success("Teacher added successfully");
+    } catch (err) {
+      if (err?.response?.status == 401 && !hasRetried) {
+        await refreshToken();
+        await addBtnClickHandler(true);
+        return;
+      }
+      toast.error("Failed to add teacher details!");
+    }
   };
 
   return (
@@ -79,18 +100,16 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
         <div className={styles.headingContainer}>
           <h4>Add Teacher Details</h4>
           <button onClick={closeBtnClickHandler}>
-            <X></X>
+            <X />
           </button>
         </div>
 
         <div className={styles.formContainer}>
           <div className={styles.inputContainer}>
-            {" "}
-            <label htmlFor="class-name-entry-wa901">
+            <label htmlFor="teacher-name-input">
               <p>Teacher Name</p>
-
               <p
-                className={`${styles.errorText}  ${
+                className={`${styles.errorText} ${
                   errorStates.teacherName ? "" : "hidden"
                 }`}
               >
@@ -103,17 +122,15 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
               onChange={(e) => setTeacherName(e.target.value)}
               type="text"
               placeholder="Enter teacher name"
-              id="class-name-entry-wa901"
+              id="teacher-name-input"
             />
           </div>
 
           <div className={styles.inputContainer}>
-            {" "}
-            <label htmlFor="class-no-entry-wa902">
-              <p>Maximum periods per week </p>
-
+            <label htmlFor="max-periods-input">
+              <p>Maximum periods per week</p>
               <p
-                className={`${styles.errorText}  ${
+                className={`${styles.errorText} ${
                   errorStates.maxPeriods ? "" : "hidden"
                 }`}
               >
@@ -124,9 +141,10 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
               className={errorStates.maxPeriods ? styles.errorField : ""}
               value={maxPeriods}
               onChange={(e) => setMaxPeriods(e.target.value)}
-              type="text"
+              type="number"
+              min="1"
               placeholder="Enter maximum periods"
-              id="class-no-entry-wa902"
+              id="max-periods-input"
             />
           </div>
         </div>
@@ -137,7 +155,7 @@ const TeacherPopup = ({ popUpClose, isPopupOpen }) => {
           </button>
           <button
             className={`${styles.btnItem} ${styles.saveBtn}`}
-            onClick={addBtnClickHandler}
+            onClick={() => addBtnClickHandler(false)}
           >
             Add
           </button>

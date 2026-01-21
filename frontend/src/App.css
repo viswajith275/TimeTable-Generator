@@ -53,7 +53,7 @@ html::-webkit-scrollbar {
 html::-webkit-scrollbar-thumb {
   background-color: var(--color-grey-700);
 }
-html::-webkit-scrollbar-thumb:hover{
+html::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-grey-900);
 }
 
@@ -107,4 +107,7 @@ this shake animation is for error indication in inputfields */
   justify-content: center;
   min-height: 100vh;
   align-items: center;
+}
+input:focus {
+  outline: none;
 }

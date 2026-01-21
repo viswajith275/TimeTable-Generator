@@ -41,7 +41,6 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
     const newErrors = { ...errors };
     const newErrorStates = { ...errorStates };
 
-    // classname validation
     if (!className.trim()) {
       newErrors.classroom = "Classname is required";
       newErrorStates.classroom = true;
@@ -54,7 +53,6 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
       newErrorStates.classroom = false;
     }
 
-    // room number validation
     if (!roomNumber.trim()) {
       newErrors.roomno = "Roomnumber is required";
       newErrorStates.roomno = true;

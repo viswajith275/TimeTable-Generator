@@ -5,6 +5,10 @@
   flex-direction: row;
   gap: 2rem;
   width: 100%;
+  overflow-x: hidden;
+}
+body {
+  overflow-x: hidden;
 }
 .mainPanelPlaceholder {
   width: 100%;
@@ -22,6 +26,7 @@
   font-family: "Inter";
   display: flex;
   justify-content: space-between;
+  flex-direction: row;
 }
 .mainPanel__headings div p {
   color: var(--color-grey-500);
@@ -46,10 +51,12 @@
 }
 .gridTeachers {
   padding: 0rem 2rem 2rem 0rem;
+
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
 }
+
 /* media queries here */
 @media (max-width: 780px) {
   .mainPanel__headings {
@@ -65,7 +72,7 @@
 
 @media (max-width: 615px) {
   .mainPanel,
-  .gridTeachers {
+  .gridClasses {
     padding: 2rem;
   }
 

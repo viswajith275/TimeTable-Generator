@@ -11,7 +11,7 @@ import Error404 from "../../Pages/error/Error404";
 import Subjects from "../../Pages/app_main/subjects/Subjects";
 import LandingPage from "../../Pages/landing_page/LandingPage";
 import SubjectCreatePage from "../../Pages/app_main/subjects/Pages/SubjectCreatePage/SubjectCreatePage";
-
+import TeacherDetailsEditPage from "../../Pages/app_main/teachers/Pages/TeacherDetailsEdit/TeacherDetailsEditPage";
 const RouteManager = () => {
   return (
     <Routes>
@@ -87,6 +87,15 @@ const RouteManager = () => {
         element={
           <ProtectedRoutes>
             <Teachers />
+          </ProtectedRoutes>
+        }
+      />
+
+      <Route
+        path="/teachers/teacher/:teacherid"
+        element={
+          <ProtectedRoutes>
+            <TeacherDetailsEditPage />
           </ProtectedRoutes>
         }
       />

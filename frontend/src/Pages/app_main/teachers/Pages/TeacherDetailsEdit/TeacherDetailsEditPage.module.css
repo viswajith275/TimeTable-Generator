@@ -1,0 +1,95 @@
+.teacher {
+  background-color: var(--color-bg-muted);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.mainPanelPlaceholder {
+  width: 100%;
+  max-height: 100vh;
+  overflow: auto;
+}
+
+.mainPanel {
+  padding: 5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.mainPanel__headings h2 {
+  font-family: "Inter";
+  font-size: 25px;
+}
+.teacherInfo > h4,
+.assigments__headingPanel h4 {
+  font-size: 21px;
+  font-family: "Inter";
+  font-weight: 600;
+}
+
+.grid__teacherInfo {
+  margin-top: 1.8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.gridItem__teacherInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1.2rem 1.7rem;
+  background-color: var(--color-bg);
+  border-radius: 0.5rem;
+}
+.gridItem__teacherInfo > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.gridItem__teacherInfo p {
+  color: var(--color-grey-500);
+  font-size: 17px;
+}
+.gridItem__teacherInfo h4 {
+  font-size: 20px;
+  font-weight: 500;
+  font-family: "Inter";
+}
+.editBtn__teacherInfo {
+  height: fit-content;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  background-color: transparent;
+  font-size: 17px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  border: 1.5px solid var(--color-grey-100);
+}
+
+.assigments__headingPanel {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.assigments__headingPanel button {
+  border: none;
+  font-size: 16px;
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  padding: 0.7rem 1.3rem;
+  border-radius: 0.4rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  cursor: pointer;
+}
