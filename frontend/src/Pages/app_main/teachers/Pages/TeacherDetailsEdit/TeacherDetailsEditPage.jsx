@@ -99,7 +99,7 @@ const TeacherDetailsEditPage = () => {
       <TeacherAssignPopup
         isPopupOpen={assignPopupShow}
         popUpClose={() => setAssignPopupShow(false)}
-        teacherId={teacherid}
+        teacherID={teacherid}
       />
 
       <Navbar />
@@ -163,8 +163,14 @@ const TeacherDetailsEditPage = () => {
               </div>
 
               <div className={styles.assigments___container}>
-                <AssignmentItem />
-                <AssignmentItem />
+                {teacherInfo.class_assignments.map((elm, i) => (
+                  <AssignmentItem
+                    key={i}
+                    subject={elm.subject}
+                    role={elm.role}
+                    className={elm.c_name}
+                  />
+                ))}
               </div>
             </div>
           </div>

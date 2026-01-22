@@ -37,6 +37,11 @@
   /* Layout */
   --border-radius: 7px;
 }
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-bg) inset;
+  -webkit-text-fill-color: var(--color-grey-700);
+  transition: background-color 5000s ease-in-out;
+}
 
 /*Firefox*/
 @supports (-moz-appearance: none) {

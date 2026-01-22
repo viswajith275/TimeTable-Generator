@@ -93,6 +93,7 @@
   align-items: center;
   cursor: pointer;
 }
+
 .assigments___container {
   margin-top: 2rem;
 
@@ -108,5 +109,13 @@
   .grid__teacherInfo {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
+  }
+}
+@media (max-width: 450px) {
+  .mainPanel {
+    padding: 2rem 1.5rem;
+  }
+  .assigments___container {
+    grid-template-columns: 1fr;
   }
 }

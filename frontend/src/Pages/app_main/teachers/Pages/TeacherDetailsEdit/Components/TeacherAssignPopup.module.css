@@ -54,6 +54,13 @@
   gap: 0.8rem;
 }
 
+.classSelect,
+.subjectSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .inputContainer label {
   font-size: 17px;
   font-weight: 400;
@@ -100,4 +107,42 @@
   border-color: var(--color-primary);
   color: var(--color-bg);
   background-color: var(--color-primary);
+}
+.label {
+  font-size: 16px;
+}
+
+.inputContainer label {
+  font-size: 16px;
+  font-weight: 400;
+  display: flex;
+  justify-content: space-between;
+}
+.errorText {
+  font-size: 14px;
+  color: var(--color-danger);
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.inputContainer input {
+  border: 1px solid var(--color-grey-300);
+  padding: 0.5rem;
+  border-radius: 0.3125rem;
+}
+.inputContainer input.errorField {
+  animation: shakeField 0.35s ease-in-out;
+  color: var(--color-danger);
+
+  border: 1px solid var(--color-danger);
+  background-color: var(--danger-bg);
+}
+.inputContainer input.errorField::placeholder {
+  color: var(--color-danger);
+}
+.inputContainer input {
+  color: var(--color-grey-500);
 }
