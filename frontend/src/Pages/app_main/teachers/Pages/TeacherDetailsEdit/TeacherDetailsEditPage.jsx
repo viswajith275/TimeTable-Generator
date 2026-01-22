@@ -10,8 +10,12 @@ import ErrorLoadingStates from "../../../Components/ErrorLoadingStates/ErrorLoad
 import EditTeachersPopup from "./Components/EditTeachersPopup";
 import AssignmentItem from "./Components/AssignmentItem";
 import TeacherAssignPopup from "./Components/TeacherAssignPopup";
+import { useSubjects } from "../../../../../Context/SubjectProvider";
+import { useClasses } from "../../../../../Context/ClassesProvider";
 
 const TeacherDetailsEditPage = () => {
+  const { classesLoaded, fetchClasses } = useClasses();
+  const { subjectsLoaded, fetchSubjects } = useSubjects();
   const { teacherid } = useParams();
   const { refreshToken } = useAuth();
 
@@ -27,21 +31,36 @@ const TeacherDetailsEditPage = () => {
   const [assignPopupShow, setAssignPopupShow] = useState(false);
 
   useEffect(() => {
-    const fetchCurrentTeacher = async (hasRetried = false) => {
+    const loadPageData = async (hasRetried = false) => {
       const start = Date.now();
 
       try {
-        const { data } = await axios.get(`/api/teachers/${teacherid}`);
+        // fetch teacher
+        const teacherReq = axios.get(`/api/teachers/${teacherid}`);
+
+        // fetch shared data only if not cached
+        const classesReq = classesLoaded ? null : fetchClasses();
+        const subjectsReq = subjectsLoaded ? null : fetchSubjects();
+
+        const [{ data }] = await Promise.all([
+          teacherReq,
+          classesReq,
+          subjectsReq,
+        ]);
+
         setTeacherInfo(data);
       } catch (err) {
         if (err?.response?.status === 404) {
           setError(404);
+          return;
         }
 
         if (err?.response?.status === 401 && !hasRetried) {
           await refreshToken();
-          await fetchCurrentTeacher(true);
+          return loadPageData(true);
         }
+
+        console.error(err);
       } finally {
         const MIN_TIME = 500;
         const elapsed = Date.now() - start;
@@ -50,8 +69,32 @@ const TeacherDetailsEditPage = () => {
       }
     };
 
-    fetchCurrentTeacher();
-  }, [teacherid, refreshToken]);
+    loadPageData();
+  }, [
+    teacherid,
+    refreshToken,
+    classesLoaded,
+    subjectsLoaded,
+    fetchClasses,
+    fetchSubjects,
+  ]);
+
+  const addClassAssignment = (data) => {
+    // console.log(data);
+    setTeacherInfo((prev) => ({
+      ...prev,
+      class_assignments: [...prev.class_assignments, data],
+    }));
+  };
+
+  const deleteClassAssignment = (assignId) => {
+    setTeacherInfo((prev) => ({
+      ...prev,
+      class_assignments: prev.class_assignments.filter(
+        (item) => item.assign_id !== assignId,
+      ),
+    }));
+  };
 
   if (error === 404) {
     return (
@@ -100,6 +143,7 @@ const TeacherDetailsEditPage = () => {
         isPopupOpen={assignPopupShow}
         popUpClose={() => setAssignPopupShow(false)}
         teacherID={teacherid}
+        addAssignment={addClassAssignment}
       />
 
       <Navbar />
@@ -165,9 +209,11 @@ const TeacherDetailsEditPage = () => {
               <div className={styles.assigments___container}>
                 {teacherInfo.class_assignments.map((elm, i) => (
                   <AssignmentItem
+                    onDelete={deleteClassAssignment}
                     key={i}
                     subject={elm.subject}
                     role={elm.role}
+                    id={elm.assign_id}
                     className={elm.c_name}
                   />
                 ))}

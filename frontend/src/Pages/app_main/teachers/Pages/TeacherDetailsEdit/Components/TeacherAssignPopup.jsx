@@ -1,12 +1,35 @@
 import styles from "./TeacherAssignPopup.module.css";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import SearchableSelect from "../../../../Components/SearchableSelect/SearchableSelect";
 import axios from "axios";
 import { useAuth } from "../../../../../../Context/AuthProvider";
 import { toast } from "react-toastify";
+import { useClasses } from "../../../../../../Context/ClassesProvider";
+import { useSubjects } from "../../../../../../Context/SubjectProvider";
 
-const TeacherAssignPopup = ({ popUpClose, isPopupOpen, teacherID }) => {
+const TeacherAssignPopup = ({
+  popUpClose,
+  isPopupOpen,
+  teacherID,
+  addAssignment,
+}) => {
+  const { classes } = useClasses();
+  const { subjects } = useSubjects();
+  const classOptions = useMemo(() => {
+    return classes.map((elm) => ({
+      label: elm.c_name,
+      value: elm.id,
+    }));
+  }, [classes]);
+
+  const subjectOptions = useMemo(() => {
+    return subjects.map((elm) => ({
+      label: elm.subject,
+      value: elm.id,
+    }));
+  }, [subjects]);
+
   const { refreshToken } = useAuth();
 
   const [teacherRole, setTeacherRole] = useState("");
@@ -67,6 +90,13 @@ const TeacherAssignPopup = ({ popUpClose, isPopupOpen, teacherID }) => {
     try {
       const { data } = await axios.post("/api/assignments", payload);
       console.log(data);
+      addAssignment({
+        assign_id: data.id,
+        c_name: data.c_name,
+        r_name: "",
+        role: data.role,
+        subject: data.subject_name,
+      });
       toast.success("Assignment added successfully");
       closeBtnClickHandler();
     } catch (error) {
@@ -106,10 +136,7 @@ const TeacherAssignPopup = ({ popUpClose, isPopupOpen, teacherID }) => {
             <p className={styles.label}>Class</p>
             <SearchableSelect
               initialPlaceholder={"Select a class"}
-              options={[
-                { label: "7A", value: 5 },
-                { label: "8A", value: 4 },
-              ]}
+              options={classOptions}
               setValue={setClassRoomID}
             />
           </div>
@@ -118,13 +145,7 @@ const TeacherAssignPopup = ({ popUpClose, isPopupOpen, teacherID }) => {
             <p className={styles.label}>Select Subject</p>
             <SearchableSelect
               initialPlaceholder={"Select a subject"}
-              options={[
-                { label: "Mathematics", value: 10 },
-                { label: "Atp", value: 11 },
-                { label: "Hot ishan videos", value: 12 },
-                { label: "Hindi", value: 13 },
-                { label: "Japanese", value: 14 },
-              ]}
+              options={subjectOptions}
               setValue={setSubjectID}
             />
           </div>
