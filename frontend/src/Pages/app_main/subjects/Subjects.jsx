@@ -4,81 +4,59 @@ import Topbar from "../Components/topbar/Topbar";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import SubjectItem from "./Components/SubjectItem";
-
 import { useNavigate } from "react-router-dom";
 import Filter from "../Components/filter/Filter";
-import axios from "axios";
-import { useAuth } from "../../../Context/AuthProvider";
 import ErrorLoadingStates from "../Components/ErrorLoadingStates/ErrorLoadingStates";
+import { useSubjects } from "../../../Context/SubjectProvider";
 const Subjects = () => {
   const navigate = useNavigate();
-  const { refreshToken } = useAuth();
-  //state variables needed
-  const [subjects, setSubjects] = useState([]);
+
+  const { subjects, setSubjects, subjectsLoaded, fetchSubjects, error } =
+    useSubjects();
+
   const [isSubjectsLoading, setIsSubjectsLoading] = useState(true);
 
-  //fetches all the subjects on mounting of component
+  // fetch once + smooth loader
   useEffect(() => {
-    const fetchAllSubjects = async (hasRetried = false) => {
-      // Ensure the loader is visible for at least MIN_TIME.
-      // If the API responds faster, we wait the remaining time.
-      // If it takes longer, we stop loading immediately (no extra delay). Math.max is used to prevent that (in case of -ve delay, make it 0)
-      // this prevents that flickering problem.. so kind of a smooth transition
+    const load = async () => {
+      const MIN_TIME = 500;
       const start = Date.now();
-      try {
-        const { data } = await axios.get("/api/subjects"); // instead of response.data  destructure that object
 
-        setSubjects(data);
-      } catch (err) {
-        console.log(err);
-        if (err?.response?.status == 401 && !hasRetried) {
-          console.log("hoho");
-          await refreshToken();
-          await fetchAllSubjects(true); //hasRetried act as a retry guard preventing multiple recursion calls
-        }
-      } finally {
-        const MIN_TIME = 500; //in ms
-        const elapsed = Date.now() - start;
-        setTimeout(
-          () => {
-            setIsSubjectsLoading(false);
-          },
-          Math.max(MIN_TIME - elapsed, 0),
-        ); // to avoid negative numbers here..
+      if (!subjectsLoaded) {
+        await fetchSubjects();
       }
+
+      const elapsed = Date.now() - start;
+      setTimeout(
+        () => setIsSubjectsLoading(false),
+        Math.max(MIN_TIME - elapsed, 0),
+      );
     };
 
-    fetchAllSubjects();
+    load();
   }, []);
 
-  useEffect(() => {
-    console.log(subjects);
-  }, [subjects]);
   const deleteSubjectItem = (id) => {
     setSubjects((prev) => prev.filter((item) => item.id !== id));
   };
-  const addSubjectItem = (data) => {
-    setSubjects([...subjects, data]);
-  };
+
+  // const addSubjectItem = (data) => {
+  //   setSubjects((prev) => [...prev, data]);
+  // };
+
   const editSubjectItem = (data) => {
     setSubjects((prev) =>
-      prev.map((item) =>
-        item.id === data.id
-          ? {
-              ...item,
-              c_name: data.c_name,
-              r_name: data.r_name,
-            }
-          : item,
-      ),
+      prev.map((item) => (item.id === data.id ? { ...item, ...data } : item)),
     );
   };
 
   return (
     <div className={styles.subjects}>
-      <Navbar></Navbar>
+      <Navbar />
+
       <div className={styles.mainPanelPlaceholder}>
-        <Topbar></Topbar>
+        <Topbar />
+
         <div className={styles.mainPanel}>
           <div className={styles.mainPanel__headings}>
             <div>
@@ -97,41 +75,39 @@ const Subjects = () => {
         </div>
 
         <div className={styles.utilityPanel}>
-          <Filter></Filter>
+          <Filter />
         </div>
 
         <div className={styles.gridSubjects}>
           {isSubjectsLoading ? (
-            <ErrorLoadingStates state={"loading"} />
+            <ErrorLoadingStates state="loading" />
+          ) : error ? (
+            <ErrorLoadingStates state="error" />
           ) : (
-            Object.values(subjects).map((value) => {
-              return (
-                <SubjectItem
-                  key={value.id}
-                  id={value.id}
-                  subjectName={value.subject}
-                  daily={{ min: value.min_per_day, max: value.max_per_day }}
-                  weekly={{ min: value.min_per_week, max: value.max_per_week }}
-                  consecutive={{
-                    min: value.min_consecutive_class,
-                    max: value.max_consecutive_class,
-                  }}
-                  deleteSubject={deleteSubjectItem}
-                  editSubject={editSubjectItem}
-                  toughnessLevel={value.is_hard_sub}
-                />
-              );
-            })
+            subjects.map((value) => (
+              <SubjectItem
+                key={value.id}
+                id={value.id}
+                subjectName={value.subject}
+                daily={{ min: value.min_per_day, max: value.max_per_day }}
+                weekly={{ min: value.min_per_week, max: value.max_per_week }}
+                consecutive={{
+                  min: value.min_consecutive_class,
+                  max: value.max_consecutive_class,
+                }}
+                toughnessLevel={value.is_hard_sub}
+                deleteSubject={deleteSubjectItem}
+                editSubject={editSubjectItem}
+              />
+            ))
           )}
 
-          {Object.values(subjects).length == 0 && !isSubjectsLoading ? (
+          {subjects.length === 0 && !isSubjectsLoading && !error && (
             <ErrorLoadingStates
-              state={"empty"}
-              listName={"subject"}
-              btnName={"Add Subject"}
+              state="empty"
+              listName="subject"
+              btnName="Add Subject"
             />
-          ) : (
-            ""
           )}
         </div>
       </div>

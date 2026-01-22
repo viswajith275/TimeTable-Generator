@@ -7,9 +7,11 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../../../../Context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { TriangleAlert } from "lucide-react";
+import { useSubjects } from "../../../../../Context/SubjectProvider";
 
 const SubjectCreatePage = () => {
   const navigate = useNavigate();
+  const { subjects, setSubjects } = useSubjects();
   const { refreshToken } = useAuth();
 
   const [form, setForm] = useState({
@@ -74,7 +76,7 @@ const SubjectCreatePage = () => {
     if (!validate()) return;
 
     try {
-      await axios.post("/api/subjects", {
+      const { data } = await axios.post("/api/subjects", {
         ...form,
         min_per_day: Number(form.min_per_day),
         max_per_day: Number(form.max_per_day),
@@ -83,6 +85,7 @@ const SubjectCreatePage = () => {
         min_consecutive_class: Number(form.min_consecutive_class),
         max_consecutive_class: Number(form.max_consecutive_class),
       });
+      setSubjects((prev) => [...prev, data]);
 
       toast.success("Subject created");
 
