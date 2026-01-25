@@ -12,6 +12,8 @@ import Subjects from "../../Pages/app_main/subjects/Subjects";
 import LandingPage from "../../Pages/landing_page/LandingPage";
 import SubjectCreatePage from "../../Pages/app_main/subjects/Pages/SubjectCreatePage/SubjectCreatePage";
 import TeacherDetailsEditPage from "../../Pages/app_main/teachers/Pages/TeacherDetailsEdit/TeacherDetailsEditPage";
+import TermsAndConditions from "../../Pages/legal/termsAndConditions/TermsAndConditions";
+
 const RouteManager = () => {
   return (
     <Routes>
@@ -45,6 +47,14 @@ const RouteManager = () => {
         element={
           <PublicRoutes>
             <ForgotPass />
+          </PublicRoutes>
+        }
+      />
+      <Route
+        path="/terms&conditions"
+        element={
+          <PublicRoutes>
+            <TermsAndConditions />
           </PublicRoutes>
         }
       />

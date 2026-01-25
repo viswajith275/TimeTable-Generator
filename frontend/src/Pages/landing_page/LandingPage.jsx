@@ -69,7 +69,7 @@ const LandingPage = () => {
         <nav>
           <a href="#Features">Features</a>
           <a href="#HowItWorks">How it works</a>
-          <a href="https://github.com/viswajith275/TimeTable-Generator" target="blank">Open Source</a>
+          <a href="#OpenSource" >Open Source</a>
         </nav>
 
         <div className={styles.actions}>
@@ -232,7 +232,7 @@ const LandingPage = () => {
         </section>
 
         {/* ================= OPEN SOURCE ================= */}
-        <section className={styles.openSource}>
+        <section className={styles.openSource} id="OpenSource">
           <CheckCircle size={32} />
           <h2>Free. Open-source. Transparent.</h2>
           <p>
@@ -242,7 +242,7 @@ const LandingPage = () => {
           <button 
           className={styles.secondary}
             onClick={() => 
-              window.open("https://github.com/viswajith275/TimeTable-Generator", "_blank")
+              window.open("https://github.com/viswajith275/TimeTable-Generator", "_blank", "noopener,noreferrer")
             }
           >
             View GitHub
@@ -268,10 +268,9 @@ const LandingPage = () => {
         <img src={logoFull} alt="Logo" />
         <nav>
           <a>About</a>
-          <a href="https://github.com/viswajith275/TimeTable-Generator" target="blank">GitHub</a>
+          <a href="https://github.com/viswajith275/TimeTable-Generator" target="blank" rel="noopener noreferrer">GitHub</a>
           <a>Privacy</a>
-          <a>Terms</a>
-          <a>Contact</a>
+          <a href="/terms&conditions">Terms &amp; Conditions</a>
         </nav>
         <span>&copy; 2025-26 All rights reserved.</span>
       </footer>
