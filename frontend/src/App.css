@@ -43,6 +43,10 @@ input:-webkit-autofill {
   transition: background-color 5000s ease-in-out;
 }
 
+html{
+  scroll-behavior: smooth;
+}
+
 /*Firefox*/
 @supports (-moz-appearance: none) {
   * {
