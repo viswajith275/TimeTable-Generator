@@ -53,21 +53,23 @@
 .header nav a::after {
   content: "";
   position: absolute;
-  left: 0;
+  left: 50%;
   bottom: -4px;
   width: 0;
   height: 2px;
   background: var(--color-primary);
-  transition: width 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .header nav a:hover::after {
   width: 100%;
+  left: 0;
 }
 
 .actions {
   display: flex;
   gap: 1rem;
+  margin-left: auto;
 }
 
 /* ================= MAIN ================= */
@@ -410,16 +412,147 @@
 
 /* ================= RESPONSIVE ================= */
 
+/* Medium screens */
+@media (max-width: 1024px) {
+  .featureGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .problemSolution {
+    padding: 3rem 4%;
+  }
+
+  .hero {
+    padding: 5.25rem 4% 2rem;
+  }
+}
+
+/* Small screens */
 @media (max-width: 768px) {
   .header nav {
     display: none;
   }
 
-  .hero {
-    padding-top: 4rem;
+  .header {
+    padding: 0.75rem 4%;
+    gap: 0.75rem;
   }
 
-  .illustrationContainer{
+  .header img {
+    height: 26px;
+  }
+
+  .actions {
+    gap: 0.5rem;
+  }
+
+  .hero {
+    padding: 4.25rem 5% 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.2rem, 6vw, 3.75rem);
+  }
+
+  .hero p {
+    width: 92%;
+    font-size: 1.05rem;
+  }
+
+  .heroActions {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .primaryLarge, .primary, .secondary {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .problemSolution {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 2rem 5%;
+  }
+
+  .featureGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .featureCard {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .illustrationContainer {
     display: none;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 480px) {
+  .header {
+    padding: 0.5rem 3%;
+  }
+
+  .header .actions{
+    font-size: 0.7rem;
+  }
+
+  .header img {
+    height: 22px;
+  }
+
+  .hero {
+    padding: 3.25rem 4% 1rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.8rem, 7vw, 2.8rem);
+    line-height: 1.05;
+  }
+
+  .hero p {
+    width: 96%;
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .heroActions {
+    gap: 0.5rem;
+  }
+
+  .primaryLarge {
+    padding: 0.9rem 1rem;
+  }
+
+  .primary, .secondary {
+    padding: 0.3rem 1rem;
+  }
+
+  .socialProof,
+  .howItWorks,
+  .features,
+  .problemSolution,
+  .finalCta {
+    padding-left: 4%;
+    padding-right: 4%;
+  }
+
+  .footer {
+    padding: 2rem 4%;
   }
 }
