@@ -1,362 +1,425 @@
+/* ================= ROOT ================= */
+
 .container {
-  width: 100%;
-  min-height: 100vh;
   position: relative;
-  overflow-x: hidden;
-  box-sizing: border-box;
+  min-height: 100vh;
+  width: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    "Open Sans",
-    "Helvetica Neue",
-    sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-primary);
 
-  letter-spacing: -0.5px;
-  background-color: #ffffff;
-  background-image: radial-gradient(
-    rgba(160, 160, 160, 0.5) 1.5px,
-    transparent 0
-  );
-  background-size: 28px 28px;
-  background-position: -6px -6px;
+  background-image: radial-gradient(rgba(12, 12, 12, 0.1) 1px, transparent 0);
+  background-size: 30px 30px;
+  background-position: -5px -5px;
 }
 
-.header,
-.main,
-.footer {
-  z-index: 100;
-}
-
-/* ================= Utilities ================= */
-
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ================= Header ================= */
+/* ================= HEADER ================= */
 
 .header {
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 1000;
 
   width: 100%;
-  padding: 1rem 2.5%;
+  padding: 1rem 4%;
 
   display: flex;
   align-items: center;
+  gap: 2rem;
 
   background-color: var(--color-bg);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-grey-100);
 }
 
 .header img {
-  height: 30px;
+  height: 32px;
 }
 
 .header nav {
-  margin-left: auto;
   display: flex;
   gap: 2rem;
-  font-weight: 500;
+  margin-left: auto;
 }
 
 .header nav a {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.3rem;
+  font-weight: 500;
   cursor: pointer;
   position: relative;
 }
 
-.header nav a:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.325rem;
+.header nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: var(--color-primary);
+  transition: width 0.25s ease;
 }
 
-.header .N2 {
+.header nav a:hover::after {
+  width: 100%;
+}
+
+.actions {
   display: flex;
   gap: 1rem;
 }
 
-/* ================= Main ================= */
+/* ================= MAIN ================= */
 
 .main {
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
 }
 
-.main h2 {
-  margin: 5rem 0 1rem;
-  font-size: 3rem;
-  font-weight: 600;
-  letter-spacing: -1.5px;
-  text-decoration: underline;
-  text-underline-offset: 1rem;
-  text-align: center;
-}
-
-/* ================= Hero ================= */
+/* ================= HERO ================= */
 
 .hero {
-  width: 95%;
-  padding: 5rem 1rem 1rem;
+  min-height: 85vh;
+  padding: 6rem 5% 2rem;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
 .hero h1 {
-  font-size: 6rem;
-  font-weight: 600;
-  letter-spacing: -1.5px;
-  line-height: 0.85;
-  margin: 1rem 0;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  background-clip: text;
+
+  background: linear-gradient(90deg, var(--color-primary), var(--color-grey-700));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero p {
-  width: min(40%, 600px);
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin: 1rem 0 3rem;
+  max-width: 620px;
+  font-size: 1.25rem;
+  margin: 1.5rem 0 2.5rem;
+  color: var(--color-grey-700);
 }
 
-.hero p u {
-  position: relative;
-}
-
-.hero a {
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 0.325rem;
-}
-
-/* ================= Features ================= */
-
-.features {
-  width: 100%;
-  padding: 2rem;
-
+.heroActions {
   display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-/* ================= Problem / Solution ================= */
-
-.problemSolution {
-  width: 100%;
-  padding: 2rem;
-
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
+.trustText {
+  font-size: 0.85rem;
+  color: var(--color-grey-500);
 }
 
-.problemSolution .left,
-.problemSolution .right {
-  min-width: 300px;
-  padding: 2rem 4rem;
+/* ================= BUTTONS ================= */
 
-  position: relative;
+.primary,
+.secondary,
+.primaryLarge {
   border-radius: 0.5rem;
-
-  background-color: var(--color-bg);
-  border: 2px solid var(--color-primary);
-  box-shadow: 2px 2px 0 var(--color-grey-900);
-
-  transition: transform 0.25s ease;
-}
-
-.problemSolution .left:hover,
-.problemSolution .right:hover {
-  transform: scale(1.05);
-}
-
-.floatingSymbol {
-  position: absolute;
-  top: -1rem;
-  right: -1rem;
-
-  padding: 0.5rem;
-  border-radius: 50%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background-color: var(--color-bg);
-  border: 2px solid var(--color-primary);
-}
-
-.problemSolution .left .floatingSymbol {
-  background-color: tomato;
-}
-
-.problemSolution .right .floatingSymbol {
-  background-color: yellowgreen;
-}
-
-/* ================= Buttons ================= */
-
-.action {
-  padding: 0.5rem 2rem;
-  border-radius: var(--border-radius);
   border: none;
   cursor: pointer;
+  font-weight: 600;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
 
-  transition: transform 0.25s ease;
-}
-
-.action:hover {
-  transform: translateY(-2px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .primary {
-  background-color: var(--color-primary);
+  padding: 0.5rem 1.5rem;
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.primaryLarge {
+  padding: 1rem 2.75rem;
+  font-size: 1.1rem;
+  background: var(--color-primary);
   color: var(--color-bg);
 }
 
 .secondary {
-  background-color: var(--color-bg);
+  padding: 0.5rem 1.5rem;
+  background: var(--color-bg);
   border: 1px solid var(--color-primary);
   color: var(--color-primary);
 }
 
-.secondary:hover {
-  background-color: var(--color-primary);
-  color: var(--color-bg);
+.secondary svg{
+  height: 1.8rem;
 }
 
-.B1 {
-  padding: 1rem 3rem;
+.primary:hover,
+.primaryLarge:hover,
+.secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 0px var(--color-grey-300);
+}
+
+/* ================= SOCIAL PROOF ================= */
+
+.socialProof {
+  padding: 2rem;
+  font-weight: 500;
+  color: var(--color-grey-700);
+}
+
+/* ================= PROBLEM / SOLUTION ================= */
+
+.problemSolution {
+  width: 100%;
+  max-width: 1100px;
+  padding: 4rem 5%;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.problem,
+.solution {
+  padding: 2.5rem;
+  border-radius: 0.75rem;
+  background: var(--color-bg);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  border: 1px solid var(--color-primary);
+}
+
+.problem h3 {
+  color: tomato;
+}
+
+.solution h3 {
+  color: yellowgreen;
+}
+
+.problem ul,
+.solution ul {
+  margin-top: 1.5rem;
+  list-style: none;
+  padding: 0;
+}
+
+.problem li,
+.solution li {
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* ================= HOW IT WORKS ================= */
+
+.howItWorks {
+  padding: 5rem 5% 3rem;
+  text-align: center;
+}
+
+.howItWorks h2 {
+  font-size: 2.75rem;
+  margin-bottom: 3rem;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  max-width: 900px;
+  margin: auto;
+}
+
+.steps div {
+  padding: 2rem;
+  border-radius: 0.75rem;
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-primary);
+}
+
+.steps span {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-bg);
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* ================= FEATURES ================= */
+
+.features {
+  padding: 5rem 5%;
+  text-align: center;
+}
+
+.features h2 {
+  font-size: 2.75rem;
+  margin-bottom: 3rem;
+}
+
+.featureGrid {
+  max-width: 1100px;
+  margin: auto;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.featureCard {
+  padding: 2.5rem 2rem;
+  border-radius: 0.75rem;
+  background: var(--color-bg);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-primary);
+}
+
+.featureCard h4 {
+  margin-top: 1rem;
   font-size: 1.2rem;
 }
 
-/* ================= Footer ================= */
-
-.footer {
-  position: relative;
-  width: 100%;
-  padding: 2rem;
-  background-color: var(--color-bg-muted);
+.featureCard p {
+  margin-top: 0.5rem;
   color: var(--color-grey-500);
 }
 
+.icon {
+  font-size: 1.5rem;
+}
+
+/* ================= OPEN SOURCE ================= */
+
+.openSource {
+  padding: 5rem 5%;
+  text-align: center;
+  background: var(--color-bg-muted);
+}
+
+.openSource h2 {
+  font-size: 2.5rem;
+  margin: 1rem 0;
+}
+
+.openSource p {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  color: var(--color-grey-500);
+}
+
+/* ================= FINAL CTA ================= */
+
+.finalCta {
+  padding: 5rem 5% 6rem;
+  text-align: center;
+}
+
+.finalCta h2 {
+  font-size: 2.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.finalCta span {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--color-grey-700);
+}
+
+/* ================= FOOTER ================= */
+
+.footer {
+  padding: 3rem 5%;
+  border-top: 1px solid var(--color-bg-muted);
+  background-color: var(--color-bg-muted);
+  text-align: center;
+}
+
 .footer img {
-  height: 30px;
+  height: 28px;
 }
 
 .footer nav {
   display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
 }
 
-.footer nav a:hover,
-.extras a:hover {
-  text-decoration: underline;
+.footer nav a {
   cursor: pointer;
+  color: var(--color-grey-500);
+}
+
+.footer nav a:hover {
+  text-decoration: underline;
 }
 
 .footer span {
-  display: flex;
-  gap: 1rem;
-  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--color-grey-700);
 }
 
-.extras {
-  float: right;
-}
-
-/* ================= Overlay ================= */
-
-.overflowOverlay {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  height: 20%;
-  background: linear-gradient(to top, var(--color-bg-muted), transparent);
-}
-
-/* ================= Illustrations ================= */
+/* ================= ILLUSTRATIONS ================= */
 
 .illustrationContainer {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 4;
+  overflow: hidden;
 }
 
-.leftSymbol,
-.rightSymbol,
-.line1 {
-  position: absolute;
+.illustrationContainer svg{
   color: var(--color-grey-900);
-  transform: scale(25);
-  stroke-linecap: butt;
-  opacity: 1;
+  stroke-width: 2px;
+  stroke-width: 0.08rem;
 }
 
-.leftSymbol {
+.paperPlaneLeft{
+  position: absolute;
+  top: 70vh;
   left: 3vw;
-  top: 90vh;
-  scale: 1.2;
 }
-
-.rightSymbol {
-  right: 1vw;
+.paperPlaneRight {
+  position: absolute;
   top: 15vh;
-  scale: 0.5;
+  right: 3vw;
 }
 
-.line1 {
-  right: 4vw;
-  top: 200vh;
-  rotate: -90deg;
+.paperPlaneLeft svg{
+  color: tomato;
+}
+.paperPlaneRight svg {
+  color: yellowgreen;
 }
 
-.line1 svg {
-  stroke-linecap: butt;
-  transform: scale(35);
-  stroke-width: 0.1rem;
-  opacity: 1;
-}
+/* ================= RESPONSIVE ================= */
 
-/* ================= Responsive ================= */
-
-@media (max-width: 615px) {
-  .header nav,
-  .header .N2,
-  .illustrationContainer {
+@media (max-width: 768px) {
+  .header nav {
     display: none;
   }
 
-  .hero h1 {
-    font-size: 4rem;
+  .hero {
+    padding-top: 4rem;
   }
 
-  .hero p {
-    width: 90%;
+  .illustrationContainer{
+    display: none;
   }
 }
