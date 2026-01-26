@@ -144,12 +144,13 @@ def Generate_Timetable(db, assignments, data, user_id):
 
                     for s in range(len(all_slotes)):
                         current = slots[s]
-                        prev = slots[s-1] if s > 0 else None
+                        
 
                         # 1. Detect "Start of Block" (Current is ON, Prev is OFF)
                         is_start = Model.NewBoolVar(f'start_{assignment.id}_{d}_{s}')
                         
-                        if prev:
+                        if s != 0:
+                            prev = slots[s-1]
                             # Start = Current AND (NOT Prev)
                             Model.AddBoolAnd([current, prev.Not()]).OnlyEnforceIf(is_start)
                             # Ensure is_start is False if condition isn't met (optional but safer)
