@@ -7,7 +7,7 @@
     color: var(--color-grey-700);
 }
 
-h1 {
+.container h1 {
     font-size: 2.2rem;
     margin-bottom: 0.5rem;
     color: var(--color-primary);
@@ -21,35 +21,35 @@ h1 {
     text-align: center;
 }
 
-section {
+.container section {
     margin-bottom: 2rem;
 }
 
-h2 {
+.container h2 {
     font-size: 1.35rem;
     margin-bottom: 0.75rem;
     color: var(--color-grey-900);
 }
 
-p {
+.container p {
     margin-bottom: 0.75rem;
 }
 
-ul {
+.container ul {
     margin: 0.75rem 0 1rem 1.25rem;
 }
 
-li {
+.container li {
     margin-bottom: 0.4rem;
 }
 
-a {
+.container a {
     color: #2563eb;
     text-decoration: underline;
     word-break: break-all;
 }
 
-a:hover {
+.container a:hover {
     text-decoration: none;
 }
 
@@ -58,11 +58,11 @@ a:hover {
         padding: 2rem 1rem;
     }
 
-    h1 {
+    .container h1 {
         font-size: 1.8rem;
     }
 
-    h2 {
+    .container h2 {
         font-size: 1.2rem;
     }
 }
