@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Request
 from backend.database import SessionDep
 from backend.oauth import UserDep
-from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable
+from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable, AllTimeTable
 from backend.Generations.utils import Generate_Timetable
 from backend.rate_limiter_deps import limiter
 from typing import List
@@ -9,18 +9,33 @@ from typing import List
 generate_routes = APIRouter(tags=['Generate TimeTable'])
 
 
-@generate_routes.get('/timetables', response_model=List[TimeTableJson])
-@limiter.limit('3/minute')
-def Fetch_All_TimeTables(current_user: UserDep, request: Request):
-    #timetables fetching
+@generate_routes.get('/timetables', response_model=List[AllTimeTable])
+def Fetch_All_timetables(current_user: UserDep, request: Request):
+
     timetables = current_user.timetables
 
     if not timetables:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='TimeTables does not exist!')
 
-    total_timetables = []
+    return [{
+        'timetable_id': timetable.id,
+        'timetable_name': timetable.timetable_name
+    } for timetable in timetables]
 
-    for a in timetables:
+
+
+
+@generate_routes.get('/timetables/{id}', response_model=TimeTableJson)
+@limiter.limit('3/minute')
+def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: SessionDep):
+    #timetables fetching
+    timetable = db.query(TimeTable).filter(TimeTable.id == id, TimeTable.user_id == current_user.id).first()
+
+    if not timetable:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='TimeTables does not exist!')
+
+
+    for a in timetable:
         formatted_entries = []
         for entry in a.entries:
             formatted_entries.append({
@@ -33,13 +48,13 @@ def Fetch_All_TimeTables(current_user: UserDep, request: Request):
                 'class_name':  entry.assignment.class_.c_name
             })
 
-        total_timetables.append({
+    return {
             'id': a.id,
             'name': a.timetable_name,
             'assignments': formatted_entries
-        })
+            }
     
-    return total_timetables
+    
  
 
 @generate_routes.post('/generate')

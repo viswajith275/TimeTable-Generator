@@ -206,6 +206,9 @@ class TimeTableJson(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class AllTimeTable(BaseModel):
+    timetable_id: int
+    timetable_name: str
 
 #table structures
 
