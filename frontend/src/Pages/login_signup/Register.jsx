@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Register = () => {
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -67,12 +69,18 @@ const Register = () => {
     }
 
     // PASSWORD
+    // PASSWORD
     if (!form.password) {
       newErrors.password = "Enter a password";
       newErrorStates.password = true;
       hasError = true;
     } else if (form.password.length < 6) {
-      newErrors.password = "Password too short";
+      newErrors.password = "Password must be at least 6 characters";
+      newErrorStates.password = true;
+      hasError = true;
+    } else if (!passwordRegex.test(form.password)) {
+      newErrors.password = "Include A–Z, a–z, 0–9 & symbol";
+
       newErrorStates.password = true;
       hasError = true;
     } else {
@@ -101,8 +109,14 @@ const Register = () => {
       setSubmitLoading(true);
 
       // backend integration here
-      const { confirmPassword, ...formData } = form;
-      const response = await axios.post("/api/register", formData);
+      const payload = {
+        username: form.username,
+        email: form.email,
+        password: form.password,
+        confirm_password: form.confirmPassword,
+      };
+
+      const response = await axios.post("/api/register", payload);
 
       if (response.status === 200) {
         toast.success("Registration successful, now please login!");
