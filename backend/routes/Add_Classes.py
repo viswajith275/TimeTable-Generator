@@ -19,6 +19,7 @@ def Fetch_All_Classes(current_user: UserDep, request: Request):
                 'id': c.id,
                 'c_name': c.c_name,
                 'r_name': c.r_name,
+                'created_at': c.created_at,
                 'teacher_assignments': [{
                     'assign_id': a.id,
                     't_name': a.teacher.t_name,
@@ -38,6 +39,7 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep, request: Request
                 'id': cur_class.id,
                 'c_name': cur_class.c_name,
                 'r_name': cur_class.r_name,
+                'created_at': cur_class.created_at,
                 'teacher_assignments': [{
                     'assign_id': a.id,
                     't_name': a.teacher.t_name,
@@ -48,7 +50,7 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep, request: Request
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
 
 
-@class_routes.post('/classes', response_model=ClassBase)
+@class_routes.post('/classes')
 @limiter.limit('10/minute')
 def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, request: Request):
     new_class = Class(c_name=classes.c_name, r_name=classes.r_name, user_id=current_user.id)
@@ -57,10 +59,10 @@ def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, reque
     db.commit()
     db.refresh(new_class)
 
-    return new_class
+    return {'message': 'Class created successfully!'}
 
 
-@class_routes.put('/classes/{id}', response_model=ClassBase)
+@class_routes.put('/classes/{id}')
 @limiter.limit('10/minute')
 def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: ClassCreate, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
@@ -70,15 +72,7 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
         db.commit()
         db.refresh(cur_class)
         return {
-                'id': cur_class.id,
-                'c_name': cur_class.c_name,
-                'r_name': cur_class.r_name,
-                'teacher_assignments': [{
-                    'assign_id': a.id,
-                    't_name': a.teacher.t_name,
-                    'subject': a.subject.subject_name,
-                    'role': a.role
-                } for a in cur_class.teacher_assignments]
+            'message': 'Class updated successfully!'
             }
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')

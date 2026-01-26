@@ -91,6 +91,7 @@ class ClassBase(BaseModel):
     id: int
     c_name: str
     r_name: str
+    created_at: datetime
     teacher_assignments: List[TeacherAssignedBase]
 
     model_config = ConfigDict(from_attributes=True)
@@ -100,6 +101,7 @@ class TeacherBase(BaseModel):
     id: int
     t_name: str
     max_classes: int
+    created_at: datetime
     class_assignments: List[ClassAssignedBase]
 
     model_config = ConfigDict(from_attributes=True)
@@ -117,6 +119,7 @@ class TeacherCreate(BaseModel):
 class SubjectBase(BaseModel):
     id: int
     subject: str
+    created_at: datetime
     min_per_day: Optional[int] = None
     max_per_day: Optional[int] = None
     min_per_week: Optional[int] = None
@@ -159,6 +162,7 @@ class SubjectUpdate(SubjectCreate):
 class TeacherClassAssignmentBase(BaseModel):
     id: int
     teacher_id: int
+    created_at: datetime
     t_name: str
     class_id: int
     c_name: str
@@ -209,6 +213,7 @@ class TimeTableJson(BaseModel):
 class AllTimeTable(BaseModel):
     timetable_id: int
     timetable_name: str
+    created_at: datetime
 
 #table structures
 
@@ -221,6 +226,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
     disabled: Mapped[bool] = mapped_column(default=False)
 
     #relationship with teachers, class, timetables, tokens
@@ -265,6 +271,7 @@ class Teacher(Base):
 
     t_name: Mapped[str] = mapped_column(String(50))
     max_classes: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
@@ -283,6 +290,8 @@ class Class(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     c_name: Mapped[str] = mapped_column(String(50), nullable=False)
     r_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
+
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     user: Mapped['User'] = relationship(back_populates='classes')
@@ -298,6 +307,8 @@ class Subject(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     subject_name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
+
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
     min_per_day: Mapped[Optional[int]] = mapped_column()
@@ -317,6 +328,7 @@ class TeacherClassAssignment(Base):
     __tablename__ = "teacher_class_assignments"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
 
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"))
     class_id: Mapped[int] = mapped_column(ForeignKey("classes.id"))
@@ -354,6 +366,7 @@ class TimeTable(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     timetable_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 

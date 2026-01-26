@@ -19,6 +19,7 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep, request: Reques
     for a in assignments:
         result.append({
             'id': a.id,
+            'created_at': a.created_at,
             'teacher_id': a.teacher_id,
             't_name': a.teacher.t_name,
             'class_id': a.class_id,
@@ -30,7 +31,7 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep, request: Reques
     
     return result
 
-@assign_routes.post('/assignments', response_model=TeacherClassAssignmentBase)
+@assign_routes.post('/assignments')
 @limiter.limit('10/minute')
 def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate, request: Request):
 
@@ -66,17 +67,10 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
     db.refresh(new_assignment)
 
     return {
-            'id': new_assignment.id,
-            'teacher_id': new_assignment.teacher_id,
-            't_name': new_assignment.teacher.t_name,
-            'class_id': new_assignment.class_id,
-            'c_name': new_assignment.class_.c_name,
-            'role': new_assignment.role,
-            'subject_id': new_assignment.subject_id,
-            'subject_name': new_assignment.subject.subject_name,
+        'message': 'Assignment created successfully!'
         }
     
-@assign_routes.put('/assignments/{id}', response_model=TeacherClassAssignmentBase)
+@assign_routes.put('/assignments/{id}')
 @limiter.limit('10/minute')
 def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentUpdate, id: int, request: Request):
     assignment = (
@@ -94,14 +88,7 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
     db.commit()
 
     return {
-            'id': assignment.id,
-            'teacher_id': assignment.teacher_id,
-            't_name': assignment.teacher.t_name,
-            'class_id': assignment.class_id,
-            'c_name': assignment.class_.c_name,
-            'role': assignment.role,
-            'subject_id': assignment.subject_id,
-            'subject_name': assignment.subject.subject_name,
+            'message': 'Assignment updated successfully!'
         }
 
 @assign_routes.delete('/assignments/{id}')

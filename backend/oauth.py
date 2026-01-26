@@ -66,7 +66,7 @@ async def get_current_user(request: Request, db: SessionDep):
     
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token Expires')
-    except jwt.PyJWKError:
+    except:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Token')
 
 # checking the user is not banned or revoked by the admin

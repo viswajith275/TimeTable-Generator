@@ -1,8 +1,14 @@
-# Backend
-backend/.env
-backend/.venv/
+# Python-generated files
 backend/__pycache__/
-backend/**/*.pyc
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+backend/.venv
+backend/.env
 
 # Frontend
 frontend/node_modules/

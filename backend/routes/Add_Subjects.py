@@ -19,6 +19,7 @@ def Fetch_all_subjects(current_user: UserDep, request: Request):
             result.append({
                 'id': s.id,
                 'subject':s.subject_name,
+                'created_at': s.created_at,
                 'min_per_day': s.min_per_day,
                 'max_per_day': s.max_per_day,
                 'min_per_week': s.min_per_week,
@@ -53,7 +54,7 @@ def Fetch_subject(current_user: UserDep, db: SessionDep, id: int, request: Reque
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
 
-@subject_routes.post('/subjects', response_model=SubjectBase)
+@subject_routes.post('/subjects')
 @limiter.limit('6/minute')
 def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate, request: Request):
     exists = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.subject_name == values.subject).first()
@@ -77,19 +78,9 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate,
     db.commit()
     db.refresh(subject)
 
-    return {
-                'id': subject.id,
-                'subject':subject.subject_name,
-                'min_per_day': subject.min_per_day,
-                'max_per_day': subject.max_per_day,
-                'min_per_week': subject.min_per_week,
-                'max_per_week': subject.max_per_week,
-                'min_consecutive_class': subject.min_consecutive_class,
-                'max_consecutive_class': subject.max_consecutive_class,
-                'is_hard_sub': subject.is_hard_sub
-            }
+    return {'message': 'Subject created successfully!'}
 
-@subject_routes.put('/subjects/{id}', response_model=SubjectBase)
+@subject_routes.put('/subjects/{id}')
 @limiter.limit('10/minute')
 def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate, id: int, request: Request):
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
@@ -106,15 +97,7 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
         db.commit()
 
         return {
-                'id': subject.id,
-                'subject':subject.subject_name,
-                'min_per_day': subject.min_per_day,
-                'max_per_day': subject.max_per_day,
-                'min_per_week': subject.min_per_week,
-                'max_per_week': subject.max_per_week,
-                'min_consecutive_class': subject.min_consecutive_class,
-                'max_consecutive_class': subject.max_consecutive_class,
-                'is_hard_sub': subject.is_hard_sub
+            'message': 'subject updated successfully!'
             }
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')

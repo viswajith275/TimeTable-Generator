@@ -19,7 +19,8 @@ def Fetch_All_timetables(current_user: UserDep, request: Request):
 
     return [{
         'timetable_id': timetable.id,
-        'timetable_name': timetable.timetable_name
+        'timetable_name': timetable.timetable_name,
+        'created_at': timetable.created_at
     } for timetable in timetables]
 
 
