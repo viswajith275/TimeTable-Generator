@@ -1,0 +1,44 @@
+.topbar {
+  flex: 1;
+  padding: 2rem 0rem 2rem 0rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: fit-content;
+  align-items: center;
+  width: 100%;
+}
+.profile {
+  display: flex;
+  flex-direction: row;
+  gap: 0.3rem;
+  justify-content: center;
+  height: fit-content;
+  align-items: center;
+  cursor: pointer;
+  color: var(--color-grey-900);
+  position: relative;
+}
+
+.backBtn {
+  display: flex;
+  flex-direction: row;
+  gap: 0.1rem;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.backBtn:hover {
+  gap: 0.3rem;
+}
+/* media queries */
+
+@media (max-width: 615px) {
+  .topbar {
+    padding: 2rem 0rem;
+  }
+
+  .topbar {
+    justify-content: space-between;
+  }
+}

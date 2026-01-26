@@ -63,7 +63,17 @@ input::placeholder {
   opacity: 0.8;
 }
 /* search input ends */
-
+.backBtn {
+  display: flex;
+  flex-direction: row;
+  gap: 0.1rem;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.backBtn:hover {
+  gap: 0.3rem;
+}
 /* media queries */
 
 @media (max-width: 615px) {

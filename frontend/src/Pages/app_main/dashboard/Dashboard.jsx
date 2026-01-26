@@ -4,8 +4,10 @@ import Topbar from "../Components/topbar/Topbar";
 import { Plus } from "lucide-react";
 import TableItem from "./Components/TableItem/TableItem";
 import Filter from "../Components/filter/Filter";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   return (
     <div className={styles.dashBoard}>
       <Navbar></Navbar>
@@ -18,7 +20,10 @@ const Dashboard = () => {
               <p>Create and manage timetables.</p>
             </div>
 
-            <button className={styles.createBtn}>
+            <button
+              className={styles.createBtn}
+              onClick={() => navigate("/dashboard/timetables/create")}
+            >
               <Plus />
               <p>Create New</p>
             </button>

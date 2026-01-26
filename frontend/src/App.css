@@ -43,7 +43,7 @@ input:-webkit-autofill {
   transition: background-color 5000s ease-in-out;
 }
 
-html{
+html {
   scroll-behavior: smooth;
 }
 
@@ -117,4 +117,39 @@ this shake animation is for error indication in inputfields */
   justify-content: center;
   min-height: 100vh;
   align-items: center;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+}
+
+.errorLabel {
+  color: var(--color-danger);
+  font-size: 12px;
+}
+
+.hidden {
+  display: none;
+}
+
+.errorInputField {
+  animation: shakeField 0.35s ease-in-out;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  background-color: var(--danger-bg);
+}
+
+.errorInputField input::placeholder {
+  color: var(--color-danger);
+}
+
+.errorInput {
+  animation: shakeField 0.35s ease-in-out;
+  color: var(--color-danger) !important;
+  border-color: var(--color-danger) !important;
+  background-color: var(--danger-bg) !important;
+}
+.errorInput::placeholder {
+  color: var(--color-danger);
 }

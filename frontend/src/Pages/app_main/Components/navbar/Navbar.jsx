@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import logoSmall from "../../../../assets/logo_small.png";
+import logoFullWidth from "../../../../assets/logo_full_width.png";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
@@ -17,7 +18,7 @@ const Navbar = () => {
 
   return (
     <div className={styles.navBar}>
-      <img src={logoSmall} width={50} alt="" />
+      <img src={logoFullWidth} width={"120px"} alt="" />
       <div className={styles.linkContainer}>
         <div className={styles.linkGroups}>
           <div
