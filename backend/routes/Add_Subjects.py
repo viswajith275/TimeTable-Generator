@@ -42,6 +42,7 @@ def Fetch_subject(current_user: UserDep, db: SessionDep, id: int, request: Reque
     if subject:
         return {
                 'id': subject.id,
+                'created_at': subject.created_at,
                 'subject':subject.subject_name,
                 'min_per_day': subject.min_per_day,
                 'max_per_day': subject.max_per_day,
@@ -57,6 +58,7 @@ def Fetch_subject(current_user: UserDep, db: SessionDep, id: int, request: Reque
 @subject_routes.post('/subjects')
 @limiter.limit('6/minute')
 def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate, request: Request):
+
     exists = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.subject_name == values.subject).first()
 
     if exists:
@@ -78,7 +80,22 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate,
     db.commit()
     db.refresh(subject)
 
+<<<<<<< HEAD
     return {'message': 'Subject created successfully!'}
+=======
+    return {
+                'id': subject.id,
+                'created_at': subject.created_at,
+                'subject':subject.subject_name,
+                'min_per_day': subject.min_per_day,
+                'max_per_day': subject.max_per_day,
+                'min_per_week': subject.min_per_week,
+                'max_per_week': subject.max_per_week,
+                'min_consecutive_class': subject.min_consecutive_class,
+                'max_consecutive_class': subject.max_consecutive_class,
+                'is_hard_sub': subject.is_hard_sub
+            }
+>>>>>>> bc210a9 (reverted the changes)
 
 @subject_routes.put('/subjects/{id}')
 @limiter.limit('10/minute')
@@ -97,7 +114,20 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
         db.commit()
 
         return {
+<<<<<<< HEAD
             'message': 'subject updated successfully!'
+=======
+                'id': subject.id,
+                'created_at': subject.created_at,
+                'subject':subject.subject_name,
+                'min_per_day': subject.min_per_day,
+                'max_per_day': subject.max_per_day,
+                'min_per_week': subject.min_per_week,
+                'max_per_week': subject.max_per_week,
+                'min_consecutive_class': subject.min_consecutive_class,
+                'max_consecutive_class': subject.max_consecutive_class,
+                'is_hard_sub': subject.is_hard_sub
+>>>>>>> bc210a9 (reverted the changes)
             }
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
