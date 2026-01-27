@@ -54,7 +54,7 @@ def fetch_teacher(id: int, current_user: UserDep, db: SessionDep, request: Reque
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
     
     
-@teacher_routes.post('/teachers')
+@teacher_routes.post('/teachers', response_model=TeacherBase)
 def add_teacher(current_user: UserDep, new_teacher: TeacherCreate, db: SessionDep, request: Request):
     teacher = Teacher(t_name=new_teacher.t_name, max_classes=new_teacher.max_classes, user_id=current_user.id)
 
@@ -62,9 +62,6 @@ def add_teacher(current_user: UserDep, new_teacher: TeacherCreate, db: SessionDe
     db.commit()
     db.refresh(teacher)
 
-<<<<<<< HEAD
-    return {'message': 'Teacher created successfully!'}
-=======
     return {
                 'id': teacher.id,
                 't_name': teacher.t_name,
@@ -79,9 +76,8 @@ def add_teacher(current_user: UserDep, new_teacher: TeacherCreate, db: SessionDe
                 } for c in teacher.class_assignments]
                     
             }
->>>>>>> bc210a9 (reverted the changes)
 
-@teacher_routes.put('/teachers/{id}')
+@teacher_routes.put('/teachers/{id}', response_model=TeacherBase)
 @limiter.limit('10/minute')
 def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: TeacherCreate, request: Request):
     updated_teacher = db.query(Teacher).filter(Teacher.id == id, Teacher.user_id == current_user.id).first()
@@ -93,9 +89,6 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
         db.refresh(updated_teacher)
 
         return {
-<<<<<<< HEAD
-            'message': 'Teacher updated successfully!'  
-=======
                 'id': updated_teacher.id,
                 'created_at': updated_teacher.created_at,
                 't_name': updated_teacher.t_name,
@@ -108,7 +101,6 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
                     'role': c.role
                 } for c in updated_teacher.class_assignments]
                     
->>>>>>> bc210a9 (reverted the changes)
             }
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
 

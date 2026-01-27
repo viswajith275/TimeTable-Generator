@@ -46,7 +46,7 @@ class UserCreate(BaseModel):
         
     @field_validator('password')
     @classmethod
-    def password_constraints(cls, v: str) -> None:
+    def password_constraints(cls, v: str) -> str:
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters long')
         if len(v) > 20:
@@ -141,7 +141,7 @@ class SubjectCreate(BaseModel):
     is_hard_sub: Hardness
 
     @model_validator(mode='after')
-    def max_min_validation(self):
+    def max_min_validation(self) -> 'SubjectCreate':
         if self.min_per_day is not None and self.max_per_day is not None:
             if self.min_per_day > self.max_per_day:
                 raise ValueError("The max value should be greater than min value!")
@@ -153,6 +153,8 @@ class SubjectCreate(BaseModel):
         if self.min_consecutive_class is not None and self.max_consecutive_class is not None:
             if self.min_consecutive_class > self.max_consecutive_class:
                 raise ValueError("The max value should be greater than min value!")
+        
+        return self
 
 
 class SubjectUpdate(SubjectCreate):

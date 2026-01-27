@@ -35,11 +35,11 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
     if not timetable:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='TimeTables does not exist!')
 
-
-    for a in timetable:
-        formatted_entries = []
-        for entry in a.entries:
-            formatted_entries.append({
+    return {
+            'id': timetable.id,
+            'name': timetable.timetable_name,
+            'assignments': [{
+                
                 'id': entry.id,
                 'assign_id': entry.assignment_id,
                 'day': entry.day,
@@ -47,12 +47,8 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
                 'subject': entry.assignment.subject.subject_name,
                 'teacher_name': entry.assignment.teacher.t_name,
                 'class_name':  entry.assignment.class_.c_name
-            })
 
-    return {
-            'id': a.id,
-            'name': a.timetable_name,
-            'assignments': formatted_entries
+            } for entry in timetable.entries]
             }
     
     

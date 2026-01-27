@@ -50,7 +50,7 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep, request: Request
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
 
 
-@class_routes.post('/classes')
+@class_routes.post('/classes', response_model=ClassBase)
 @limiter.limit('10/minute')
 def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, request: Request):
     new_class = Class(c_name=classes.c_name, r_name=classes.r_name, user_id=current_user.id)
@@ -59,11 +59,6 @@ def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, reque
     db.commit()
     db.refresh(new_class)
 
-<<<<<<< HEAD
-    return {'message': 'Class created successfully!'}
-
-
-=======
     return {
                 'id': new_class.id,
                 'c_name': new_class.c_name,
@@ -77,8 +72,7 @@ def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, reque
                 } for a in new_class.teacher_assignments]
             }
 
->>>>>>> bc210a9 (reverted the changes)
-@class_routes.put('/classes/{id}')
+@class_routes.put('/classes/{id}', response_model=ClassBase)
 @limiter.limit('10/minute')
 def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: ClassCreate, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
@@ -90,9 +84,6 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
         db.refresh(cur_class)
 
         return {
-<<<<<<< HEAD
-            'message': 'Class updated successfully!'
-=======
                 'id': cur_class.id,
                 'c_name': cur_class.c_name,
                 'r_name': cur_class.r_name,
@@ -103,7 +94,6 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
                     'subject': a.subject.subject_name,
                     'role': a.role
                 } for a in cur_class.teacher_assignments]
->>>>>>> bc210a9 (reverted the changes)
             }
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')

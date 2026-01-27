@@ -55,7 +55,7 @@ def Fetch_subject(current_user: UserDep, db: SessionDep, id: int, request: Reque
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
 
-@subject_routes.post('/subjects')
+@subject_routes.post('/subjects', response_model=SubjectBase)
 @limiter.limit('6/minute')
 def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate, request: Request):
 
@@ -80,9 +80,6 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate,
     db.commit()
     db.refresh(subject)
 
-<<<<<<< HEAD
-    return {'message': 'Subject created successfully!'}
-=======
     return {
                 'id': subject.id,
                 'created_at': subject.created_at,
@@ -95,9 +92,8 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate,
                 'max_consecutive_class': subject.max_consecutive_class,
                 'is_hard_sub': subject.is_hard_sub
             }
->>>>>>> bc210a9 (reverted the changes)
 
-@subject_routes.put('/subjects/{id}')
+@subject_routes.put('/subjects/{id}', response_model=SubjectBase)
 @limiter.limit('10/minute')
 def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate, id: int, request: Request):
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
@@ -114,9 +110,6 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
         db.commit()
 
         return {
-<<<<<<< HEAD
-            'message': 'subject updated successfully!'
-=======
                 'id': subject.id,
                 'created_at': subject.created_at,
                 'subject':subject.subject_name,
@@ -127,7 +120,6 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
                 'min_consecutive_class': subject.min_consecutive_class,
                 'max_consecutive_class': subject.max_consecutive_class,
                 'is_hard_sub': subject.is_hard_sub
->>>>>>> bc210a9 (reverted the changes)
             }
     
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')

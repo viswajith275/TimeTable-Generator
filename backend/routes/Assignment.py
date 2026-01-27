@@ -31,7 +31,7 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep, request: Reques
     
     return result
 
-@assign_routes.post('/assignments')
+@assign_routes.post('/assignments', response_model=TeacherClassAssignmentBase)
 @limiter.limit('10/minute')
 def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentCreate, request: Request):
 
@@ -67,9 +67,6 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
     db.refresh(new_assignment)
 
     return {
-<<<<<<< HEAD
-        'message': 'Assignment created successfully!'
-=======
             'id': new_assignment.id,
             'created_at': new_assignment.created_at,
             'teacher_id': new_assignment.teacher_id,
@@ -79,10 +76,9 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
             'role': new_assignment.role,
             'subject_id': new_assignment.subject_id,
             'subject_name': new_assignment.subject.subject_name,
->>>>>>> bc210a9 (reverted the changes)
         }
     
-@assign_routes.put('/assignments/{id}')
+@assign_routes.put('/assignments/{id}', response_model=TeacherClassAssignmentBase)
 @limiter.limit('10/minute')
 def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClassAssignmentUpdate, id: int, request: Request):
     assignment = (
@@ -100,9 +96,6 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
     db.commit()
 
     return {
-<<<<<<< HEAD
-            'message': 'Assignment updated successfully!'
-=======
             'id': assignment.id,
             'created_at': assignment.created_at,
             'teacher_id': assignment.teacher_id,
@@ -112,7 +105,6 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
             'role': assignment.role,
             'subject_id': assignment.subject_id,
             'subject_name': assignment.subject.subject_name,
->>>>>>> bc210a9 (reverted the changes)
         }
 
 @assign_routes.delete('/assignments/{id}')
