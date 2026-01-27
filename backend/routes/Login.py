@@ -15,7 +15,6 @@ login_routes = APIRouter(tags=['Authentication'])
 
 #sigh up endpoint
 @login_routes.post('/register', response_model=UsersBase)
-@limiter.limit('10/minute')
 def register_user(db: SessionDep, user: UserCreate, request: Request):
     exists = db.query(User).filter(or_(User.username == user.username, User.email == user.email)).first()
 
@@ -33,7 +32,6 @@ def register_user(db: SessionDep, user: UserCreate, request: Request):
 
 #login endpoint
 @login_routes.post('/login', response_model=UsersBase)
-@limiter.limit('10/minute')
 async def login_for_access_token(db: SessionDep,response: Response , form_data: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request):
     
     user = db.query(User).filter(User.username == form_data.username).first()
@@ -76,7 +74,6 @@ async def login_for_access_token(db: SessionDep,response: Response , form_data: 
 
 #refreshing the access and refresh tokens
 @login_routes.post('/refresh')
-@limiter.limit('3/15minute')
 def refresh_tokens(request: Request, response: Response, db: SessionDep):
     
     refresh_token = request.cookies.get('refresh_token')
@@ -139,7 +136,6 @@ def refresh_tokens(request: Request, response: Response, db: SessionDep):
 
 
 @login_routes.post('/logout')
-@limiter.limit('50/15minute')
 def logout_user(request: Request, response: Response, db: SessionDep):
 
     refresh_token = request.cookies.get('refresh_token')

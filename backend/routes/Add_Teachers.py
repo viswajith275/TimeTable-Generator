@@ -8,7 +8,6 @@ from backend.models import Teacher,TeacherCreate, TeacherBase
 teacher_routes = APIRouter(tags=['Teachers'])
 
 @teacher_routes.get('/teachers', response_model=List[TeacherBase])
-@limiter.limit('6/minute')
 def fetch_all_teachers(current_user: UserDep, request: Request):
     teachers = current_user.teachers
     if teachers:
@@ -33,7 +32,6 @@ def fetch_all_teachers(current_user: UserDep, request: Request):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teachers not found!")
 
 @teacher_routes.get('/teachers/{id}', response_model=TeacherBase)
-@limiter.limit('10/minute')
 def fetch_teacher(id: int, current_user: UserDep, db: SessionDep, request: Request):
     teacher = db.query(Teacher).filter(Teacher.id == id and Teacher.user_id == current_user.id).first()
     if teacher:
@@ -78,7 +76,6 @@ def add_teacher(current_user: UserDep, new_teacher: TeacherCreate, db: SessionDe
             }
 
 @teacher_routes.put('/teachers/{id}', response_model=TeacherBase)
-@limiter.limit('10/minute')
 def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: TeacherCreate, request: Request):
     updated_teacher = db.query(Teacher).filter(Teacher.id == id, Teacher.user_id == current_user.id).first()
     if updated_teacher:
@@ -105,7 +102,6 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
 
 @teacher_routes.delete('/teachers/{id}')
-@limiter.limit('40/minute')
 def delete_teacher(id: int, current_user: UserDep, db: SessionDep, request: Request):
     teacher = db.query(Teacher).filter(Teacher.id == id, Teacher.user_id == current_user.id).first()
     if teacher:

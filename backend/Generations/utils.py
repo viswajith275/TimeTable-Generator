@@ -125,13 +125,13 @@ def Generate_Timetable(db, assignments, data, user_id):
                     for i in range(len(all_slotes)):
 
                         cur = slotes[i]
-                        prev = slotes[i-1] if i > 0 else None
-                        next = slotes[i+1] if i < len(all_slotes) - 1 else None
+                        prev = slotes[i-1]
+                        next = slotes[i+1]
 
                         neighbors = []
-                        if prev:
+                        if i != 0:
                             neighbors.append(prev)
-                        if next:
+                        if i < len(all_slotes):
                             neighbors.append(next)
                         
                         if neighbors:

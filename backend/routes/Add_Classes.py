@@ -9,7 +9,6 @@ from backend.models import Class, ClassBase, ClassCreate
 class_routes = APIRouter(tags=['Classes'])
 
 @class_routes.get('/classes', response_model=List[ClassBase])
-@limiter.limit('5/minute')
 def Fetch_All_Classes(current_user: UserDep, request: Request):
     classes = current_user.classes
     if classes:
@@ -31,7 +30,6 @@ def Fetch_All_Classes(current_user: UserDep, request: Request):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Classes not found!')
 
 @class_routes.get('/classes/{id}', response_model=ClassBase)
-@limiter.limit('15/minute')
 def Fetch_Class(id: int, current_user: UserDep, db: SessionDep, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
     if cur_class:
@@ -51,7 +49,6 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep, request: Request
 
 
 @class_routes.post('/classes', response_model=ClassBase)
-@limiter.limit('10/minute')
 def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, request: Request):
     new_class = Class(c_name=classes.c_name, r_name=classes.r_name, user_id=current_user.id)
 
@@ -73,7 +70,6 @@ def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, reque
             }
 
 @class_routes.put('/classes/{id}', response_model=ClassBase)
-@limiter.limit('10/minute')
 def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: ClassCreate, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
     if cur_class:
@@ -100,7 +96,6 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
 
 
 @class_routes.delete('/classes/{id}')
-@limiter.limit('40/minute')
 def delete_class(id: int, current_user: UserDep, db: SessionDep, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
     if cur_class:
