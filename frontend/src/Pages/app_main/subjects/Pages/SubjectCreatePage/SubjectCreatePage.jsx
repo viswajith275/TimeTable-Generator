@@ -48,24 +48,16 @@ const SubjectCreatePage = () => {
     }
 
     if (minDay > maxDay) {
-      e.min_per_day =
-        "The minimum number of classes per day cannot be greater than the maximum.";
+      e.min_per_day = "Minimum per day cannot be greater than maximum.";
     }
 
     if (minWeek > maxWeek) {
-      e.min_per_week =
-        "The minimum number of classes per week cannot be greater than the maximum.";
-    } else if (minWeek < minDay) {
-      e.min_per_week =
-        "The minimum weekly classes cannot be less than the minimum daily classes.";
-    } else if (maxWeek > maxDay * 5) {
-      e.min_per_week =
-        "The maximum weekly classes exceed what is possible based on daily limits.";
+      e.min_per_week = "Minimum per week cannot be greater than maximum.";
     }
 
     if (minCon > maxCon) {
       e.min_consecutive_class =
-        "The minimum consecutive classes cannot be greater than the maximum.";
+        "Minimum consecutive classes cannot be greater than maximum.";
     }
 
     setErrors(e);

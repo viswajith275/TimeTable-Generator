@@ -56,6 +56,7 @@ const TimeTableCreate = () => {
 
     try {
       setLoading(true);
+      console.log(payload);
 
       const { data } = await axios.post("/api/generate", payload);
 
