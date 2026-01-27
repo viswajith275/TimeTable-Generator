@@ -15,7 +15,7 @@ def Fetch_All_timetables(current_user: UserDep, request: Request):
     timetables = current_user.timetables
 
     if not timetables:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='TimeTables does not exist!')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No timetables found!')
 
     return [{
         'timetable_id': timetable.id,
@@ -60,7 +60,7 @@ def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Dat
     teacher_class_assignments = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).all()
 
     if not teacher_class_assignments:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = 'No teacher assigned to any class!')
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail = 'No teacher assigned to any class!')
     
     new_timetable = Generate_Timetable(db=db, assignments=teacher_class_assignments, data=data, user_id=current_user.id)
 
