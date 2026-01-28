@@ -33,21 +33,37 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
 
     if not timetable:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='TimeTables does not exist!')
+    
+    formated_assignments = [{
+        'class_name': c.c_name,
+        'assignments': []
+        } for c in current_user.classes]
+    
+    class_name_to_index = {
+        c.get('class_name') : index
+        for index, c in enumerate(formated_assignments)
+    }
+    
+    for entry in timetable.entries:
 
-    return {
-            'id': timetable.id,
-            'name': timetable.timetable_name,
-            'assignments': [{
-                
-                'id': entry.id,
+        formated_entry = {
                 'assign_id': entry.assignment_id,
                 'day': entry.day,
                 'slot': entry.slot,
                 'subject': entry.assignment.subject.subject_name,
                 'teacher_name': entry.assignment.teacher.t_name,
-                'class_name':  entry.assignment.class_.c_name
+            }
+        
+        index = class_name_to_index.get(entry.assignment.class_.c_name)
 
-            } for entry in timetable.entries]
+        formated_assignments[index]['assignments'] = formated_assignments[index].get('assignments', []) + [formated_entry]
+
+        
+
+    return {
+            'id': timetable.id,
+            'name': timetable.timetable_name,
+            'assignments': formated_assignments
             }
     
     

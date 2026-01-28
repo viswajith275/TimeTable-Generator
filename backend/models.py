@@ -193,22 +193,24 @@ class Generate_Data(BaseModel):
 
 #Timetable Entries of an timetable data model
 class TimeTableEntryJson(BaseModel):
-    id: int
     assign_id: int
     day: str
     slot: int
     subject: str
     teacher_name: str
-    class_name: str
 
     model_config = ConfigDict(from_attributes=True)
+
+class PerClassTimetableEntryJson(BaseModel):
+    class_name: str
+    assignments: List[TimeTableEntryJson]
 
 #Timetable Return structure
 class TimeTableJson(BaseModel):
     id: int
     name: str
     
-    assignments: List[TimeTableEntryJson]
+    assignments: List[PerClassTimetableEntryJson]
 
     model_config = ConfigDict(from_attributes=True)
 
