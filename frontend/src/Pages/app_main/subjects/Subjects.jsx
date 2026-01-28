@@ -13,7 +13,6 @@ const Subjects = () => {
 
   const { subjects, setSubjects, subjectsLoaded, fetchSubjects, error } =
     useSubjects();
-
   const [isSubjectsLoading, setIsSubjectsLoading] = useState(true);
 
   // fetch once + smooth loader
@@ -81,10 +80,8 @@ const Subjects = () => {
         <div className={styles.gridSubjects}>
           {isSubjectsLoading ? (
             <ErrorLoadingStates state="loading" />
-          ) : error ? (
-            <ErrorLoadingStates state="error" />
           ) : (
-            subjects.map((value) => (
+            Object.values(subjects).map((value) => (
               <SubjectItem
                 key={value.id}
                 id={value.id}
@@ -102,13 +99,15 @@ const Subjects = () => {
             ))
           )}
 
-          {subjects.length === 0 && !isSubjectsLoading && !error && (
-            <ErrorLoadingStates
-              state="empty"
-              listName="subject"
-              btnName="Add Subject"
-            />
-          )}
+          {Object.values(subjects).length === 0 &&
+            !isSubjectsLoading &&
+            !error && (
+              <ErrorLoadingStates
+                state="empty"
+                listName="subject"
+                btnName="Add Subject"
+              />
+            )}
         </div>
       </div>
     </div>

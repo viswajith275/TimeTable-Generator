@@ -4,6 +4,7 @@ import Navbar from "../../../Components/navbar/Navbar";
 import axios from "axios";
 import TopbarLite from "../../../Components/topbar/TopbarLite";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../../../Context/AuthProvider";
 
 const DAYS = [
   { label: "Mon", value: "Monday" },
@@ -16,6 +17,7 @@ const DAYS = [
 ];
 
 const TimeTableCreate = () => {
+  const { refreshToken } = useAuth();
   const [timetableName, setTimetableName] = useState("");
   const [nameError, setNameError] = useState("");
   const [slots, setSlots] = useState(6);
@@ -28,7 +30,7 @@ const TimeTableCreate = () => {
     );
   };
 
-  const handleSubmission = async (e) => {
+  const handleSubmission = async (e, hasRetried = false) => {
     e.preventDefault();
 
     setNameError("");
@@ -62,6 +64,16 @@ const TimeTableCreate = () => {
 
       // navigate(`/dashboard/timetable/${data.id}`);
     } catch (err) {
+      if (err?.response?.status == 401 && !hasRetried) {
+        await refreshToken();
+        await handleSubmission(e, true);
+        return;
+      } else if (err?.response?.status == 400) {
+        toast.error(
+          "The current constraints prevent timetable generation. Please review and edit them.",
+        );
+        return;
+      }
       toast.error("Failed to create timetable. Please try again.");
     } finally {
       setLoading(false);

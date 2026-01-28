@@ -14,7 +14,7 @@ const SubjectsProvider = ({ children }) => {
   useEffect(() => {
     if (!isAuthenticated) {
       setSubjects([]);
-      setSubjects(false);
+      setSubjectsLoaded(false);
       setError(null);
     }
   }, [isAuthenticated]);

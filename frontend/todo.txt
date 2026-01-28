@@ -3,3 +3,4 @@ TO DO
 Edit subjects 
 Edit teacher-class Assigments
 
+Subject creation -> min,max settings -> default value none.. add it
