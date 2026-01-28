@@ -83,17 +83,19 @@ const ClassItem = ({ roomName, roomNumber, id, deleteClass, editClass }) => {
   //edit mode part
   if (isEditMode) {
     return (
-      <div className={styles.classItem}>
+      <div className={`${styles.classItem} ${styles.editMode}`}>
         <div className={styles.itemHeading}>
           <input
             type="text"
             onKeyDown={handleKeyDown}
             placeholder="Edit class name"
             value={formData.c_name}
-            onChange={(e) => {
-              setFormData({ ...formData, c_name: e.target.value });
-            }}
+            onChange={(e) =>
+              setFormData({ ...formData, c_name: e.target.value })
+            }
+            className={styles.editInputTitle}
           />
+
           <div className={styles.actionBtns}>
             <button className={styles.actionBtn__Item} onClick={handleCancel}>
               <X size={sizeActionItems} />
@@ -108,18 +110,19 @@ const ClassItem = ({ roomName, roomNumber, id, deleteClass, editClass }) => {
             </button>
           </div>
         </div>
+
         <input
           type="text"
           onKeyDown={handleKeyDown}
           placeholder="Edit room number"
           value={formData.r_name}
-          onChange={(e) => {
-            setFormData({ ...formData, r_name: e.target.value });
-          }}
+          onChange={(e) => setFormData({ ...formData, r_name: e.target.value })}
+          className={styles.editInputSub}
         />
       </div>
     );
   }
+
   //main box item
   return (
     <div className={styles.classItem}>

@@ -12,6 +12,7 @@ import AssignmentItem from "./Components/AssignmentItem";
 import TeacherAssignPopup from "./Components/TeacherAssignPopup";
 import { useSubjects } from "../../../../../Context/SubjectProvider";
 import { useClasses } from "../../../../../Context/ClassesProvider";
+import TopbarLite from "../../../Components/topbar/TopbarLite";
 
 const TeacherDetailsEditPage = () => {
   const { classesLoaded, fetchClasses } = useClasses();
@@ -150,6 +151,7 @@ const TeacherDetailsEditPage = () => {
 
       <div className={styles.mainPanelPlaceholder}>
         <div className={styles.mainPanel}>
+          <TopbarLite />
           <div className={styles.mainPanel__headings}>
             <h2>Edit Teacher Details</h2>
           </div>

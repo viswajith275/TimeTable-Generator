@@ -22,7 +22,8 @@
   /* Backgrounds */
   --color-bg: #ffffff; /* white background */
   --color-bg-light: #fafafa;
-  --color-bg-muted: #f5f5f5; /* subtle light grey */
+  --color-bg-muted: #f5f5f5;
+  /* subtle light grey */
 
   /* Status Colors */
   --color-success: #2ecc71;

@@ -1,55 +1,92 @@
 .classItem {
-  padding: 1rem 1.5rem;
+  padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  border-radius: 0.7rem;
+  gap: 0.6rem;
+  border-radius: 0.75rem;
   background-color: var(--color-bg);
+  transition: background-color 0.2s ease;
 }
+
+.editMode {
+  background-color: var(--color-bg-light);
+}
+
 .classItem p {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--color-grey-500);
 }
+
 .itemHeading {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 }
+
 .itemHeading h3 {
   color: var(--color-primary);
   font-size: 20px;
+  font-weight: 600;
 }
+
 .actionBtns {
   display: flex;
-  flex-direction: row;
-  gap: 0.8rem;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
 }
 
 .actionBtn__Item {
   border: none;
-  background-color: transparent;
+  background: transparent;
   cursor: pointer;
-
-  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-grey-700);
+  transition: opacity 0.2s ease;
 }
+
 .actionBtn__Item:hover {
   opacity: 0.7;
 }
+
 .deleteBtn {
   color: var(--color-danger);
 }
 
 .tickBtn {
   color: var(--color-success);
-  cursor: pointer;
 }
+
 .tickBtn:disabled {
   color: var(--color-grey-500);
   cursor: not-allowed;
 }
+
 .classItem input {
-  padding: 0rem 0.25rem;
+  background: transparent;
   border: none;
-  border-bottom: 1px solid var(--color-primary);
-  overflow-x: hidden;
-  width: fit-content;
+  outline: none;
+  padding: 0;
+  width: 100%;
+}
+
+.editInputTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.editInputSub {
+  font-size: 15px;
+  color: var(--color-grey-500);
+}
+
+/* subtle, clean edit affordance */
+.editInputTitle:focus,
+.editInputSub:focus {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }

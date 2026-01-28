@@ -1,15 +1,23 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "./AuthProvider";
 
 const SubjectsContext = createContext(null);
 
 const SubjectsProvider = ({ children }) => {
-  const { refreshToken } = useAuth();
+  const { refreshToken, isAuthenticated } = useAuth();
 
   const [subjects, setSubjects] = useState([]);
   const [subjectsLoaded, setSubjectsLoaded] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setSubjects([]);
+      setSubjects(false);
+      setError(null);
+    }
+  }, [isAuthenticated]);
 
   const fetchSubjects = async (hasRetried = false) => {
     // prevent refetch once loaded

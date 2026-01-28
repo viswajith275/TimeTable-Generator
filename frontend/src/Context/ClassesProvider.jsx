@@ -1,15 +1,25 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "./AuthProvider";
 
 const ClassesContext = createContext(null);
 
 const ClassesProvider = ({ children }) => {
-  const { refreshToken } = useAuth();
+  const { refreshToken, isAuthenticated } = useAuth();
 
   const [classes, setClasses] = useState([]);
   const [classesLoaded, setClassesLoaded] = useState(false);
   const [error, setError] = useState(null);
+
+  //clear data on logout
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setClasses([]);
+      setClassesLoaded(false);
+      setError(null);
+    }
+  }, [isAuthenticated]);
 
   const fetchClasses = async (hasRetried = false) => {
     //  prevent refetch if already loaded
