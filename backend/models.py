@@ -42,6 +42,8 @@ class UserCreate(BaseModel):
     def username_validation(cls, u: str) -> str:
         if ' ' in u:
             raise ValueError('Username cannot contain spaces')
+        if len(u) < 3 or len(u) > 20:
+            raise ValueError('Length of username should be between 3 and 20')
         return u
         
     @field_validator('password')
@@ -188,26 +190,30 @@ class TeacherClassAssignmentUpdate(BaseModel):
 #Timetable generation data model
 class Generate_Data(BaseModel):
     timetable_name: str
-    slotes: int
+    slots: int
     days: List[WeekDay]
 
 #Timetable Entries of an timetable data model
 class TimeTableEntryJson(BaseModel):
-    day: str
     slot: int
     subject: str
     teacher_name: str
 
     model_config = ConfigDict(from_attributes=True)
 
+class PerDayTimeTableEntryJson(BaseModel):
+    day: WeekDay
+    assignments: List[TimeTableEntryJson]
+
 class PerClassTimetableEntryJson(BaseModel):
     class_name: str
-    assignments: List[TimeTableEntryJson]
+    assignments: List[PerDayTimeTableEntryJson]
 
 #Timetable Return structure
 class TimeTableJson(BaseModel):
     id: int
     name: str
+    slots: int
     
     assignments: List[PerClassTimetableEntryJson]
 
@@ -369,6 +375,7 @@ class TimeTable(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     timetable_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    slots: Mapped[int] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

@@ -26,7 +26,7 @@ def Fetch_All_timetables(current_user: UserDep, request: Request):
 
 
 
-@generate_routes.get('/timetables/{id}', response_model=TimeTableJson)
+@generate_routes.get('/timetables/{id', response_model=TimeTableJson)
 def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: SessionDep):
     #timetables fetching
     timetable = db.query(TimeTable).filter(TimeTable.id == id, TimeTable.user_id == current_user.id).first()
@@ -35,35 +35,44 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='TimeTables does not exist!')
     
     class_in_timetables = db.query(TimeTableEntry.class_name).filter(TimeTableEntry.timetable_id == timetable.id).distinct().all()
+    days_in_timetables = db.query(TimeTableEntry.day).filter(TimeTableEntry.timetable_id == timetable.id).distinct().all()
+
 
     formated_assignments = [{
         'class_name': c[0],
-        'assignments': []
+        'assignments': [{
+            'day': d[0],
+            'assignments': []
+        } for d in days_in_timetables]
         } for c in class_in_timetables]
     
     class_name_to_index = {
         c.get('class_name') : index
         for index, c in enumerate(formated_assignments)
     }
-    
+    days_to_index = {
+        d.get('day'): index
+        for index, d in enumerate(formated_assignments[0]['assignments'])
+    }
     for entry in timetable.entries:
 
         formated_entry = {
-                'day': entry.day,
                 'slot': entry.slot,
                 'subject': entry.subject_name,
                 'teacher_name': entry.teacher_name,
             }
         
-        index = class_name_to_index.get(entry.class_name)
+        class_index = class_name_to_index.get(entry.class_name)
+        day_index = days_to_index.get(entry.day)
 
-        formated_assignments[index]['assignments'] = formated_assignments[index].get('assignments', []) + [formated_entry]
+        formated_assignments[class_index]['assignments'][day_index]['assignments'] = formated_assignments[class_index]['assignments'][day_index].get('assignments', []) + [formated_entry]
 
         
 
     return {
             'id': timetable.id,
             'name': timetable.timetable_name,
+            'slots': timetable.slots,
             'assignments': formated_assignments
             }
     

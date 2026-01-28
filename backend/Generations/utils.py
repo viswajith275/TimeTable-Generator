@@ -15,7 +15,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                 all_days[i] = WeekDay[d.upper()]
 
     day_indices = range(len(all_days))
-    all_slotes = range(1,data.slotes+1)
+    all_slotes = range(1,data.slots+1)
     Hardness_maping = {
         'Low': 1,
         'Med': 2,
@@ -207,7 +207,7 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
         try:
-            new_timetable = TimeTable(timetable_name=data.timetable_name, user_id=user_id)
+            new_timetable = TimeTable(timetable_name=data.timetable_name, user_id=user_id, slots=data.slots)
             db.add(new_timetable)
             db.flush()
             db.refresh(new_timetable)
