@@ -220,7 +220,9 @@ def Generate_Timetable(db, assignments, data, user_id):
                             # store WeekDay enum member (not string) to match DB enum type
                             entry = TimeTableEntry(
                                 timetable_id=new_timetable.id,
-                                assignment_id=assignment.id,
+                                class_name=assignment.class_.c_name,
+                                teacher_name=assignment.teacher.t_name,
+                                subject_name=assignment.subject.subject_name,
                                 day=all_days[d],
                                 slot=s
                             )

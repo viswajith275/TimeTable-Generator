@@ -193,7 +193,6 @@ class Generate_Data(BaseModel):
 
 #Timetable Entries of an timetable data model
 class TimeTableEntryJson(BaseModel):
-    assign_id: int
     day: str
     slot: int
     subject: str
@@ -344,7 +343,6 @@ class TeacherClassAssignment(Base):
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")
     class_: Mapped["Class"] = relationship(back_populates="teacher_assignments")
     subject: Mapped["Subject"] = relationship(back_populates="subject_assignments") 
-    timetable_entries: Mapped[List["TimeTableEntry"]] = relationship(back_populates="assignment", cascade="all, delete-orphan")
 
 #TimeTable Entry Table data (Assigns date and slot for teacher class assignments)
 class TimeTableEntry(Base):
@@ -354,13 +352,14 @@ class TimeTableEntry(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     timetable_id: Mapped[int] = mapped_column(ForeignKey("timetables.id"))
+    class_name: Mapped[str] = mapped_column()
+    teacher_name: Mapped[str] = mapped_column()
+    subject_name: Mapped[str] = mapped_column()
 
-    assignment_id: Mapped[int] = mapped_column(ForeignKey('teacher_class_assignments.id'))
 
     day: Mapped[WeekDay] = mapped_column(Enum(WeekDay))
     slot: Mapped[int] = mapped_column(nullable=False)
 
-    assignment: Mapped["TeacherClassAssignment"] = relationship(back_populates="timetable_entries")
     timetable: Mapped["TimeTable"] = relationship(back_populates='entries')
 
 #Timetable table schema (Maps Timetable entries under a single name)

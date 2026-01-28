@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Request
 from backend.database import SessionDep
 from backend.oauth import UserDep
-from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable, AllTimeTable
+from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable, AllTimeTable, TimeTableEntry
 from backend.Generations.utils import Generate_Timetable
 from backend.rate_limiter_deps import limiter
 from typing import List
@@ -34,10 +34,12 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
     if not timetable:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='TimeTables does not exist!')
     
+    class_in_timetables = db.query(TimeTableEntry.class_name).filter(TimeTableEntry.timetable_id == timetable.id).distinct().all()
+
     formated_assignments = [{
-        'class_name': c.c_name,
+        'class_name': c[0],
         'assignments': []
-        } for c in current_user.classes]
+        } for c in class_in_timetables]
     
     class_name_to_index = {
         c.get('class_name') : index
@@ -47,14 +49,13 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
     for entry in timetable.entries:
 
         formated_entry = {
-                'assign_id': entry.assignment_id,
                 'day': entry.day,
                 'slot': entry.slot,
-                'subject': entry.assignment.subject.subject_name,
-                'teacher_name': entry.assignment.teacher.t_name,
+                'subject': entry.subject_name,
+                'teacher_name': entry.teacher_name,
             }
         
-        index = class_name_to_index.get(entry.assignment.class_.c_name)
+        index = class_name_to_index.get(entry.class_name)
 
         formated_assignments[index]['assignments'] = formated_assignments[index].get('assignments', []) + [formated_entry]
 
