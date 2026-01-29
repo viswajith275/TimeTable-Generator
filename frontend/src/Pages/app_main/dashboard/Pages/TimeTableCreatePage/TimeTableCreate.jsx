@@ -52,7 +52,7 @@ const TimeTableCreate = () => {
 
     const payload = {
       timetable_name: timetableName.trim(),
-      slotes: Number(slots),
+      slots: Number(slots),
       days: selectedDays,
     };
 

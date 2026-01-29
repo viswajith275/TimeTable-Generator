@@ -14,6 +14,7 @@ import SubjectCreatePage from "../../Pages/app_main/subjects/Pages/SubjectCreate
 import TeacherDetailsEditPage from "../../Pages/app_main/teachers/Pages/TeacherDetailsEdit/TeacherDetailsEditPage";
 import TermsAndConditions from "../../Pages/legal/termsAndConditions/TermsAndConditions";
 import TimeTableCreate from "../../Pages/app_main/dashboard/Pages/TimeTableCreatePage/TimeTableCreate";
+import TimeTableView from "../../Pages/app_main/dashboard/Pages/TimeTableViewPage/TimeTableView";
 
 const RouteManager = () => {
   return (
@@ -77,6 +78,15 @@ const RouteManager = () => {
           </ProtectedRoutes>
         }
       />
+      <Route
+        path="/dashboard/timetables/:timeTableID"
+        element={
+          <ProtectedRoutes>
+            <TimeTableView />
+          </ProtectedRoutes>
+        }
+      />
+
       <Route
         path="/classes"
         element={

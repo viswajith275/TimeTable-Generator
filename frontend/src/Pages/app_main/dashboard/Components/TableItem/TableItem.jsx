@@ -2,8 +2,10 @@ import styles from "./TableItem.module.css";
 import { Eye, SquarePen, Download, Trash2, ChevronRight } from "lucide-react";
 import { useAuth } from "../../../../../Context/AuthProvider";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 const TableItem = ({ id, tableName, deleteTable }) => {
+  const navigate = useNavigate();
   let sizeActionItems = 20;
   const { refreshToken } = useAuth();
 
@@ -44,7 +46,10 @@ const TableItem = ({ id, tableName, deleteTable }) => {
         </div>
       </div>
       <div className={styles.progressBarItemContainer}></div>
-      <div className={styles.viewDetailsBtn}>
+      <div
+        className={styles.viewDetailsBtn}
+        onClick={() => navigate(`/dashboard/timetables/${id}`)}
+      >
         <p>View Details</p>
         <ChevronRight strokeWidth={3} size={15} />
       </div>
