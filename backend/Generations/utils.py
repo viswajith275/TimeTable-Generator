@@ -5,16 +5,11 @@ from backend.models import TimeTable, TimeTableEntry, WeekDay
 def Generate_Timetable(db, assignments, data, user_id):
     Model = cp_model.CpModel()
     # keep WeekDay enum members
-    all_days = list(data.days)  # each item should be a WeekDay (or convertible)
+    index_to_day = {i:d for i,d in enumerate(WeekDay)}  # each item should be a WeekDay (or convertible)
+    day_to_index = {d:i for i,d in enumerate(WeekDay)}
     # ensure enum members if strings were passed
-    for i, d in enumerate(all_days):
-        if not isinstance(d, WeekDay):
-            try:
-                all_days[i] = WeekDay(d)
-            except Exception:
-                all_days[i] = WeekDay[d.upper()]
 
-    day_indices = range(len(all_days))
+    day_indices = set([day_to_index[d] for d in data.days])
     all_slotes = range(1,data.slots+1)
     Hardness_maping = {
         'Low': 1,
@@ -56,6 +51,23 @@ def Generate_Timetable(db, assignments, data, user_id):
         for d in day_indices:
             for s in all_slotes:
                 Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1)
+
+
+    #A class teacher should take morning classes at the specified dates
+    for assignment in assignments:
+
+        morning_class_days = getattr(assignment, 'morning_class_days', None)
+
+        if morning_class_days is not None:
+            
+            for d in morning_class_days:
+
+                if day_to_index[d] not in day_indices:
+                    return False
+
+                Model.Add(shifts[(assignment.id, day_to_index[d], 1)] == 1)
+
+
 
     #An assingned teacher should take the class for atleast min_per_day times
     #An assigned teacher should take the class atmost max_per_day times
@@ -144,8 +156,6 @@ def Generate_Timetable(db, assignments, data, user_id):
 
                     for s in range(len(all_slotes)):
                         current = slots[s]
-                        
-
                         # 1. Detect "Start of Block" (Current is ON, Prev is OFF)
                         is_start = Model.NewBoolVar(f'start_{assignment.id}_{d}_{s}')
                         
@@ -223,7 +233,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                                 class_name=assignment.class_.c_name,
                                 teacher_name=assignment.teacher.t_name,
                                 subject_name=assignment.subject.subject_name,
-                                day=all_days[d],
+                                day=index_to_day[d],
                                 slot=s
                             )
                             db.add(entry)

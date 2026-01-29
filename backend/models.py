@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, ForeignKey, Enum
+from sqlalchemy import Integer, String, ForeignKey, Enum, ARRAY
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator, model_validator
 from typing import List, Optional
@@ -22,6 +22,12 @@ class Hardness(enum.Enum):
     HARD = "High"
     MED = "Med"
     LOW = "Low"
+
+class TeacherRoles(enum.Enum):
+    CLASS_TEACHER = "CLASS_TEACHER"
+    SUBJECT_TEACHER = "SUBJECT_TEACHER"
+
+
 #Base user model
 class UsersBase(BaseModel):
     username : str
@@ -180,12 +186,31 @@ class TeacherClassAssignmentBase(BaseModel):
 class TeacherClassAssignmentCreate(BaseModel):
     teacher_id: int
     class_id: int
-    role: str
     subject_id: int
+    role: TeacherRoles
+    morning_class_days: Optional[List[WeekDay]]
+
+    @model_validator(mode='after')
+    def validation(self) -> 'TeacherClassAssignmentCreate':
+
+        if self.morning_class_days is not None and self.role == TeacherRoles.SUBJECT_TEACHER:
+            raise ValueError("Subject teacher cant have fixed morning classes!")
+        
+        return self
+    
 
 #Teacher class assignment update data model
 class TeacherClassAssignmentUpdate(BaseModel):
-    role: str
+    role: TeacherRoles
+    morning_class_days: Optional[List[WeekDay]]
+
+    @model_validator(mode='after')
+    def validation(self) -> 'TeacherClassAssignmentUpdate':
+
+        if self.morning_class_days is not None and self.role == TeacherRoles.SUBJECT_TEACHER:
+            raise ValueError("Subject teacher cant have fixed morning classes!")
+        
+        return self
 
 #Timetable generation data model
 class Generate_Data(BaseModel):
@@ -321,7 +346,7 @@ class Subject(Base):
     __tablename__ = 'subjects'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    subject_name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    subject_name: Mapped[str] = mapped_column(String(50), nullable=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
@@ -349,7 +374,8 @@ class TeacherClassAssignment(Base):
     class_id: Mapped[int] = mapped_column(ForeignKey("classes.id"))
     subject_id: Mapped[int] = mapped_column(ForeignKey("subjects.id"))
 
-    role: Mapped[str] = mapped_column(String(30), nullable=False)  # "class_teacher","subject_teacher"
+    role: Mapped[TeacherRoles] = mapped_column(Enum(TeacherRoles), nullable=False)  # "CLASS_TEACHER","SUBJECT_TEACHER"
+    morning_class_days: Mapped[Optional[List[WeekDay]]] = mapped_column(ARRAY(Enum(WeekDay)))
 
 
     teacher: Mapped["Teacher"] = relationship(back_populates="class_assignments")

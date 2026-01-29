@@ -3,7 +3,7 @@ from typing import List
 from backend.database import SessionDep
 from backend.oauth import UserDep
 from backend.rate_limiter_deps import limiter
-from backend.models import Teacher, Class, Subject, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentBase, TeacherClassAssignmentUpdate
+from backend.models import Teacher, Class, Subject, TeacherClassAssignment, TeacherClassAssignmentCreate, TeacherClassAssignmentBase, TeacherClassAssignmentUpdate, TeacherRoles
 
 assign_routes = APIRouter(tags=['Teacher Assignment'])
 
@@ -53,11 +53,20 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
     if exist:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Already exists!')
     
+    if values.role == TeacherRoles.CLASS_TEACHER:
+
+        already_class_teacher = db.query(TeacherClassAssignment).filter(TeacherClassAssignment.teacher_id == teacher.id, TeacherClassAssignment.role == TeacherRoles.CLASS_TEACHER).first()
+
+        if already_class_teacher:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This teacher is already a class teacher!")
+
+    
     new_assignment = TeacherClassAssignment(
         teacher_id=teacher.id,
         class_id=cur_class.id,
+        subject_id=subject.id,
         role=values.role,
-        subject_id=subject.id
+        morning_class_days=values.morning_class_days if values.morning_class_days is not None else None
     )
 
     db.add(new_assignment)
@@ -87,8 +96,17 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
     )
     if not assignment:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
+    
+    if values.role == TeacherRoles.CLASS_TEACHER:
+
+        already_class_teacher = db.query(TeacherClassAssignment).filter(TeacherClassAssignment.teacher_id == assignment.teacher_id, TeacherClassAssignment.role == TeacherRoles.CLASS_TEACHER).first()
+
+        if already_class_teacher:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This teacher is already a class teacher!")
+
 
     assignment.role = values.role
+    assignment.morning_class_days = values.morning_class_days if values.morning_class_days is not None else None
 
     db.commit()
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Request
 from backend.database import SessionDep
 from backend.oauth import UserDep
-from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable, AllTimeTable, TimeTableEntry, TimeTableEntryUpdate
+from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable, AllTimeTable, TimeTableEntry, TimeTableEntryUpdate, WeekDay
 from backend.Generations.utils import Generate_Timetable
 from backend.rate_limiter_deps import limiter
 from typing import List
@@ -36,14 +36,15 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
     
     class_in_timetables = db.query(TimeTableEntry.class_name).filter(TimeTableEntry.timetable_id == timetable.id).distinct().all()
     days_in_timetables = db.query(TimeTableEntry.day).filter(TimeTableEntry.timetable_id == timetable.id).distinct().all()
-
+    list_of_days = set([d[0] for d in days_in_timetables])
+    all_days = list(WeekDay)
 
     formated_assignments = [{
         'class_name': c[0],
         'assignments': [{
-            'day': d[0],
+            'day': d,
             'assignments': []
-        } for d in days_in_timetables]
+        } for d in all_days if d in list_of_days]
         } for c in class_in_timetables]
     
     class_name_to_index = {
