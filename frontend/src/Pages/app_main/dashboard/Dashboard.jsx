@@ -82,6 +82,16 @@ const Dashboard = () => {
                 />
               ))
             )}
+
+            {Object.values(timetables).length == 0 && !isTimetableLoading ? (
+              <ErrorLoadingStates
+                listName={"Time tables"}
+                btnName={"Create New"}
+                state={"empty"}
+              />
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@
 .mainPanelPlaceholder {
   width: 100%;
   overflow: auto;
-  padding: 2rem;
+  padding: 1rem 2rem;
 }
 
 .mainPanel {
@@ -146,12 +146,14 @@
   justify-content: space-between;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 500px) {
   .mainPanel {
-    padding: 1.25rem;
+    padding: 0;
     min-height: auto;
   }
-
+  .mainPanelPlaceholder {
+    padding: 1.5rem;
+  }
   .card {
     padding: 1.5rem;
   }
@@ -162,11 +164,5 @@
 
   .days {
     gap: 0.45rem;
-  }
-}
-
-@media (max-width: 470px) {
-  .mainPanel {
-    padding: 2rem 0;
   }
 }
