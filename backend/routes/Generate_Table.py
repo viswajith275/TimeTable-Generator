@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Request
 from backend.database import SessionDep
 from backend.oauth import UserDep
-from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable, AllTimeTable, TimeTableEntry
+from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTableJson, TimeTable, AllTimeTable, TimeTableEntry, TimeTableEntryUpdate
 from backend.Generations.utils import Generate_Timetable
 from backend.rate_limiter_deps import limiter
 from typing import List
@@ -57,6 +57,7 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
     for entry in timetable.entries:
 
         formated_entry = {
+                'id': entry.id,
                 'slot': entry.slot,
                 'subject': entry.subject_name,
                 'teacher_name': entry.teacher_name,
@@ -95,6 +96,21 @@ def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Dat
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='TimeTable is not possible!')
 
+
+@generate_routes.put('/entries/{id}')
+def Update_Timetable_Entry(current_user: UserDep, db: SessionDep, id: int,entry_data: TimeTableEntryUpdate , request: Request):
+
+    timetable_entry = db.query(TimeTableEntry).join(TimeTable).filter(TimeTableEntry.id == id).filter(TimeTable.user_id == current_user.id).first()
+
+    if not timetable_entry:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="timetable entry not found!")
+    
+    timetable_entry.teacher_name = entry_data.teacher_name
+    timetable_entry.subject_name = entry_data.subject
+
+    db.commit()
+    
+    return {'message': 'Timetable entry updated successfully!'}
 
 @generate_routes.delete('/timetables/{id}')
 def Delete_TimeTable(current_user: UserDep, db: SessionDep, id: int, request: Request):

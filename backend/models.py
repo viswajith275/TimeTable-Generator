@@ -194,7 +194,13 @@ class Generate_Data(BaseModel):
     days: List[WeekDay]
 
 #Timetable Entries of an timetable data model
+
+class TimeTableEntryUpdate(BaseModel):
+    subject: str
+    teacher_name: str
+
 class TimeTableEntryJson(BaseModel):
+    id: int
     slot: int
     subject: str
     teacher_name: str
