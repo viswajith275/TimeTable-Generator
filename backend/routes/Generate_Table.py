@@ -26,7 +26,7 @@ def Fetch_All_timetables(current_user: UserDep, request: Request):
 
 
 
-@generate_routes.get('/timetables/{id', response_model=TimeTableJson)
+@generate_routes.get('/timetables/{id}', response_model=TimeTableJson)
 def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: SessionDep):
     #timetables fetching
     timetable = db.query(TimeTable).filter(TimeTable.id == id, TimeTable.user_id == current_user.id).first()
