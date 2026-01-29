@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import ErrorLoadingStates from "../Components/ErrorLoadingStates/ErrorLoadingStates";
 import axios from "axios";
 import { useAuth } from "../../../Context/AuthProvider";
+
 const Dashboard = () => {
   const { refreshToken } = useAuth();
   const navigate = useNavigate();
@@ -21,7 +22,6 @@ const Dashboard = () => {
 
       try {
         const { data } = await axios.get("/api/timetables");
-        console.log(data);
         setTimetables(data);
       } catch (error) {
         if (error?.response?.status === 401 && !hasRetried) {

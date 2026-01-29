@@ -12,6 +12,9 @@
   --color-accent: #6e4e37; /* warm brown accent */
   --color-accent-light: #8a6547; /* lighter warm brown */
 
+  --color-table-heading: #e9ebf1;
+  --color-table-border: #dbdde6;
+
   /* Greys */
   --color-grey-900: #2b2b2b;
   --color-grey-700: #4a4a4a;
