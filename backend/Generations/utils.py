@@ -231,6 +231,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                             entry = TimeTableEntry(
                                 timetable_id=new_timetable.id,
                                 class_name=assignment.class_.c_name,
+                                room_name=assignment.class_.r_name,
                                 teacher_name=assignment.teacher.t_name,
                                 subject_name=assignment.subject.subject_name,
                                 day=index_to_day[d],
@@ -240,7 +241,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                             
             # commit all changes at once
             db.commit()
-            return True
+            return new_timetable.id
         except Exception:
             db.rollback()
             return False

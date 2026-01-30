@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String, ForeignKey, Enum, ARRAY
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator, model_validator
-from typing import List, Optional
+from typing import List, Optional, Union
 from datetime import datetime
 import enum
 import re
@@ -223,22 +223,43 @@ class Generate_Data(BaseModel):
 class TimeTableEntryUpdate(BaseModel):
     subject: str
     teacher_name: str
+    room_name: str
 
-class TimeTableEntryJson(BaseModel):
+class ClassTimeTableEntryJson(BaseModel):
     id: int
     slot: int
     subject: str
     teacher_name: str
+    room_name: str
 
     model_config = ConfigDict(from_attributes=True)
 
-class PerDayTimeTableEntryJson(BaseModel):
+class TeacherTimeTableEntryJson(BaseModel):
+    id: int
+    slot: int
+    subject: str
+    class_name: str
+    room_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class PerDayClassTimeTableEntryJson(BaseModel):
     day: WeekDay
-    assignments: List[TimeTableEntryJson]
+    assignments: List[ClassTimeTableEntryJson]
+
+class PerDayTeacherTimeTableEntryJson(BaseModel):
+    day: WeekDay
+    assignments: List[TeacherTimeTableEntryJson]
 
 class PerClassTimetableEntryJson(BaseModel):
     class_name: str
-    assignments: List[PerDayTimeTableEntryJson]
+    assignments: List[PerDayClassTimeTableEntryJson]
+
+
+class PerTeacherTimeTableEntryJson(BaseModel):
+    teacher_name: str
+    assignments: List[PerDayTeacherTimeTableEntryJson]
+    
 
 #Timetable Return structure
 class TimeTableJson(BaseModel):
@@ -249,6 +270,29 @@ class TimeTableJson(BaseModel):
     assignments: List[PerClassTimetableEntryJson]
 
     model_config = ConfigDict(from_attributes=True)
+
+class ClassTimeTableJson(BaseModel):
+    id: int
+    name: str
+    slots: int
+    
+    assignments: PerClassTimetableEntryJson
+
+    model_config = ConfigDict(from_attributes=True)
+
+class TeacherTimeTableJson(BaseModel):
+    id: int
+    name: str
+    slots: int
+    
+    assignments: PerTeacherTimeTableEntryJson
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+
+AllTimeTableBaseModel = Union[TimeTableJson, ClassTimeTableJson, TeacherTimeTableJson]
+
 
 class AllTimeTable(BaseModel):
     timetable_id: int
@@ -390,6 +434,7 @@ class TimeTableEntry(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     timetable_id: Mapped[int] = mapped_column(ForeignKey("timetables.id"))
+    room_name: Mapped[str] = mapped_column()
     class_name: Mapped[str] = mapped_column()
     teacher_name: Mapped[str] = mapped_column()
     subject_name: Mapped[str] = mapped_column()
