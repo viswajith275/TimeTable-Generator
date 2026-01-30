@@ -2,7 +2,7 @@
   background-color: var(--color-bg-muted);
   min-height: 100vh;
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .mainPanelPlaceholder {
@@ -12,10 +12,10 @@
 }
 
 .mainPanel {
-  padding: 5rem 3rem;
+  padding: 2rem 3rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1rem;
 }
 
 .pageHeader h2 {
@@ -36,11 +36,18 @@
   width: 100%;
   max-width: 900px;
   background-color: var(--color-bg);
-  padding: 2rem;
+  padding: 1.2rem 1.5rem;
   border-radius: 0.8rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
+  box-shadow: 0 0 10px var(--color-bg-muted);
+}
+
+.fullWidthSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .section {
@@ -67,9 +74,10 @@
   justify-content: space-between;
   font-size: 16px;
 }
-/* .label span:first-child {
+
+.label span:first-child {
   font-weight: 600;
-} */
+}
 
 .subjects input {
   padding: 0.65rem 0.75rem;
@@ -78,7 +86,7 @@
   font-size: 15px;
 }
 
-.grid {
+.inputGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
@@ -94,6 +102,25 @@
 .errorText {
   font-size: 14px;
   color: var(--color-danger);
+}
+
+.gridLayout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.gridItem {
+  border: 1px solid var(--color-grey-300);
+  padding: 1.3rem;
+  border-radius: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.gridItem:focus-within{
+  border-color: var(--color-primary);
 }
 
 .toughnessGroup {
@@ -169,7 +196,7 @@
     padding: 1.5rem;
   }
 
-  .grid {
+  .gridLayout {
     grid-template-columns: 1fr;
   }
 }

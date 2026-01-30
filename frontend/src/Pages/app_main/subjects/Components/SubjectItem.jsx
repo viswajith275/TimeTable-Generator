@@ -49,6 +49,12 @@ const SubjectItem = ({
     }
   };
 
+  const toughness = {
+    "High" : "tough",
+    "Med": "normal",
+    "Low": "easy"
+  }
+
   return (
     <div className={styles.subjectItem}>
       <div className={styles.itemHeading}>
@@ -68,9 +74,9 @@ const SubjectItem = ({
           </button>
         </div>
       </div>
-      <h4 className={styles.subjectDifficulty}>
-        Subject Difficulty :{" "}
-        {toughnessLevel == "Med" ? "Medium" : toughnessLevel}
+      <h4 
+      className={styles.subjectDifficulty}>
+        {toughness[toughnessLevel]}
       </h4>
       <div className={styles.viewDetails}>
         <p>See Details</p>
