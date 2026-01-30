@@ -1,5 +1,4 @@
 import Navbar from "../../../Components/navbar/Navbar";
-import { ChevronLeft } from "lucide-react";
 import styles from "./SubjectCreatePage.module.css";
 import { useState } from "react";
 import axios from "axios";
@@ -8,6 +7,7 @@ import { useAuth } from "../../../../../Context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { TriangleAlert } from "lucide-react";
 import { useSubjects } from "../../../../../Context/SubjectProvider";
+import TopbarLite from "../../../Components/topbar/TopbarLite";
 
 const SubjectCreatePage = () => {
   const navigate = useNavigate();
@@ -108,6 +108,9 @@ const SubjectCreatePage = () => {
       <Navbar />
 
       <div className={styles.mainPanelPlaceholder}>
+        
+        <TopbarLite />
+
         <div className={styles.mainPanel}>
           <div className={styles.pageHeader}>
             <h2>Create Subject</h2>
@@ -141,7 +144,7 @@ const SubjectCreatePage = () => {
                     <div>
                       <h4>Daily Limits</h4>
                       <p>
-                        Adjust the minimum and maximum number of daily classes here.
+                        Adjust the minimum and maximum number of daily classes.
                       </p>
                     </div>
                     <div className={styles.inputGrid}>
@@ -179,8 +182,7 @@ const SubjectCreatePage = () => {
                     <div>
                       <h4>Weekly Limits</h4>
                       <p>
-                        Adjust the minimum and maximum number of weekly classes
-                        here.
+                        Adjust the minimum and maximum number of weekly classes.
                       </p>
                     </div>
                     <div className={styles.inputGrid}>
@@ -218,8 +220,7 @@ const SubjectCreatePage = () => {
                     <div>
                       <h4>Consecutive Classes</h4>
                       <p>
-                        Adjust the minimum and maximum number of consecutive classes
-                        here.
+                        Adjust the minimum and maximum number of consecutive classes.
                       </p>
                     </div>
 
@@ -277,13 +278,6 @@ const SubjectCreatePage = () => {
                   </div>
 
                   <div className={styles.actions}>
-                    <div
-                      className={styles.goBackBtn}
-                      onClick={() => navigate("/subjects")}
-                    >
-                      <ChevronLeft strokeWidth={3} size={16} />
-                      <p>Go back</p>
-                    </div>
                     <button type="submit" className={styles.saveBtn}>
                       Create Subject
                     </button>

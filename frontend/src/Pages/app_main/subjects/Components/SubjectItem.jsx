@@ -13,7 +13,7 @@ const SubjectItem = ({
   consecutive,
   toughnessLevel,
   id,
-  deleteSubject,
+  onRequestDelete,
   editSubject,
 }) => {
   const { refreshToken } = useAuth();
@@ -38,7 +38,7 @@ const SubjectItem = ({
     try {
       const { data } = await axios.delete(`/api/subjects/${id}`);
       console.log(data);
-      deleteSubject(id);
+      onRequestDelete(id);
     } catch (err) {
       console.log(err?.response?.status, hasRetried);
       if (err?.response?.status === 401 && !hasRetried) {
@@ -51,7 +51,7 @@ const SubjectItem = ({
 
   const toughness = {
     "High" : "tough",
-    "Med": "normal",
+    "Med": "average",
     "Low": "easy"
   }
 
@@ -68,7 +68,7 @@ const SubjectItem = ({
           </button>
           <button
             className={`${styles.actionBtn__Item} ${styles.deleteBtn}`}
-            onClick={() => handleDelete(false)}
+            onClick={() => onRequestDelete(id)}
           >
             <Trash2 size={sizeActionItems} />
           </button>

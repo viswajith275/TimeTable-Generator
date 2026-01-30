@@ -12,7 +12,7 @@
 }
 
 .mainPanel {
-  padding: 2rem 3rem;
+  padding: 0 3rem 2rem 3rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -65,7 +65,7 @@
   line-height: 1.5rem;
 }
 .section div p {
-  font-size: 14px;
+  font-size: 0.8rem;
   color: var(--color-grey-500);
 }
 
@@ -112,7 +112,7 @@
 
 .gridItem {
   border: 1px solid var(--color-grey-300);
-  padding: 1.3rem;
+  padding: 0.9rem 1.3rem;
   border-radius: 0.6rem;
   display: flex;
   flex-direction: column;
@@ -150,19 +150,10 @@
   align-items: center;
   margin-top: 1rem;
 }
-.goBackBtn {
-  display: inline-flex;
-  width: fit-content;
-  gap: 0.3rem;
-  align-items: center;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.goBackBtn:hover {
-  gap: 0.4rem;
-}
+
 .saveBtn {
-  padding: 0.65rem 1.4rem;
+  width: 100%;
+  padding: 0.65rem;
   border-radius: 0.35rem;
   border: none;
   background-color: var(--color-primary);

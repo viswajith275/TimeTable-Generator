@@ -57,6 +57,76 @@ body {
   gap: 1rem;
 }
 
+/*=================== POPUP MENU ====================*/
+
+.popup{
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.overlay{
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  z-index: 500;
+  background-color: var(--color-primary);
+}
+
+.popup .card{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  background-color: var(--color-bg);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  z-index: 600;
+  min-width: 30%;
+}
+
+/*=================== DEL POPUP ====================*/
+
+.popup h3{
+  font-weight: normal;
+}
+
+.popup .actions{
+  width: 100%;
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.popup .actions button{
+  border: none;
+  outline: none;
+  padding: 0.5rem 2rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.popup .actions button:hover{
+  transform: translateY(-2px);
+}
+
+.popup .actions .delBtn{
+  background-color: var(--color-danger);
+  color: #fff;
+}
+
+.popup .actions .cancel{
+  border: 1px solid var(--color-grey-500);
+}
+
 /* media queries here */
 @media (max-width: 780px) {
   .mainPanel__headings {

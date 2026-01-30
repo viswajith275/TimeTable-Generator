@@ -8,12 +8,28 @@ import { useNavigate } from "react-router-dom";
 import Filter from "../Components/filter/Filter";
 import ErrorLoadingStates from "../Components/ErrorLoadingStates/ErrorLoadingStates";
 import { useSubjects } from "../../../Context/SubjectProvider";
+import axios from "axios";
+import { useAuth } from "../../../Context/AuthProvider";
+import { toast } from "react-toastify";
+
 const Subjects = () => {
   const navigate = useNavigate();
 
-  const { subjects, setSubjects, subjectsLoaded, fetchSubjects, error } =
-    useSubjects();
+  const {
+    subjects,
+    setSubjects,
+    subjectsLoaded,
+    fetchSubjects,
+    error,
+  } = useSubjects();
+
+  const { refreshToken } = useAuth();
+
   const [isSubjectsLoading, setIsSubjectsLoading] = useState(true);
+
+  // delete confirmation state
+  const [openDelConf, setOpenDelConf] = useState(false);
+  const [subjectToDelete, setSubjectToDelete] = useState(null);
 
   // fetch once + smooth loader
   useEffect(() => {
@@ -28,24 +44,64 @@ const Subjects = () => {
       const elapsed = Date.now() - start;
       setTimeout(
         () => setIsSubjectsLoading(false),
-        Math.max(MIN_TIME - elapsed, 0),
+        Math.max(MIN_TIME - elapsed, 0)
       );
     };
 
     load();
   }, []);
 
-  const deleteSubjectItem = (id) => {
-    setSubjects((prev) => prev.filter((item) => item.id !== id));
+  // request delete (open popup)
+  const requestDeleteSubject = (id) => {
+    setSubjectToDelete(id);
+    setOpenDelConf(true);
   };
 
-  // const addSubjectItem = (data) => {
-  //   setSubjects((prev) => [...prev, data]);
-  // };
+  // confirm delete
+  const confirmDeleteSubject = async () => {
+    const deleteReq = async (hasRetried = false) => {
+      try {
+        await axios.delete(`/api/subjects/${subjectToDelete}`);
+        return true;
+      } catch (err) {
+        if (err?.response?.status === 401 && !hasRetried) {
+          await refreshToken();
+          return await deleteReq(true);
+        }
+        toast.error("Failed to delete subject");
+        return false;
+      }
+    };
+
+    const ok = await deleteReq(false);
+    if (ok) {
+      setSubjects((prev) => prev.filter((item) => item.id !== subjectToDelete));
+      setSubjectToDelete(null);
+      setOpenDelConf(false);
+    }
+  };
+
+  // cancel delete
+  const cancelDelete = () => {
+    setSubjectToDelete(null);
+    setOpenDelConf(false);
+  };
 
   const editSubjectItem = (data) => {
     setSubjects((prev) =>
-      prev.map((item) => (item.id === data.id ? { ...item, ...data } : item)),
+      prev.map((item) =>
+        item.id === data.id ? { ...item, ...data } : item
+      )
+    );
+  };
+
+  // Popup component
+  const Popup = ({ children }) => {
+    return (
+      <div className={styles.popup}>
+        <div className={styles.overlay} onClick={cancelDelete} />
+        <div className={styles.card}>{children}</div>
+      </div>
     );
   };
 
@@ -93,7 +149,7 @@ const Subjects = () => {
                   max: value.max_consecutive_class,
                 }}
                 toughnessLevel={value.is_hard_sub}
-                deleteSubject={deleteSubjectItem}
+                onRequestDelete={requestDeleteSubject}
                 editSubject={editSubjectItem}
               />
             ))
@@ -110,6 +166,21 @@ const Subjects = () => {
             )}
         </div>
       </div>
+
+      {openDelConf && (
+        <Popup>
+          <h3>Do you want to delete this subject?</h3>
+
+          <div className={styles.actions}>
+            <button className={styles.cancel} onClick={cancelDelete}>
+              Cancel
+            </button>
+            <button className={styles.delBtn} onClick={confirmDeleteSubject}>
+              Delete
+            </button>
+          </div>
+        </Popup>
+      )}
     </div>
   );
 };
