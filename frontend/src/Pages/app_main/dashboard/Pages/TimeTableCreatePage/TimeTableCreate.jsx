@@ -62,7 +62,7 @@ const TimeTableCreate = () => {
       const { data } = await axios.post("/api/generate", payload);
       console.log(data);
 
-      // navigate(`/dashboard/timetable/${data.id}`);
+      navigate(`/dashboard/timetables/${data.id}`);
     } catch (err) {
       if (err?.response?.status == 401 && !hasRetried) {
         await refreshToken();
