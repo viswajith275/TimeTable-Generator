@@ -5,13 +5,7 @@ import { useAuth } from "../../../../Context/AuthProvider";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const TeacherItem = ({
-  teacherName,
-  subjects = [],
-  classes = [],
-  id,
-  deleteTeacher,
-}) => {
+const TeacherItem = ({ teacherName, assigments = [], id, deleteTeacher }) => {
   const navigate = useNavigate();
   const { refreshToken } = useAuth();
 
@@ -34,17 +28,23 @@ const TeacherItem = ({
       <div className={styles.headContainer}>
         {" "}
         <div className={styles.actions}>
-          <SquarePen size={18} />
+          <SquarePen
+            size={18}
+            onClick={() => navigate(`/teachers/teacher/edit/${id}`)}
+          />
           <Trash2
             size={18}
             className={styles.deleteBtn}
             onClick={() => handleDelete(false)}
           />
         </div>
-        <h4 className={styles.name}>{teacherName}</h4>
+        <div className={styles.nameContainer}>
+          {" "}
+          <h4 className={styles.name}>{teacherName}</h4>
+        </div>
       </div>
 
-      <div
+      {/* <div
         className={styles.subjects}
         style={{ display: subjects.length === 0 ? "none" : "flex" }}
       >
@@ -64,13 +64,21 @@ const TeacherItem = ({
             {cls}
           </span>
         ))}
-      </div>
+      </div> */}
 
       <div
         className={styles.viewDetails}
-        onClick={() => navigate(`/teachers/teacher/${id}`)}
+        onClick={() => {
+          // if there are assigments we show them details & teacher-specific timetables
+          // other wise force them into
+          assigments.length === 0
+            ? navigate(`/teachers/teacher/edit/${id}`)
+            : "";
+        }}
       >
-        <p>Assign Classes</p>
+        <p>
+          {assigments.length === 0 ? "Assign Classes" : "View Teacher Info"}
+        </p>
         <ChevronRight size={18} />
       </div>
     </div>

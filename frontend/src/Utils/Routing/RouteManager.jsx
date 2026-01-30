@@ -121,7 +121,7 @@ const RouteManager = () => {
       />
 
       <Route
-        path="/teachers/teacher/:teacherid"
+        path="/teachers/teacher/edit/:teacherid"
         element={
           <ProtectedRoutes>
             <TeacherDetailsEditPage />

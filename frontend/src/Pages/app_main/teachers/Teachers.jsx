@@ -109,6 +109,7 @@ const Teachers = () => {
                 <TeacherItem
                   key={value.id}
                   id={value.id}
+                  assigments={value.class_assignments}
                   teacherName={value.t_name}
                   deleteTeacher={deleteTeacherItem}
                 />

@@ -14,6 +14,17 @@
   justify-content: space-between;
   align-items: center;
 }
+.nameContainer {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: clip;
+  height: 20px;
+}
+.name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
 .actions {
   display: flex;
   gap: 0.6rem;
@@ -32,11 +43,6 @@
   color: var(--color-danger);
 }
 
-.name {
-  font-size: 18px;
-  font-weight: 600;
-}
-
 .subjects {
   display: flex;
   overflow: hidden;
@@ -46,8 +52,8 @@
 .subjectPill {
   padding: 0.35rem 0.9rem;
   border-radius: 999px;
-  border: 2px solid tomato;
-  color: tomato;
+  border: 2px solid var(--color-danger);
+  color: var(--color-danger);
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
@@ -73,11 +79,12 @@
   /* margin-top: 0.4rem; */
   display: flex;
   align-items: flex-end;
+
   gap: 0.3rem;
   color: var(--color-grey-700);
   cursor: pointer;
   width: fit-content;
-  transition: gap 0.15s ease;
+  transition: gap 0.15s ease-out;
 }
 
 .viewDetails:hover {
