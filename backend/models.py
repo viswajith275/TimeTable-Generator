@@ -243,13 +243,16 @@ class TeacherTimeTableEntryJson(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class PerDayClassTimeTableEntryJson(BaseModel):
     day: WeekDay
     assignments: List[ClassTimeTableEntryJson]
 
+
 class PerDayTeacherTimeTableEntryJson(BaseModel):
     day: WeekDay
     assignments: List[TeacherTimeTableEntryJson]
+
 
 class PerClassTimetableEntryJson(BaseModel):
     class_name: str
