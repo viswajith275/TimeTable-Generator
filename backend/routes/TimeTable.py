@@ -189,14 +189,7 @@ def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Dat
     
     new_timetable = Generate_Timetable(db=db, assignments=teacher_class_assignments, data=data, user_id=current_user.id)
 
-    if new_timetable:
-        return {
-            'message': 'TimeTable created successfully!',
-            'id': new_timetable
-                }
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='TimeTable is not possible!')
-
+    return new_timetable
 
 @timetable_routes.put('/entries/{id}')
 def Update_Timetable_Entry(current_user: UserDep, db: SessionDep, id: int,entry_data: TimeTableEntryUpdate , request: Request):

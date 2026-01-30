@@ -17,6 +17,16 @@ def Generate_Timetable(db, assignments, data, user_id):
         'High': 3,
     }
 
+    slack_report = {}
+    all_penalties = []
+
+    def make_slack(error, penalty = 1000):
+        
+        slack_var = Model.NewIntVar(0, 100, error)
+        slack_report[error] = slack_var
+        all_penalties.append(slack_var * penalty)
+        return slack_var
+
     shifts = {}
     for assignment in assignments:
         for d in day_indices:
@@ -27,9 +37,11 @@ def Generate_Timetable(db, assignments, data, user_id):
     for assignment in assignments:
         max_classes = getattr(assignment.teacher, 'max_classes', None)
         if max_classes is not None:
+            error_msg = f"max weekly load exceeded {assignment.teacher.t_name} limit is {max_classes}"
+            slack = make_slack(error_msg, penalty=100)
             Model.Add(
                 sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes)
-                <= max_classes
+                <= max_classes + slack
             )
 
     # teacher cannot be in two places same time
@@ -40,7 +52,11 @@ def Generate_Timetable(db, assignments, data, user_id):
     for teacher_assignments in assigned_to_teacher.values():
         for d in day_indices:
             for s in all_slotes:
-                Model.Add(sum(shifts[(a.id, d, s)] for a in teacher_assignments) <= 1)
+
+                error_msg = f"Teacher conflicts for {teacher_assignments[0].teacher.t_name} at slot {s}"
+                slack = make_slack(error_msg, penalty=100000000)
+
+                Model.Add(sum(shifts[(a.id, d, s)] for a in teacher_assignments) <= 1 + slack)
 
     # class can have only one teacher at a time (fix: group by class_id)
     assigned_to_class = collections.defaultdict(list)
@@ -50,7 +66,11 @@ def Generate_Timetable(db, assignments, data, user_id):
     for class_assignments in assigned_to_class.values():
         for d in day_indices:
             for s in all_slotes:
-                Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1)
+
+                error_msg = f"Class conflicts for {class_assignments[0].class_.c_name} at slot {s}"
+                slack = make_slack(error_msg, penalty=100000000)
+
+                Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1 + slack)
 
 
     #A class teacher should take morning classes at the specified dates
@@ -62,10 +82,12 @@ def Generate_Timetable(db, assignments, data, user_id):
             
             for d in morning_class_days:
 
-                if day_to_index[d] not in day_indices:
-                    return False
+                if day_to_index[d] in day_indices:
 
-                Model.Add(shifts[(assignment.id, day_to_index[d], 1)] == 1)
+                    error_msg = f"No Morning Class {assignment.teacher.t_name} for {assignment.class_.c_name} on {d.value}"
+                    slack = make_slack(error_msg, penalty=500)
+
+                    Model.Add(shifts[(assignment.id, day_to_index[d], 1)] + slack >= 1)
 
 
 
@@ -80,14 +102,21 @@ def Generate_Timetable(db, assignments, data, user_id):
         if min_classes_per_day is not None or max_classes_per_day is not None:
 
             for d in day_indices:
+                daily_sum = sum(shifts[(assignment.id, d, s)] for s in all_slotes)
 
                 if min_classes_per_day is not None:
 
-                    Model.Add(sum(shifts[(assignment.id, d, s)] for s in all_slotes) >= min_classes_per_day)
+                    error_msg = f"Min Daily Classes {assignment.subject.subject_name} in {assignment.class_.c_name} (requires: {min_classes_per_day})"
+                    slack = make_slack(error_msg, penalty=10000)
+
+                    Model.Add(daily_sum + slack >= min_classes_per_day)
 
                 if max_classes_per_day is not None:
 
-                    Model.Add(sum(shifts[(assignment.id, d, s)] for s in all_slotes) <= max_classes_per_day)
+                    error_msg = f"Max Daily Classes {assignment.subject.subject_name} in {assignment.class_.c_name} (limit: {max_classes_per_day})"
+                    slack = make_slack(error_msg, penalty=10000)
+
+                    Model.Add(daily_sum <= max_classes_per_day + slack)
 
 
     #An assigned teacher should take the class atleast min_per_week times
@@ -98,13 +127,19 @@ def Generate_Timetable(db, assignments, data, user_id):
         min_classes_per_week = getattr(assignment.subject, 'min_per_week', None)
         max_classes_per_week = getattr(assignment.subject, 'max_per_week', None)
 
-        if min_classes_per_week is not None:
+        weekly_sum = sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes)
 
-            Model.Add(sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes) >= min_classes_per_week)
+        if min_classes_per_week is not None:
+            error_msg = f"Min Weekly Classes {assignment.subject.subject_name} in {assignment.class_.c_name} (requires: {min_classes_per_week})"
+            slack = make_slack(error_msg, penalty=100000)
+
+            Model.Add(weekly_sum + slack >= min_classes_per_week)
 
         if max_classes_per_week is not None:
+            error_msg = f"Max Weekly Classes {assignment.subject.subject_name} in {assignment.class_.c_name} (limit: {max_classes_per_week})"
+            slack = make_slack(error_msg, penalty=100000)
 
-            Model.Add(sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes) <= max_classes_per_week)
+            Model.Add(weekly_sum <= max_classes_per_week + slack)
 
     #A teacher should not take more consecutive classes than max_consecutive_class
     for assignment in assignments:
@@ -119,7 +154,10 @@ def Generate_Timetable(db, assignments, data, user_id):
 
                 for i in range(len(slots) - max_consecutive_class):
 
-                    Model.Add(sum(slots[i : i + max_consecutive_class + 1]) <= max_consecutive_class)
+                    error_msg = f"Max consecutive Classes exceeded {assignment.subject.subject_name} in {assignment.class_.c_name} on {index_to_day[d].value} (start slot: {i+1}) (limit: {max_consecutive_class})"
+                    slack = make_slack(error_msg, penalty=50)
+
+                    Model.Add(sum(slots[i : i + max_consecutive_class + 1]) <= max_consecutive_class + slack)
 
     #A teacher should take atleast min_consecutive_classes
     for assignment in assignments:
@@ -137,19 +175,25 @@ def Generate_Timetable(db, assignments, data, user_id):
                     for i in range(len(all_slotes)):
 
                         cur = slotes[i]
-                        prev = slotes[i-1] if i > 0 else None
-                        next = slotes[i+1] if i < len(all_slotes)-1 else None
+
 
                         neighbors = []
-                        if i != 0:
-                            neighbors.append(prev)
+                        if i > 0:
+                            neighbors.append(slotes[i-1])
                         if i < len(all_slotes)-1:
-                            neighbors.append(next)
+                            neighbors.append(slotes[i+1])
                         
                         if neighbors:
-                            Model.AddBoolOr(neighbors).OnlyEnforceIf(cur)
+
+                            error_msg = f"Single class (Min: 2) {assignment.subject.subject_name} in {assignment.class_.c_name} on {index_to_day[d].value} slot {i+1}"
+                            slack = make_slack(error_msg, penalty=5000)
+
+                            Model.Add(sum(neighbors) + slack >= 1).OnlyEnforceIf(cur)
                         else:
-                            Model.Add(cur == 0)
+
+                            error_msg = f"Impossible Consecutive class {assignment.subject.subject_name} in {assignment.class_.c_name} on {index_to_day[d].value} slot {i+1}"
+                            slack = make_slack(error_msg, penalty=5000)
+                            Model.Add(slack >= 1).OnlyEnforceIf(cur)
             else:
                 for d in day_indices:
                     slots = [shifts[(assignment.id, d, s)] for s in all_slotes]
@@ -175,10 +219,16 @@ def Generate_Timetable(db, assignments, data, user_id):
                         if s + needed < len(slots):
                             for i in range(1, min_consecutive_class):
                                 # Force subsequent slots to 1
-                                Model.Add(slots[s+i] == 1).OnlyEnforceIf(is_start)
+                                error_msg = f"Broken Block (Min {min_consecutive_class}) {assignment.subject.subject_name} on {index_to_day[d]} at slot {s+1+i}"
+                                slack = make_slack(error_msg, penalty=5000)
+
+                                Model.Add(slots[s+i] + slack >= 1).OnlyEnforceIf(is_start)
                         else:
                             # Not enough room left in the day to start a block here
-                            Model.Add(is_start == 0)
+                            error_msg = f"Block Cut Off (End of Day or not enough slots to complete sequence) {assignment.subject.subject_name} on {index_to_day[d]} at slot {s+1+i}"
+                            slack = make_slack(error_msg, penalty=5000)
+
+                            Model.Add(slack >= 1).OnlyEnforceIf(is_start)
 
     
     #Priortising hard subject in the morning
@@ -195,9 +245,15 @@ def Generate_Timetable(db, assignments, data, user_id):
 
                 cur = shifts[(assignment.id, d, s)]
                 cost = slot_cost[s]
-                total_penalty_terms.append(cur * cost * Hardness_maping[assignment.subject.is_hard_sub]) #if the current slot is 0 then we append 0 else we append cost plan is to minimise cost
+                all_penalties.append(cur * cost * Hardness_maping[assignment.subject.is_hard_sub]) #if the current slot is 0 then we append 0 else we append cost plan is to minimise cost
+    for assignment in assignments:
+        for d in day_indices:
+            for s in all_slotes:
+                all_penalties.append(shifts[(assignment.id, d, s)] * -1000)
 
-    Model.Minimize(sum(total_penalty_terms))
+
+    Model.Minimize(sum(all_penalties))
+
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
@@ -216,34 +272,56 @@ def Generate_Timetable(db, assignments, data, user_id):
         pass
 
     if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-        try:
-            new_timetable = TimeTable(timetable_name=data.timetable_name, user_id=user_id, slots=data.slots)
-            db.add(new_timetable)
-            db.flush()
-            db.refresh(new_timetable)
-            
-            
-            for d in day_indices:
-                for s in all_slotes:
-                    for assignment in assignments:
-                        if solver.Value(shifts[(assignment.id, d, s)]):
-                            # store WeekDay enum member (not string) to match DB enum type
-                            entry = TimeTableEntry(
-                                timetable_id=new_timetable.id,
-                                class_name=assignment.class_.c_name,
-                                room_name=assignment.class_.r_name,
-                                teacher_name=assignment.teacher.t_name,
-                                subject_name=assignment.subject.subject_name,
-                                day=index_to_day[d],
-                                slot=s
-                            )
-                            db.add(entry)
-                            
-            # commit all changes at once
-            db.commit()
-            return new_timetable.id
-        except Exception:
-            db.rollback()
-            return False
+        detected_errors = []
+
+        for error, slack_var in slack_report.items():
+            severity = solver.Value(slack_var)
+            if severity > 0:
+                detected_errors.append(f"{error} (Violation amount: {severity})")
+        if len(detected_errors) > 0:
+            # change it to request to llm to get englified errors
+            return {
+                'status': 'failed',
+                'error': detected_errors
+            }
+        else:
+            try:
+                new_timetable = TimeTable(timetable_name=data.timetable_name, user_id=user_id, slots=data.slots)
+                db.add(new_timetable)
+                db.flush()
+                db.refresh(new_timetable)
+                
+                
+                for d in day_indices:
+                    for s in all_slotes:
+                        for assignment in assignments:
+                            if solver.Value(shifts[(assignment.id, d, s)]):
+                                # store WeekDay enum member (not string) to match DB enum type
+                                entry = TimeTableEntry(
+                                    timetable_id=new_timetable.id,
+                                    class_name=assignment.class_.c_name,
+                                    room_name=assignment.class_.r_name,
+                                    teacher_name=assignment.teacher.t_name,
+                                    subject_name=assignment.subject.subject_name,
+                                    day=index_to_day[d],
+                                    slot=s
+                                )
+                                db.add(entry)
+                                
+                # commit all changes at once
+                db.commit()
+                return {
+                    'status': 'success',
+                    'timetable_id': new_timetable.id,
+                }
+            except Exception as e:
+                db.rollback()
+                return {
+                    'status': 'DATABASE_ERROR',
+                    'error': [f'{str(e)}']
+                }
     else:
-        return False
+        return {
+            'status': 'MODEL_ERROR',
+            'error': ["Contact admin"] #verthe oru rasam
+        }
