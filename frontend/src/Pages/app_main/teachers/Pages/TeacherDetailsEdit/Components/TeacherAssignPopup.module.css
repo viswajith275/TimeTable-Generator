@@ -1,158 +1,110 @@
 .popupContainer {
   position: absolute;
-  z-index: 100;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 0;
   pointer-events: none;
-  transition:
-    transform 0.2s ease,
-    opacity 0.1s ease;
+  transition: opacity 0.15s ease;
 }
+
 .popupMain {
   min-width: clamp(330px, 30vw, 450px);
   padding: 1rem 1.5rem;
   background-color: var(--color-bg);
   border-radius: 0.7rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+  transform: scale(0.6);
   opacity: 0;
-  pointer-events: none;
   transition:
     transform 0.2s ease,
-    opacity 0.1s ease;
-  transform: scale(0.6);
+    opacity 0.15s ease;
 }
+
 .open {
-  transform: scale(1);
-  pointer-events: auto;
   opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
 }
+
 .headingContainer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
+
 .headingContainer h4 {
   font-size: 20px;
 }
+
 .headingContainer button {
-  background-color: transparent;
+  background: none;
   border: none;
   cursor: pointer;
 }
-.formContainer,
+
 .inputContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-}
-.formContainer {
-  gap: 0.8rem;
-}
-
-.classSelect,
-.subjectSelect {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .inputContainer label {
-  font-size: 17px;
-  font-weight: 400;
   display: flex;
   justify-content: space-between;
+  font-size: 16px;
+}
+.form {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .errorText {
   font-size: 14px;
   color: var(--color-danger);
 }
 
-.inputContainer input {
-  border: 1px solid var(--color-grey-300);
-  padding: 0.5rem;
-  border-radius: 0.3125rem;
-}
-.inputContainer input.errorField {
-  animation: shakeField 0.35s ease-in-out;
-  color: var(--color-danger);
-
-  border: 1px solid var(--color-danger);
-  background-color: var(--danger-bg);
-}
-.inputContainer input.errorField::placeholder {
-  color: var(--color-danger);
-}
-.actionBtns {
-  margin-top: 0.5rem;
+.days {
   display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  justify-content: flex-end;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
-.btnItem {
-  padding: 0.5rem 1rem;
-  background-color: transparent;
+.day,
+.dayActive {
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
   border: 1px solid var(--color-grey-300);
-  border-radius: 0.3125rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dayActive {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.actionBtns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-grey-300);
+  background: #fff;
   cursor: pointer;
 }
 
 .saveBtn {
-  border-color: var(--color-primary);
-  color: var(--color-bg);
   background-color: var(--color-primary);
-}
-.label {
-  font-size: 16px;
-}
-
-.inputContainer label {
-  font-size: 16px;
-  font-weight: 400;
-  display: flex;
-  justify-content: space-between;
-}
-.errorText {
-  font-size: 14px;
-  color: var(--color-danger);
-}
-
-.inputContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.inputContainer input {
-  border: 1px solid var(--color-grey-300);
-  padding: 0.5rem;
-  border-radius: 0.3125rem;
-}
-.inputContainer input.errorField {
-  animation: shakeField 0.35s ease-in-out;
-  color: var(--color-danger);
-
-  border: 1px solid var(--color-danger);
-  background-color: var(--danger-bg);
-}
-.inputContainer input.errorField::placeholder {
-  color: var(--color-danger);
-}
-.inputContainer input {
-  color: var(--color-grey-500);
-}
-.errorText {
-  font-size: 14px;
-  color: var(--color-danger);
-}
-
-.errorField {
-  border: 1px solid var(--color-danger);
-  border-radius: 0.3125rem;
-  background-color: var(--danger-bg);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
 }

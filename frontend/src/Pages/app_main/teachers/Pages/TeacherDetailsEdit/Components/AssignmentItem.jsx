@@ -6,6 +6,11 @@ import { useAuth } from "../../../../../../Context/AuthProvider";
 import { toast } from "react-toastify";
 
 const AssignmentItem = ({ subject, className, role, id, onDelete }) => {
+  const roles = {
+    CLASS_TEACHER: "Class Teacher",
+    SUBJECT_TEACHER: "Subject Teacher",
+  };
+
   const actionItemSize = 20;
   const { refreshToken } = useAuth();
   const [deleting, setDeleting] = useState(false);
@@ -62,7 +67,7 @@ const AssignmentItem = ({ subject, className, role, id, onDelete }) => {
       </div>
 
       <div className={styles.teacherRole}>
-        <p>{role}</p>
+        <p>{roles[role]}</p>
       </div>
     </div>
   );
