@@ -1,6 +1,6 @@
 import styles from "./TeacherAssignPopup.module.css";
 import { X } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SearchableSelect from "../../../../Components/SearchableSelect/SearchableSelect";
 import axios from "axios";
 import { useAuth } from "../../../../../../Context/AuthProvider";
@@ -18,16 +18,25 @@ const DAYS = [
   { label: "Sun", value: "Sunday" },
 ];
 
+const ROLE_OPTIONS = [
+  { label: "Class Teacher", value: "CLASS_TEACHER" },
+  { label: "Subject Teacher", value: "SUBJECT_TEACHER" },
+];
+
 const TeacherAssignPopup = ({
   popUpClose,
   isPopupOpen,
   teacherID,
   addAssignment,
+  editDetails,
 }) => {
+  const isEditMode = Boolean(editDetails);
+
   const { classes } = useClasses();
   const { subjects } = useSubjects();
   const { refreshToken } = useAuth();
-
+  // these are done to form labels for the drop down.. useMemo is used to avoid repeated calculcations..
+  // the concept of DP
   const classOptions = useMemo(
     () => classes.map((c) => ({ label: c.c_name, value: c.id })),
     [classes],
@@ -38,18 +47,12 @@ const TeacherAssignPopup = ({
     [subjects],
   );
 
-  const roleOptions = useMemo(
-    () => [
-      { label: "Class Teacher", value: "CLASS_TEACHER" },
-      { label: "Subject Teacher", value: "SUBJECT_TEACHER" },
-    ],
-    [],
-  );
-
   const [classRoomID, setClassRoomID] = useState(null);
   const [subjectID, setSubjectID] = useState(null);
   const [teacherRole, setTeacherRole] = useState(null);
   const [morningClassDays, setMorningClassDays] = useState([]);
+
+  const [initialState, setInitialState] = useState(null);
 
   const [errors, setErrors] = useState({
     classRoomID: "",
@@ -58,13 +61,36 @@ const TeacherAssignPopup = ({
     morningClassDays: "",
   });
 
+  useEffect(() => {
+    if (!isEditMode) return;
+
+    const init = {
+      teacherRole: editDetails.role,
+      morningClassDays: editDetails.morning_class_days ?? [],
+    };
+
+    setTeacherRole(init.teacherRole);
+    setMorningClassDays(init.morningClassDays);
+    setInitialState(init);
+  }, [isEditMode, editDetails]);
+
+  const hasChanges = () => {
+    if (!isEditMode || !initialState) return true;
+
+    return (
+      initialState.teacherRole !== teacherRole ||
+      JSON.stringify(initialState.morningClassDays) !==
+        JSON.stringify(morningClassDays)
+    );
+  };
+
   const toggleDay = (day) => {
     setMorningClassDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
 
-  const resetState = () => {
+  const resetErrors = () => {
     setErrors({
       classRoomID: "",
       subjectID: "",
@@ -82,14 +108,16 @@ const TeacherAssignPopup = ({
       morningClassDays: "",
     };
 
-    if (!classRoomID) {
-      nextErrors.classRoomID = "Select a class";
-      valid = false;
-    }
+    if (!isEditMode) {
+      if (!classRoomID) {
+        nextErrors.classRoomID = "Select a class";
+        valid = false;
+      }
 
-    if (!subjectID) {
-      nextErrors.subjectID = "Select a subject";
-      valid = false;
+      if (!subjectID) {
+        nextErrors.subjectID = "Select a subject";
+        valid = false;
+      }
     }
 
     if (!teacherRole) {
@@ -109,17 +137,31 @@ const TeacherAssignPopup = ({
   const submitHandler = async (e, hasRetried = false) => {
     e.preventDefault();
     if (!validateForm()) return;
+    if (isEditMode && !hasChanges()) toast.error("No changes were made");
 
-    const payload = {
-      teacher_id: teacherID,
-      class_id: classRoomID,
-      subject_id: subjectID,
-      role: teacherRole,
-      morning_class_days:
-        teacherRole === "CLASS_TEACHER" ? morningClassDays : null,
-    };
+    const payload = isEditMode
+      ? {
+          role: teacherRole,
+          morning_class_days:
+            teacherRole === "CLASS_TEACHER" ? morningClassDays : null,
+        }
+      : {
+          teacher_id: teacherID,
+          class_id: classRoomID,
+          subject_id: subjectID,
+          role: teacherRole,
+          morning_class_days:
+            teacherRole === "CLASS_TEACHER" ? morningClassDays : null,
+        };
 
     try {
+      if (isEditMode) {
+        await axios.put(`/api/assignments/${editDetails.id}`, payload);
+        resetErrors();
+        popUpClose();
+        return;
+      }
+
       const { data } = await axios.post("/api/assignments", payload);
 
       addAssignment({
@@ -130,18 +172,29 @@ const TeacherAssignPopup = ({
         subject: data.subject_name,
       });
 
-      resetState();
+      resetErrors();
       popUpClose();
     } catch (err) {
       const status = err?.response?.status;
+
       if (status === 401 && !hasRetried) {
         await refreshToken();
-        return await submitHandler(e, true);
-      } else if (status == 403) {
-        return toast.error("Error: Class assignment conflict!");
+        return submitHandler(e, true);
       }
+
+      if (status === 403) {
+        return toast.error(
+          `Class assignment conflict. ${err?.response?.data?.detail}`,
+        );
+      }
+
+      toast.error(
+        isEditMode ? "Failed to edit assignment." : "Failed to assign class.",
+      );
     }
   };
+
+  /* ---------------- UI ---------------- */
 
   return (
     <div
@@ -149,11 +202,11 @@ const TeacherAssignPopup = ({
     >
       <div className={`${styles.popupMain} ${isPopupOpen ? styles.open : ""}`}>
         <div className={styles.headingContainer}>
-          <h4>Add Assignment</h4>
+          <h4>{isEditMode ? "Edit Assignment" : "Add Assignment"}</h4>
           <button
             type="button"
             onClick={() => {
-              resetState();
+              resetErrors();
               popUpClose();
             }}
           >
@@ -162,40 +215,46 @@ const TeacherAssignPopup = ({
         </div>
 
         <form onSubmit={submitHandler} className={styles.form}>
-          <div className={styles.inputContainer}>
-            <label>
-              <p>Class</p>
-              {errors.classRoomID && (
-                <p className={styles.errorText}>{errors.classRoomID}</p>
-              )}
-            </label>
-            <SearchableSelect
-              initialPlaceholder="Select class"
-              options={classOptions}
-              setValue={(v) => {
-                setClassRoomID(v);
-                setErrors((p) => ({ ...p, classRoomID: "" }));
-              }}
-            />
-          </div>
+          {/* Class & Subject ONLY in Add Mode */}
+          {!isEditMode && (
+            <>
+              <div className={styles.inputContainer}>
+                <label>
+                  <p>Class</p>
+                  {errors.classRoomID && (
+                    <p className={styles.errorText}>{errors.classRoomID}</p>
+                  )}
+                </label>
+                <SearchableSelect
+                  initialPlaceholder="Select a class"
+                  options={classOptions}
+                  setValue={(v) => {
+                    setClassRoomID(v);
+                    setErrors((p) => ({ ...p, classRoomID: "" }));
+                  }}
+                />
+              </div>
 
-          <div className={styles.inputContainer}>
-            <label>
-              <p>Subject</p>
-              {errors.subjectID && (
-                <p className={styles.errorText}>{errors.subjectID}</p>
-              )}
-            </label>
-            <SearchableSelect
-              initialPlaceholder="Select subject"
-              options={subjectOptions}
-              setValue={(v) => {
-                setSubjectID(v);
-                setErrors((p) => ({ ...p, subjectID: "" }));
-              }}
-            />
-          </div>
+              <div className={styles.inputContainer}>
+                <label>
+                  <p>Subject</p>
+                  {errors.subjectID && (
+                    <p className={styles.errorText}>{errors.subjectID}</p>
+                  )}
+                </label>
+                <SearchableSelect
+                  initialPlaceholder="Select a subject"
+                  options={subjectOptions}
+                  setValue={(v) => {
+                    setSubjectID(v);
+                    setErrors((p) => ({ ...p, subjectID: "" }));
+                  }}
+                />
+              </div>
+            </>
+          )}
 
+          {/* Role */}
           <div className={styles.inputContainer}>
             <label>
               <p>Teacher Role</p>
@@ -204,8 +263,8 @@ const TeacherAssignPopup = ({
               )}
             </label>
             <SearchableSelect
-              initialPlaceholder="Select role"
-              options={roleOptions}
+              initialPlaceholder="Select a role"
+              options={ROLE_OPTIONS}
               setValue={(v) => {
                 setTeacherRole(v);
                 setMorningClassDays([]);
@@ -214,6 +273,7 @@ const TeacherAssignPopup = ({
             />
           </div>
 
+          {/* Morning days */}
           {teacherRole === "CLASS_TEACHER" && (
             <div className={styles.inputContainer}>
               <label>
@@ -246,18 +306,15 @@ const TeacherAssignPopup = ({
           )}
 
           <div className={styles.actionBtns}>
-            <button
-              type="button"
-              className={styles.btn}
-              onClick={() => {
-                resetState();
-                popUpClose();
-              }}
-            >
+            <button type="button" className={styles.btn} onClick={popUpClose}>
               Cancel
             </button>
-            <button type="submit" className={`${styles.btn} ${styles.saveBtn}`}>
-              Add
+            <button
+              type="submit"
+              disabled={isEditMode && !hasChanges()}
+              className={`${styles.btn} ${styles.saveBtn}`}
+            >
+              {isEditMode ? "Update" : "Add"}
             </button>
           </div>
         </form>

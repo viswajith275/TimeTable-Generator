@@ -5,7 +5,7 @@ import axios from "axios";
 import { useAuth } from "../../../../../../Context/AuthProvider";
 import { toast } from "react-toastify";
 
-const AssignmentItem = ({ subject, className, role, id, onDelete }) => {
+const AssignmentItem = ({ subject, className, role, id, onDelete, onEdit }) => {
   const roles = {
     CLASS_TEACHER: "Class Teacher",
     SUBJECT_TEACHER: "Subject Teacher",
@@ -52,7 +52,7 @@ const AssignmentItem = ({ subject, className, role, id, onDelete }) => {
         </div>
 
         <div className={styles.actionItems}>
-          <button className={styles.editBtn}>
+          <button className={styles.editBtn} onClick={() => onEdit(id)}>
             <SquarePen size={actionItemSize} />
           </button>
 

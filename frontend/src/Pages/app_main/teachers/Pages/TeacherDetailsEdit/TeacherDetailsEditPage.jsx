@@ -25,6 +25,8 @@ const TeacherDetailsEditPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [teacherInfo, setTeacherInfo] = useState({});
   const [error, setError] = useState(null);
+  const [editAssignmentTargetDetails, setEditAssignmentTargetDetails] =
+    useState(null);
 
   // Edit teacher popup
   const [popupShow, setPopupShow] = useState(false);
@@ -103,6 +105,13 @@ const TeacherDetailsEditPage = () => {
     setTeacherInfo(data);
     setTeachers((prev) => prev.map((val) => (val.id === data.id ? data : val)));
   };
+  const editClassAssignment = async (id) => {
+    const { data } = await axios.get("/api/assignments");
+    const assignment = data.find((c) => c.id == id);
+    console.log(assignment);
+    setAssignPopupShow(true);
+    setEditAssignmentTargetDetails(assignment);
+  };
 
   if (error === 404) {
     return (
@@ -142,16 +151,23 @@ const TeacherDetailsEditPage = () => {
       <EditTeachersPopup
         isPopupOpen={popupShow}
         targetElm={editTargetElm}
-        popUpClose={() => setPopupShow(false)}
+        popUpClose={() => {
+          setPopupShow(false);
+        }}
         initialData={teacherInfo}
         updateMain={editTeacherInfo}
       />
 
       <TeacherAssignPopup
         isPopupOpen={assignPopupShow}
-        popUpClose={() => setAssignPopupShow(false)}
+        popUpClose={() => {
+          setEditAssignmentTargetDetails(null);
+
+          setAssignPopupShow(false);
+        }}
         teacherID={teacherid}
         addAssignment={addClassAssignment}
+        editDetails={editAssignmentTargetDetails}
       />
 
       <Navbar />
@@ -224,6 +240,7 @@ const TeacherDetailsEditPage = () => {
                     role={elm.role}
                     id={elm.assign_id}
                     className={elm.c_name}
+                    onEdit={editClassAssignment}
                   />
                 ))}
               </div>
