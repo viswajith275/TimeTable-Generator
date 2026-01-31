@@ -293,6 +293,11 @@ class TeacherTimeTableJson(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class TimeTableCreateBase(BaseModel):
+    status: str
+    timetable_id: Optional[int] = None
+    error: Optional[List[str]] = None
+
 
 AllTimeTableBaseModel = Union[TimeTableJson, ClassTimeTableJson, TeacherTimeTableJson]
 

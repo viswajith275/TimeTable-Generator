@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Request, Query
 from backend.database import SessionDep
 from backend.oauth import UserDep
-from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTable, AllTimeTable, TimeTableEntry, TimeTableEntryUpdate, WeekDay, AllTimeTableBaseModel
+from backend.models import Generate_Data, TeacherClassAssignment, Teacher, TimeTable, AllTimeTable, TimeTableEntry, TimeTableEntryUpdate, WeekDay, AllTimeTableBaseModel, TimeTableCreateBase
 from backend.Generations.utils import Generate_Timetable
 from backend.rate_limiter_deps import limiter
 from typing import List, Annotated
@@ -178,7 +178,7 @@ def Fetch_One_TimeTables(current_user: UserDep, request: Request, id: int, db: S
 
 
 
-@timetable_routes.post('/generate')
+@timetable_routes.post('/generate', response_model=TimeTableCreateBase)
 def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Data, request: Request):
 
     # select assignments for teachers that belong to the current user
