@@ -10,7 +10,7 @@ const ClassesProvider = ({ children }) => {
   const [classes, setClasses] = useState([]);
   const [classesLoaded, setClassesLoaded] = useState(false);
   const [error, setError] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   //clear data on logout
 
   useEffect(() => {
@@ -18,16 +18,17 @@ const ClassesProvider = ({ children }) => {
       setClasses([]);
       setClassesLoaded(false);
       setError(null);
+      setLoading(false);
     }
   }, [isAuthenticated]);
 
   const fetchClasses = async (hasRetried = false) => {
     //  prevent refetch if already loaded
-    if (classesLoaded) return;
+    if (classesLoaded || loading) return;
 
     try {
       setError(null);
-
+      setLoading(true);
       const { data } = await axios.get("/api/classes");
       console.log("FETCHED CLASSES IN CONTEXT");
       setClasses(data);
@@ -40,6 +41,8 @@ const ClassesProvider = ({ children }) => {
 
       setError(err?.response?.status ?? "UNKNOWN_ERROR");
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 

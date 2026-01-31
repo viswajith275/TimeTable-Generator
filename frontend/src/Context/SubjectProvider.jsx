@@ -10,20 +10,23 @@ const SubjectsProvider = ({ children }) => {
   const [subjects, setSubjects] = useState([]);
   const [subjectsLoaded, setSubjectsLoaded] = useState(false);
   const [error, setError] = useState(null);
-
+  const [loading, setLoading] = useState(false);
+  // this code resets context after logout..
   useEffect(() => {
     if (!isAuthenticated) {
       setSubjects([]);
       setSubjectsLoaded(false);
+      setLoading(false);
       setError(null);
     }
   }, [isAuthenticated]);
 
   const fetchSubjects = async (hasRetried = false) => {
     // prevent refetch once loaded
-    if (subjectsLoaded) return;
+    if (subjectsLoaded || loading) return;
 
     try {
+      setLoading(true);
       setError(null);
 
       const { data } = await axios.get("/api/subjects");
@@ -38,6 +41,8 @@ const SubjectsProvider = ({ children }) => {
 
       setError(err?.response?.status ?? "UNKNOWN_ERROR");
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
