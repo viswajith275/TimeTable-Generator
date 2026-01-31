@@ -5,6 +5,7 @@ import axios from "axios";
 import TopbarLite from "../../../Components/topbar/TopbarLite";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../../Context/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const DAYS = [
   { label: "Mon", value: "Monday" },
@@ -23,6 +24,7 @@ const TimeTableCreate = () => {
   const [slots, setSlots] = useState(6);
   const [selectedDays, setSelectedDays] = useState(["Monday"]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDay = (day) => {
     setSelectedDays((prev) =>
@@ -62,7 +64,7 @@ const TimeTableCreate = () => {
       const { data } = await axios.post("/api/generate", payload);
       console.log(data);
 
-      navigate(`/dashboard/timetables/${data.id}`);
+      navigate(`/dashboard/timetables/${data.id}`, { replace: true });
     } catch (err) {
       if (err?.response?.status == 401 && !hasRetried) {
         await refreshToken();
