@@ -35,14 +35,43 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     # teacher weekly limit (use <= for flexibility)
     for assignment in assignments:
-        max_classes = getattr(assignment.teacher, 'max_classes', None)
+        max_classes = getattr(assignment.teacher, 'max_per_week', None)
         if max_classes is not None:
             error_msg = f"max weekly load exceeded {assignment.teacher.t_name} limit is {max_classes}"
             slack = make_slack(error_msg, penalty=1000)
             Model.Add(
-                sum(shifts[(assignment.id, d, s)] for d in day_indices for s in all_slotes)
+                sum(shifts[(assignment.id, d, s)] for s in all_slotes for d in day_indices)
                 <= max_classes + slack
             )
+
+    # teacher daily limit
+    for assignment in assignments:
+
+        max_class_per_day_teacher = getattr(assignment.teacher, 'max_per_day', None)
+        
+        if max_class_per_day_teacher is not None:
+            for d in day_indices:
+
+                error_msg = f"max Daily load exceeded {assignment.teacher.t_name} limit is {max_class_per_day_teacher}"
+                slack = make_slack(error_msg, penalty=500)
+
+                Model.Add(sum(shifts[(assignment.id, d, s)] for s in all_slotes) <= max_class_per_day_teacher + slack)
+    
+    # teacher consecutive class limit
+    for assignment in assignments:
+
+        max_consecutive_class_teacher = getattr(assignment.teacher, 'max_consecutive_class', None)
+
+        if max_consecutive_class_teacher is not None:
+            for d in day_indices:
+                slots = [shifts[(assignment.id, d, s)] for s in all_slotes]
+
+                for i in range(len(slots) - max_consecutive_class_teacher):
+
+                    error_msg = f"max Consecutive load exceeded {assignment.teacher.t_name} limit is {max_consecutive_class_teacher}"
+                    slack = make_slack(error_msg, penalty=500)
+
+                    Model.Add(sum(slots[i : i + max_consecutive_class_teacher + 1]) <= max_consecutive_class_teacher + slack)
 
     # teacher cannot be in two places same time
     assigned_to_teacher = collections.defaultdict(list)

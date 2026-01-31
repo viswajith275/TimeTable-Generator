@@ -108,7 +108,9 @@ class ClassBase(BaseModel):
 class TeacherBase(BaseModel):
     id: int
     t_name: str
-    max_classes: int
+    max_per_week: int
+    max_per_day: Optional[int]
+    max_consecutive_class: Optional[int]
     created_at: datetime
     class_assignments: List[ClassAssignedBase]
 
@@ -119,10 +121,17 @@ class ClassCreate(BaseModel):
     c_name: str
     r_name: str
 
-#Teacher creation detail model
+#Teacher creation/Updation detail model
 class TeacherCreate(BaseModel):
     t_name: str
-    max_classes: int
+    max_per_week: int
+    max_per_day: Optional[int]
+    max_consecutive_class: Optional[int]
+
+
+class TeacherUpdate(TeacherCreate):
+    pass
+
 
 class SubjectBase(BaseModel):
     id: int
@@ -362,9 +371,12 @@ class Teacher(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     t_name: Mapped[str] = mapped_column(String(50))
-    max_classes: Mapped[int] = mapped_column(Integer, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
 
+    max_per_week: Mapped[int] = mapped_column()
+    max_per_day: Mapped[Optional[int]] = mapped_column()
+    max_consecutive_class: Mapped[Optional[int]] = mapped_column()
+    
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
     user: Mapped["User"] = relationship(back_populates="teachers")
