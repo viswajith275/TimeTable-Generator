@@ -14,7 +14,10 @@ import { useSubjects } from "../../../../../Context/SubjectProvider";
 import { useClasses } from "../../../../../Context/ClassesProvider";
 import TopbarLite from "../../../Components/topbar/TopbarLite";
 import { useTeachers } from "../../../../../Context/TeacherProvider";
-
+// const roles = {
+//   CLASS_TEACHER: "Class Teacher",
+//   SUBJECT_TEACHER: "Subject Teacher",
+// };
 const TeacherDetailsEditPage = () => {
   const { setTeachers } = useTeachers();
   const { classesLoaded, fetchClasses } = useClasses();
@@ -105,12 +108,29 @@ const TeacherDetailsEditPage = () => {
     setTeacherInfo(data);
     setTeachers((prev) => prev.map((val) => (val.id === data.id ? data : val)));
   };
+
   const editClassAssignment = async (id) => {
     const { data } = await axios.get("/api/assignments");
     const assignment = data.find((c) => c.id == id);
-    console.log(assignment);
+
     setAssignPopupShow(true);
     setEditAssignmentTargetDetails(assignment);
+  };
+  const updateAssignments = (data) => {
+    // console.log(data, teacherInfo);
+    // teacherInfo.class_assignments.map((val) => {
+    //   console.log(val.assign_id == data.id ? val : "");
+    // });
+    setTeacherInfo((prev) => ({
+      ...prev,
+      class_assignments: prev.class_assignments.map((val) => {
+        if (val.assign_id == data.id) {
+          return { ...val, role: data.role };
+        } else {
+          return val;
+        }
+      }),
+    }));
   };
 
   if (error === 404) {
@@ -168,6 +188,7 @@ const TeacherDetailsEditPage = () => {
         teacherID={teacherid}
         addAssignment={addClassAssignment}
         editDetails={editAssignmentTargetDetails}
+        updateAssignments={updateAssignments}
       />
 
       <Navbar />

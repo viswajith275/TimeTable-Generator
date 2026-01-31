@@ -29,6 +29,7 @@ const TeacherAssignPopup = ({
   teacherID,
   addAssignment,
   editDetails,
+  updateAssignments,
 }) => {
   const isEditMode = Boolean(editDetails);
 
@@ -156,7 +157,11 @@ const TeacherAssignPopup = ({
 
     try {
       if (isEditMode) {
-        await axios.put(`/api/assignments/${editDetails.id}`, payload);
+        const { data } = await axios.put(
+          `/api/assignments/${editDetails.id}`,
+          payload,
+        );
+        updateAssignments(data);
         resetErrors();
         popUpClose();
         return;
