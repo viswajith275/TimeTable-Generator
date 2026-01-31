@@ -64,7 +64,7 @@ def add_teacher(current_user: UserDep, new_teacher: TeacherCreate, db: SessionDe
     if exists:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Teacher already exists!")
 
-    teacher = Teacher(t_name=new_teacher.t_name, max_per_week=new_teacher.max_per_week, max_per_day=new_teacher.max_per_day if new_teacher.max_per_day is not None else None, max_consecutive_class=new_teacher.max_consecutive_class is new_teacher.max_consecutive_class is not None else None, user_id=current_user.id)
+    teacher = Teacher(t_name=new_teacher.t_name, max_per_week=new_teacher.max_per_week, max_per_day=new_teacher.max_per_day if new_teacher.max_per_day is not None else None, max_consecutive_class=new_teacher.max_consecutive_class if new_teacher.max_consecutive_class is not None else None, user_id=current_user.id)
 
     db.add(teacher)
     db.commit()
