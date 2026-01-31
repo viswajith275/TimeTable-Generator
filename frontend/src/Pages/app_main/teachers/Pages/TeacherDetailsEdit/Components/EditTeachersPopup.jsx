@@ -4,22 +4,6 @@ import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-/**
- * EditTeachersPopup Component
- *
- * A modal popup component for editing teacher details (name or max periods).
- * The component dynamically displays different input fields based on what element
- * is being edited (targetElm). It includes validation, change detection, and handles
- * API calls to update teacher information.
- *
- * Props:
- * - popUpClose: Function to close the popup and reset state
- * - isPopupOpen: Boolean indicating if the popup is currently visible
- * - targetElm: String identifying what is being edited ('name' or 'max_classes')
- * - initialData: Object containing current teacher data (t_name, max_classes,id)
- * - updateMain : function that updates main page
- */
-
 const EditTeachersPopup = ({
   popUpClose,
   isPopupOpen,
@@ -27,23 +11,19 @@ const EditTeachersPopup = ({
   initialData,
   updateMain,
 }) => {
-  // State for teacher name and maximum periods input fields
   const [teacherName, setTeacherName] = useState("");
   const [maxPeriods, setMaxPeriods] = useState("");
 
-  // State to store validation error messages for each field
   const [errors, setErrors] = useState({
     teacherName: "",
     maxPeriods: "",
   });
 
-  // State to track which fields have validation errors (for styling)
   const [errorStates, setErrorStates] = useState({
     teacherName: false,
     maxPeriods: false,
   });
 
-  // Initialize form fields with initial data when popup opens or initial data changes
   useEffect(() => {
     if (!initialData) return;
 
@@ -51,17 +31,13 @@ const EditTeachersPopup = ({
     setMaxPeriods(String(initialData.max_classes ?? ""));
   }, [initialData, isPopupOpen]);
 
-  // Memoized value to detect if any changes have been made to the current field
-  // Prevents the Save button from being active if no actual changes occurred
   const isChanged = useMemo(() => {
     if (!initialData) return false;
 
-    // Check if teacher name has changed
     if (targetElm === "name") {
       return teacherName.trim() !== initialData.t_name;
     }
 
-    // Check if max periods has changed
     if (targetElm === "max_classes") {
       return Number(maxPeriods) !== initialData.max_classes;
     }
@@ -69,21 +45,17 @@ const EditTeachersPopup = ({
     return false;
   }, [teacherName, maxPeriods, targetElm, initialData]);
 
-  // Handler to close the popup and reset all error states
   const closeHandler = () => {
     setErrors({ teacherName: "", maxPeriods: "" });
     setErrorStates({ teacherName: false, maxPeriods: false });
     popUpClose();
   };
 
-  // Validation function that checks form inputs based on the target element being edited
-  // Returns true if validation passes, false otherwise
   const validate = () => {
     let hasError = false;
     const newErrors = {};
     const newErrorStates = {};
 
-    // Validate teacher name field if editing name
     if (targetElm === "name") {
       if (!teacherName.trim()) {
         newErrors.teacherName = "Teacher name is required.";
@@ -96,7 +68,6 @@ const EditTeachersPopup = ({
       }
     }
 
-    // Validate max periods field if editing max classes
     if (targetElm === "max_classes") {
       const num = Number(maxPeriods);
 
@@ -111,23 +82,17 @@ const EditTeachersPopup = ({
       }
     }
 
-    // Update error state in the component
     setErrors(newErrors);
     setErrorStates(newErrorStates);
 
     return !hasError;
   };
 
-  // Handler to send edit request to the API
-  // hasRetried: Flag to prevent infinite retry loops after token refresh
   const editHandler = async (hasRetried = false) => {
-    // Validate form before attempting to update
     if (!validate()) return;
 
-    // Skip API call if no changes were made
     if (!isChanged) return;
 
-    // Prepare payload with updated values based on which field is being edited
     const payload = {
       t_name: targetElm === "name" ? teacherName.trim() : initialData.t_name,
       max_classes:
@@ -137,7 +102,6 @@ const EditTeachersPopup = ({
     };
 
     try {
-      // Send PUT request to update teacher details
       const { data } = await axios.put(
         `/api/teachers/${initialData.id}`,
         payload,
@@ -147,25 +111,20 @@ const EditTeachersPopup = ({
       toast.success("Teacher updated successfully");
       popUpClose();
     } catch (err) {
-      // Handle 401 Unauthorized error by refreshing token and retrying
       if (err?.response?.status === 401 && !hasRetried) {
         await refreshToken();
         await editHandler(true);
         return;
       }
-      // Show error toast for other failures
       toast.error("Failed to update teacher details");
     }
   };
 
   return (
-    // Popup container with conditional open/close styling
     <div
       className={`${styles.popupContainer} ${isPopupOpen ? styles.open : ""}`}
     >
-      {/* Main popup content area */}
       <div className={`${styles.popupMain} ${isPopupOpen ? styles.open : ""}`}>
-        {/* Header with title and close button */}
         <div className={styles.headingContainer}>
           <h4>Edit Details</h4>
           <button onClick={closeHandler}>
@@ -173,9 +132,7 @@ const EditTeachersPopup = ({
           </button>
         </div>
 
-        {/* Form container with conditional input based on targetElm */}
         <div className={styles.formContainer}>
-          {/* Teacher name input field - shown when editing name */}
           {targetElm === "name" && (
             <div className={styles.inputContainer}>
               <label>
@@ -198,7 +155,6 @@ const EditTeachersPopup = ({
             </div>
           )}
 
-          {/* Max periods input field - shown when editing max_classes */}
           {targetElm === "max_classes" && (
             <div className={styles.inputContainer}>
               <label>
@@ -222,12 +178,11 @@ const EditTeachersPopup = ({
           )}
         </div>
 
-        {/* Action buttons: Cancel and Edit */}
         <div className={styles.actionBtns}>
           <button className={styles.btnItem} onClick={closeHandler}>
             Cancel
           </button>
-          {/* Edit button - disabled if no changes were made */}
+
           <button
             className={`${styles.btnItem} ${styles.saveBtn}`}
             disabled={!isChanged}

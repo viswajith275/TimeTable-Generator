@@ -8,46 +8,40 @@ import { useState, useEffect } from "react";
 import TeacherPopup from "./Components/TeacherPopup";
 import Filter from "../Components/filter/Filter";
 import { useAuth } from "../../../Context/AuthProvider";
+import { useTeachers } from "../../../Context/TeacherProvider";
 import ErrorLoadingStates from "../Components/ErrorLoadingStates/ErrorLoadingStates";
 
 const Teachers = () => {
   const { refreshToken } = useAuth();
-
+  // state vars from context api
+  const { teachers, setTeachers, teachersLoaded, fetchTeachers } =
+    useTeachers();
   const [popupShow, setPopupShow] = useState(false);
-  const [teachers, setTeachers] = useState([]);
+
   const [isTeachersLoading, setIsTeachersLoading] = useState(true);
 
   //fetches all the classes on mounting of component
+  // Ensure the loader is visible for at least MIN_TIME.
+  // If the API responds faster, we wait the remaining time.
+  // If it takes longer, we stop loading immediately (no extra delay). Math.max is used to prevent that (in case of -ve delay, make it 0)
+  // this prevents that flickering problem.. so kind of a smooth transition
   useEffect(() => {
-    const fetchAllTeachers = async (hasRetried = false) => {
-      // Ensure the loader is visible for at least MIN_TIME.
-      // If the API responds faster, we wait the remaining time.
-      // If it takes longer, we stop loading immediately (no extra delay). Math.max is used to prevent that (in case of -ve delay, make it 0)
-      // this prevents that flickering problem.. so kind of a smooth transition
+    const load = async () => {
+      const MIN_TIME = 500;
       const start = Date.now();
-      try {
-        const { data } = await axios.get("/api/teachers"); // instead of response.data  destructure that object
-        console.log(data);
-        setTeachers(data);
-      } catch (err) {
-        console.log(err);
-        if (err?.response?.status == 401 && !hasRetried) {
-          await refreshToken();
-          await fetchAllTeachers(true); //hasRetried act as a retry guard preventing multiple recursion calls
-        }
-      } finally {
-        const MIN_TIME = 500; //in ms
-        const elapsed = Date.now() - start;
-        setTimeout(
-          () => {
-            setIsTeachersLoading(false);
-          },
-          Math.max(MIN_TIME - elapsed, 0),
-        ); // to avoid negative numbers here..
-      }
-    };
 
-    fetchAllTeachers();
+      if (!teachersLoaded) {
+        await fetchTeachers();
+      }
+      const elapsed = Date.now() - start;
+      setTimeout(
+        () => {
+          setIsTeachersLoading(false);
+        },
+        Math.max(MIN_TIME - elapsed, 0),
+      );
+    };
+    load();
   }, []);
 
   const addTeacherItem = (data) => {

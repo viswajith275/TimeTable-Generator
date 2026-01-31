@@ -13,8 +13,10 @@ import TeacherAssignPopup from "./Components/TeacherAssignPopup";
 import { useSubjects } from "../../../../../Context/SubjectProvider";
 import { useClasses } from "../../../../../Context/ClassesProvider";
 import TopbarLite from "../../../Components/topbar/TopbarLite";
+import { useTeachers } from "../../../../../Context/TeacherProvider";
 
 const TeacherDetailsEditPage = () => {
+  const { setTeachers } = useTeachers();
   const { classesLoaded, fetchClasses } = useClasses();
   const { subjectsLoaded, fetchSubjects } = useSubjects();
   const { teacherid } = useParams();
@@ -97,6 +99,11 @@ const TeacherDetailsEditPage = () => {
     }));
   };
 
+  const editTeacherInfo = (data) => {
+    setTeacherInfo(data);
+    setTeachers((prev) => prev.map((val) => (val.id === data.id ? data : val)));
+  };
+
   if (error === 404) {
     return (
       <div className={styles.teacher}>
@@ -137,7 +144,7 @@ const TeacherDetailsEditPage = () => {
         targetElm={editTargetElm}
         popUpClose={() => setPopupShow(false)}
         initialData={teacherInfo}
-        updateMain={setTeacherInfo}
+        updateMain={editTeacherInfo}
       />
 
       <TeacherAssignPopup
