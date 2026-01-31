@@ -97,17 +97,9 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
     if not assignment:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
     
-    if values.role == TeacherRoles.CLASS_TEACHER:
-
-        already_class_teacher = db.query(TeacherClassAssignment).filter(TeacherClassAssignment.teacher_id == assignment.teacher_id, TeacherClassAssignment.role == TeacherRoles.CLASS_TEACHER).first()
-
-        if already_class_teacher:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This teacher is already a class teacher!")
-
-
     assignment.role = values.role
     assignment.morning_class_days = values.morning_class_days if values.morning_class_days is not None else None
-
+    
     db.commit()
 
     return {
