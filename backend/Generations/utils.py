@@ -265,6 +265,29 @@ def Generate_Timetable(db, assignments, data, user_id):
                             Model.Add(slack >= 1).OnlyEnforceIf(is_start)
 
     
+    #no two hard subjects should be together
+    for class_assign in assigned_to_class.values(): #reusing the variable from class conflicts :)
+
+        hard_subs = [a for a in class_assign if a.subject.is_hard_sub == "High"]
+
+        if not hard_subs:
+            continue
+
+        for d in day_indices:
+            for s in all_slotes:
+
+                current_hard_shifts = [shifts[(a.id, d, s)] for a in hard_subs]
+
+                next_hard_shifts = [shifts[(a.id, d, s+1)] for a in hard_subs]
+
+                if current_hard_shifts and next_hard_shifts:
+
+                    error_msg = f"Student Mental fatigue(adj hard subjects): Class {class_assign[0].class_.c_name} on {index_to_day[d]} (slotes {s} and {s+1})"
+                    slack = make_slack(error_msg, penalty=500)
+
+                    Model.Add(sum(current_hard_shifts) + sum(next_hard_shifts) <= 1 + slack)
+
+
     #Priortising hard subject in the morning
     slot_cost = {
         s: (s-1) * 2 for s in all_slotes
@@ -281,6 +304,8 @@ def Generate_Timetable(db, assignments, data, user_id):
                 cost = slot_cost[s]
                 all_penalties.append(cur * cost * Hardness_maping[assignment.subject.is_hard_sub]) #if the current slot is 0 then we append 0 else we append cost plan is to minimise cost
                 #we are appending it to all penaltiess to minimize in one go
+
+
     for assignment in assignments:
         for d in day_indices:
             for s in all_slotes:
