@@ -298,7 +298,6 @@ def Generate_Timetable(db, assignments, data, user_id):
     try:
         # set objective to maximize total assignments if not already set
         if not Model.HasObjective():
-            Model.Maximize(sum(shifts.values()))
             solver = cp_model.CpSolver()
             solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
             solver.parameters.num_search_workers = 8
