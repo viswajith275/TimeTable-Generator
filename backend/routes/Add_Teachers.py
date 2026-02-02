@@ -71,19 +71,19 @@ def add_teacher(current_user: UserDep, new_teacher: TeacherCreate, db: SessionDe
     db.refresh(teacher)
 
     return {
-                'id': teacher.id,
-                't_name': teacher.t_name,
-                'created_at': teacher.created_at,
-                'max_per_day': teacher.max_per_day,
-                'max_consecutive_class': teacher.max_consecutive_class,
-                'max_per_week': teacher.max_per_week,
-                'class_assignments': [{
-                    'assign_id': c.id,
-                    'c_name': c.class_.c_name,
-                    'r_name': c.class_.r_name,
-                    'subject': c.subject.subject_name,
-                    'role': c.role
-                } for c in teacher.class_assignments]
+            'id': teacher.id,
+            't_name': teacher.t_name,
+            'created_at': teacher.created_at,
+            'max_per_day': teacher.max_per_day,
+            'max_consecutive_class': teacher.max_consecutive_class,
+            'max_per_week': teacher.max_per_week,
+            'class_assignments': [{
+                'assign_id': c.id,
+                'c_name': c.class_.c_name,
+                'r_name': c.class_.r_name,
+                'subject': c.subject.subject_name,
+                'role': c.role
+            } for c in teacher.class_assignments]
                     
             }
 

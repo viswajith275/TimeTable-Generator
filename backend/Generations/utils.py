@@ -1,13 +1,18 @@
 from ortools.sat.python import cp_model
 import collections
+import random
 from backend.models import TimeTable, TimeTableEntry, WeekDay
 
 def Generate_Timetable(db, assignments, data, user_id):
+
+    #data has a max_solve_seconds to control server load (could be used in the future)
+
     Model = cp_model.CpModel()
+
     # keep WeekDay enum members
+
     index_to_day = {i:d for i,d in enumerate(WeekDay)}  # each item should be a WeekDay (or convertible)
     day_to_index = {d:i for i,d in enumerate(WeekDay)}
-    # ensure enum members if strings were passed
 
     day_indices = set([day_to_index[d] for d in data.days])
     all_slotes = range(1,data.slots+1)
@@ -20,7 +25,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     slack_report = {}
     all_penalties = []
 
-    def make_slack(error, penalty = 1000):
+    def make_slack(error, penalty = 1000): # slack diagnosis function
         
         slack_var = Model.NewIntVar(0, 100, error)
         slack_report[error] = slack_var
@@ -33,7 +38,7 @@ def Generate_Timetable(db, assignments, data, user_id):
             for s in all_slotes:
                 shifts[(assignment.id, d, s)] = Model.NewBoolVar(f'assign_{assignment.id}_d{d}_s{s}')
 
-    # teacher weekly limit (use <= for flexibility)
+    # teacher weekly limit
     for assignment in assignments:
         max_classes = getattr(assignment.teacher, 'max_per_week', None)
         if max_classes is not None:
@@ -232,7 +237,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                         # 1. Detect "Start of Block" (Current is ON, Prev is OFF)
                         is_start = Model.NewBoolVar(f'start_{assignment.id}_{d}_{s}')
                         
-                        if s != 0:
+                        if s > 0:
                             prev = slots[s-1]
                             # Start = Current AND (NOT Prev)
                             Model.AddBoolAnd([current, prev.Not()]).OnlyEnforceIf(is_start)
@@ -242,7 +247,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                             # If first slot of the day, Start = Current
                             Model.Add(is_start == current)
 
-                        # 2. Enforce: If this is a start, the next (Min-1) slots must be ON
+                        # Enforce: If this is a start, the next (Min-1) slots must be ON
                         needed = min_consecutive_class - 1
                         
                         if s + needed < len(slots):
@@ -262,7 +267,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     
     #Priortising hard subject in the morning
     slot_cost = {
-        s: (s-1) * 10 * 2 for s in all_slotes
+        s: (s-1) * 2 for s in all_slotes
     }
 
     total_penalty_terms = []
@@ -296,6 +301,10 @@ def Generate_Timetable(db, assignments, data, user_id):
             Model.Maximize(sum(shifts.values()))
             solver = cp_model.CpSolver()
             solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
+            solver.parameters.num_search_workers = 8
+            solver.parameters.random_polarity_ratio = 0.99  # 99% chance to choose 0 or 1 randomly
+            solver.parameters.random_seed = random.randint(0, 10000)
+            solver.parameters.exploit_best_solution_probability = 0.2
             status = solver.Solve(Model)
     except Exception:
         # if objective addition fails, continue with original status
@@ -309,7 +318,7 @@ def Generate_Timetable(db, assignments, data, user_id):
             if severity > 0:
                 detected_errors.append(f"{error} (Violation amount: {severity})")
         if len(detected_errors) > 0:
-            # change it to request to llm to get englified errors
+            # change it to request to llm to get englified (wtf is this word) errors
             return {
                 'status': 'failed',
                 'error': detected_errors
@@ -326,7 +335,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                     for s in all_slotes:
                         for assignment in assignments:
                             if solver.Value(shifts[(assignment.id, d, s)]):
-                                # store WeekDay enum member (not string) to match DB enum type
+                                # store WeekDay enum member (not string) to match db enum type
                                 entry = TimeTableEntry(
                                     timetable_id=new_timetable.id,
                                     class_name=assignment.class_.c_name,

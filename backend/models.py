@@ -125,8 +125,8 @@ class ClassCreate(BaseModel):
 class TeacherCreate(BaseModel):
     t_name: str
     max_per_week: int
-    max_per_day: Optional[int]
-    max_consecutive_class: Optional[int]
+    max_per_day: Optional[int] = None
+    max_consecutive_class: Optional[int] = None
 
 
 class TeacherUpdate(TeacherCreate):
@@ -197,7 +197,7 @@ class TeacherClassAssignmentCreate(BaseModel):
     class_id: int
     subject_id: int
     role: TeacherRoles
-    morning_class_days: Optional[List[WeekDay]]
+    morning_class_days: Optional[List[WeekDay]] = None
 
     @model_validator(mode='after')
     def validation(self) -> 'TeacherClassAssignmentCreate':
