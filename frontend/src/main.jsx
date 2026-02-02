@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import ClassesProvider from "./Context/ClassesProvider.jsx";
 import SubjectsProvider from "./Context/SubjectProvider.jsx";
 import TeacherProvider from "./Context/TeacherProvider.jsx";
+import GlobalDataProvider from "./Context/GlobalDataProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -12,7 +13,9 @@ createRoot(document.getElementById("root")).render(
       <ClassesProvider>
         <SubjectsProvider>
           <TeacherProvider>
-            <App />
+            <GlobalDataProvider>
+              <App />
+            </GlobalDataProvider>
           </TeacherProvider>
         </SubjectsProvider>
       </ClassesProvider>

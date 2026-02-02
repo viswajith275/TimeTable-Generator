@@ -7,12 +7,12 @@ import TeacherItem from "./Components/TeacherItem";
 import { useState, useEffect } from "react";
 import TeacherPopup from "./Components/TeacherPopup";
 import Filter from "../Components/filter/Filter";
-import { useAuth } from "../../../Context/AuthProvider";
+import { useGlobalData } from "../../../Context/GlobalDataProvider";
 import { useTeachers } from "../../../Context/TeacherProvider";
 import ErrorLoadingStates from "../Components/ErrorLoadingStates/ErrorLoadingStates";
 
 const Teachers = () => {
-  const { refreshToken } = useAuth();
+  const { timeTableLoaded, fetchTimeTables } = useGlobalData();
   // state vars from context api
   const { teachers, setTeachers, teachersLoaded, fetchTeachers } =
     useTeachers();
@@ -29,7 +29,9 @@ const Teachers = () => {
     const load = async () => {
       const MIN_TIME = 500;
       const start = Date.now();
-
+      if (!timeTableLoaded) {
+        fetchTimeTables();
+      }
       if (!teachersLoaded) {
         await fetchTeachers();
       }

@@ -15,6 +15,7 @@ import TeacherDetailsEditPage from "../../Pages/app_main/teachers/Pages/TeacherD
 import TermsAndConditions from "../../Pages/legal/termsAndConditions/TermsAndConditions";
 import TimeTableCreate from "../../Pages/app_main/dashboard/Pages/TimeTableCreatePage/TimeTableCreate";
 import TimeTableView from "../../Pages/app_main/dashboard/Pages/TimeTableViewPage/TimeTableView";
+import TeacherTimeTable from "../../Pages/app_main/teachers/Pages/TeacherTimeTable/TeacherTimeTable";
 
 const RouteManager = () => {
   return (
@@ -129,6 +130,14 @@ const RouteManager = () => {
         }
       />
 
+      <Route
+        path="/teachers/teacher/timetable/:teacherid"
+        element={
+          <ProtectedRoutes>
+            <TeacherTimeTable />
+          </ProtectedRoutes>
+        }
+      />
       <Route path="*" element={<Error404 />} />
     </Routes>
   );

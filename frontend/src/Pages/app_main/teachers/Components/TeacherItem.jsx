@@ -4,10 +4,12 @@ import axios from "axios";
 import { useAuth } from "../../../../Context/AuthProvider";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useGlobalData } from "../../../../Context/GlobalDataProvider";
 
 const TeacherItem = ({ teacherName, assigments = [], id, deleteTeacher }) => {
   const navigate = useNavigate();
   const { refreshToken } = useAuth();
+  const { timetables } = useGlobalData();
 
   const handleDelete = async (hasRetried = false) => {
     try {
@@ -16,7 +18,6 @@ const TeacherItem = ({ teacherName, assigments = [], id, deleteTeacher }) => {
       deleteTeacher(id);
     } catch (err) {
       if (err?.response?.status == 401 && !hasRetried) {
-        console.log("ho");
         await refreshToken();
         await handleDelete(true);
       } else toast.error("Failed to delete teacher item.");
@@ -71,14 +72,12 @@ const TeacherItem = ({ teacherName, assigments = [], id, deleteTeacher }) => {
         onClick={() => {
           // if there are assigments we show them details & teacher-specific timetables
           // other wise force them into
-          assigments.length === 0
+          timetables.length === 0
             ? navigate(`/teachers/teacher/edit/${id}`)
-            : "";
+            : navigate(`/teachers/teacher/timetable/${id}`);
         }}
       >
-        <p>
-          {assigments.length === 0 ? "Assign Classes" : "View Teacher Info"}
-        </p>
+        <p>{timetables.length === 0 ? "Assign Classes" : "View Timetable"}</p>
         <ChevronRight size={18} />
       </div>
     </div>

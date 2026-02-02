@@ -109,12 +109,19 @@ const TeacherDetailsEditPage = () => {
     setTeachers((prev) => prev.map((val) => (val.id === data.id ? data : val)));
   };
 
-  const editClassAssignment = async (id) => {
-    const { data } = await axios.get("/api/assignments");
-    const assignment = data.find((c) => c.id == id);
+  const editClassAssignment = async (id, hasRetried = false) => {
+    try {
+      const { data } = await axios.get("/api/assignments");
+      const assignment = data.find((c) => c.id == id);
 
-    setAssignPopupShow(true);
-    setEditAssignmentTargetDetails(assignment);
+      setAssignPopupShow(true);
+      setEditAssignmentTargetDetails(assignment);
+    } catch (error) {
+      if (error?.response?.status === 401 && !hasRetried) {
+        await refreshToken();
+        return await editClassAssignment(true);
+      }
+    }
   };
   const updateAssignments = (data) => {
     // console.log(data, teacherInfo);

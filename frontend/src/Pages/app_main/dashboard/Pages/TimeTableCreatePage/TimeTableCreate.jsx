@@ -6,6 +6,7 @@ import TopbarLite from "../../../Components/topbar/TopbarLite";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../../Context/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { useGlobalData } from "../../../../../Context/GlobalDataProvider";
 
 const DAYS = [
   { label: "Mon", value: "Monday" },
@@ -24,6 +25,7 @@ const TimeTableCreate = () => {
   const [slots, setSlots] = useState(6);
   const [selectedDays, setSelectedDays] = useState(["Monday"]);
   const [loading, setLoading] = useState(false);
+  const { setTimetables } = useGlobalData();
   const navigate = useNavigate();
 
   const toggleDay = (day) => {
@@ -62,9 +64,15 @@ const TimeTableCreate = () => {
       setLoading(true);
 
       const { data } = await axios.post("/api/generate", payload);
-      console.log(data);
-
-      navigate(`/dashboard/timetables/${data.id}`, { replace: true });
+      console.log(data, data.timetable_id);
+      setTimetables((prev) => [
+        ...prev,
+        {
+          timetable_id: data.timetable_id,
+          timetable_name: timetableName.trim(),
+        },
+      ]);
+      navigate(`/dashboard/timetables/${data.timetable_id}`, { replace: true });
     } catch (err) {
       if (err?.response?.status == 401 && !hasRetried) {
         await refreshToken();

@@ -7,39 +7,32 @@ import Filter from "../Components/filter/Filter";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ErrorLoadingStates from "../Components/ErrorLoadingStates/ErrorLoadingStates";
-import axios from "axios";
-import { useAuth } from "../../../Context/AuthProvider";
+import { useGlobalData } from "../../../Context/GlobalDataProvider";
 
 const Dashboard = () => {
-  const { refreshToken } = useAuth();
   const navigate = useNavigate();
-  const [timetables, setTimetables] = useState([]);
+  const { timetables, setTimetables, fetchTimeTables, timeTableLoaded } =
+    useGlobalData();
   const [isTimetableLoading, setIsTimetableLoading] = useState(true);
   useEffect(() => {
-    const fetchAllTimeTables = async (hasRetried = false) => {
-      const start = Date.now();
+    const load = async () => {
       const MIN_TIME = 500;
+      const start = Date.now();
 
-      try {
-        const { data } = await axios.get("/api/timetables");
-        setTimetables(data);
-      } catch (error) {
-        if (error?.response?.status === 401 && !hasRetried) {
-          await refreshToken();
-          return fetchAllTimeTables(true);
-        }
-      } finally {
-        const elapsed = Date.now() - start;
-        setTimeout(
-          () => {
-            setIsTimetableLoading(false);
-          },
-          Math.max(MIN_TIME - elapsed, 0),
-        );
+      if (!timeTableLoaded) {
+        await fetchTimeTables();
       }
+      const elapsed = Date.now() - start;
+      setTimeout(
+        () => {
+          setIsTimetableLoading(false);
+        },
+        Math.max(MIN_TIME - elapsed, 0),
+      );
     };
+    load();
 
-    fetchAllTimeTables();
+    console.log(timetables);
   }, []);
   const deleteTableItem = (id) => {
     setTimetables((prev) => prev.filter((item) => item.timetable_id != id));
