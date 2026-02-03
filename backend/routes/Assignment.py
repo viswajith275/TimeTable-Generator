@@ -66,7 +66,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
         class_id=cur_class.id,
         subject_id=subject.id,
         role=values.role,
-        morning_class_days=values.morning_class_days if values.morning_class_days is not None else None
+        morning_class_days=values.morning_class_days
     )
 
     db.add(new_assignment)
