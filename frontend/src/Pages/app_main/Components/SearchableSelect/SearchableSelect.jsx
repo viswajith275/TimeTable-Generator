@@ -16,6 +16,7 @@ const SearchableSelect = ({ initialPlaceholder, options, setValue }) => {
 
   const [placeholder, setPlaceholder] = useState(initialPlaceholder);
   const wrapperRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -30,10 +31,12 @@ const SearchableSelect = ({ initialPlaceholder, options, setValue }) => {
     };
   }, []);
 
-  //resetting query on close
+  //resetting query on close + auto focus on search input
   useEffect(() => {
     if (!open) {
       setSearchQuery("");
+    } else {
+      searchInputRef.current.focus();
     }
   }, [open]);
   return (
@@ -55,6 +58,7 @@ const SearchableSelect = ({ initialPlaceholder, options, setValue }) => {
             <Search size={16} strokeWidth={1.75} />
 
             <input
+              ref={searchInputRef}
               value={searchQuery}
               onClick={(e) => e.stopPropagation()}
               onChange={(e) => setSearchQuery(e.target.value)}

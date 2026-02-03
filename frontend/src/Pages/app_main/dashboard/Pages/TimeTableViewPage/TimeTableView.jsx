@@ -10,7 +10,6 @@ import ErrorLoadingStates from "../../../Components/ErrorLoadingStates/ErrorLoad
 import SearchableSelect from "../../../Components/SearchableSelect/SearchableSelect";
 
 const buildSubjectColorMap = (assignments, colors) => {
-  //this color assign function was entirely written with chatgpt so idk what is going on here.. dont bother dming me @asif ali lol
   const subjects = new Set();
 
   assignments.forEach((cls) => {
