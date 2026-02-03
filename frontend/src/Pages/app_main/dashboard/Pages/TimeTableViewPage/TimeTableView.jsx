@@ -145,65 +145,70 @@ const TimeTableView = () => {
                 <div
                   className={styles.timeTableGrid}
                   style={{
-                    "--grid-cols": days.length,
-                    "--grid-rows": timeTable?.slots || 0,
+                    "--grid-cols": timeTable?.slots || 0,
+                    "--grid-rows": days.length - 1,
                   }}
                 >
-                  {/*first row*/}
-                  {days.map((elm, i) => (
-                    <div key={i} className={styles.headingRowItem}>
-                      <p>{elm}</p>
-                    </div>
-                  ))}
-                  {/* Each rows are formed by iteration.
-Array.from({length:n}) is similiar to range(n) in python.
-First we check if index = 0 which means.. column before day.. so assign it a slot.
-else assign it a subject..
- */}
-                  {Array.from({ length: timeTable?.slots }, (_, slotIndex) =>
-                    days.map((day, index) => {
-                      if (index === 0) {
+                  {Array.from(
+                    { length: timeTable?.slots + 1 },
+                    (_, slotIndex) => (
+                      <div
+                        key={`slot-header-${slotIndex}`}
+                        className={styles.headingRowItem}
+                      >
+                        <p>{slotIndex === 0 ? "" : `Slot ${slotIndex}`}</p>
+                      </div>
+                    ),
+                  )}
+
+                  {days.slice(1).map((day) =>
+                    Array.from(
+                      { length: timeTable?.slots + 1 },
+                      (_, slotIndex) => {
+                        if (slotIndex === 0) {
+                          return (
+                            <div
+                              key={`day-${day}`}
+                              className={`${styles.slotBox} ${styles.rowItem}`}
+                            >
+                              <p>{day}</p>
+                            </div>
+                          );
+                        }
+
+                        const dayData = selectedClass?.assignments.find(
+                          (d) => d.day === day,
+                        );
+
+                        const subject = dayData?.assignments.find(
+                          (a) => a.slot === slotIndex,
+                        );
+
                         return (
                           <div
-                            key={`slot-${slotIndex + 1}`}
-                            className={`${styles.slotBox} ${styles.rowItem}`}
+                            key={`${day}-slot-${slotIndex}`}
+                            className={`${styles.subjectBox} ${styles.rowItem}`}
                           >
-                            <p>Slot {slotIndex + 1}</p>
+                            <div
+                              className={styles.subItem__background}
+                              style={{
+                                backgroundColor:
+                                  subjectColorMap[subject?.subject] ||
+                                  "#E5E7EB",
+                                color: subject ? "#fff" : "#6B7280",
+                              }}
+                            >
+                              <p className={styles.subjectName__rowItem}>
+                                {subject?.subject || "Free Period"}
+                              </p>
+                              <p className={styles.teacherName__rowItem}>
+                                {subject?.teacher_name || ""}
+                              </p>
+                            </div>
                           </div>
                         );
-                      }
-
-                      const dayData = selectedClass?.assignments.find(
-                        (d) => d.day === day,
-                      );
-
-                      const subject = dayData?.assignments.find(
-                        (a) => a.slot === slotIndex + 1,
-                      );
-
-                      return (
-                        <div
-                          key={`slot-${slotIndex + 1}-${day}`}
-                          className={`${styles.subjectBox} ${styles.rowItem}`}
-                        >
-                          <div
-                            className={styles.subItem__background}
-                            style={{
-                              backgroundColor:
-                                subjectColorMap[subject?.subject] || "#E5E7EB",
-                              color: subject ? "#fff" : "#6B7280",
-                            }} //free period fall back mechanism
-                          >
-                            <p className={styles.subjectName__rowItem}>
-                              {subject?.subject || "Free Period"}
-                            </p>
-                            <p className={styles.teacherName__rowItem}>
-                              {subject?.teacher_name || ""}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    }),
+                      },
+                    ),
                   )}
                 </div>
               </div>

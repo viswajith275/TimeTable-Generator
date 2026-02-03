@@ -62,7 +62,7 @@
 .timeTableGrid {
   display: grid;
   min-width: max-content;
-  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  grid-template-columns: 200px repeat(var(--grid-cols), 1fr);
   grid-template-rows: 48px repeat(var(--grid-rows), 90px);
   gap: 0;
   border-top: 1px solid var(--color-table-border);
