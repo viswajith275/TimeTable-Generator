@@ -6,6 +6,7 @@
   height: 60vh;
 }
 .containerMain p {
+  text-align: center;
   font-size: 18px;
   color: var(--color-grey-500);
 }

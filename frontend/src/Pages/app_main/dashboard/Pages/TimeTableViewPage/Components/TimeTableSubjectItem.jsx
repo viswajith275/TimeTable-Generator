@@ -4,7 +4,7 @@ import { X, Check } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../../../../../Context/AuthProvider";
-const TimeTableSubjectItem = ({ subject, subjectColorMap }) => {
+const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
   const { refreshToken } = useAuth();
   const isFreePeriod = !subject?.id;
   const [editMode, setEditMode] = useState(false);
@@ -16,6 +16,15 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap }) => {
   const actionBtnSize = 18;
 
   const subjectInputRef = useRef(null);
+
+  //reset data
+  useEffect(() => {
+    setFormValue({
+      subject: subject?.subject || "Free Period",
+      teacher: subject?.teacher_name || "",
+    });
+    setEditMode(false);
+  }, [subject]);
 
   //auto focus
   useEffect(() => {
@@ -57,9 +66,13 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap }) => {
       teacher_name: formValue.teacher,
     };
     try {
-      const { data } = await axios.put(`/entries/${subject.id}`, payload);
+      console.log("invoking api");
+      console.log("Payload structure : ", payload);
+      await axios.put(`/api/entries/${subject.id}`, payload);
+      editEntry({ ...payload, id: subject.id });
     } catch (error) {
       const status = error?.response?.status;
+      console.log(error);
       if (status == 401 && !hasRetried) {
         await refreshToken();
         return await handleSubmit(e, true);

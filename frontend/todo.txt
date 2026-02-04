@@ -7,6 +7,7 @@ Subject creation -> min,max settings -> default value none.. add it
 Error handling in timetable creation : RAG shit
 
 Teacher assignments new constraints.
+Refactoring everything
 
 
 
