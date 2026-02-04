@@ -157,3 +157,7 @@ this shake animation is for error indication in inputfields */
 .errorInput::placeholder {
   color: var(--color-danger);
 }
+
+input[type="number"]:focus {
+  outline: none !important;
+}

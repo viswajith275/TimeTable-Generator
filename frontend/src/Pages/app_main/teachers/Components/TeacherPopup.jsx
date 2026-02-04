@@ -77,8 +77,11 @@ const TeacherPopup = ({ popUpClose, isPopupOpen, addTeacher }) => {
     try {
       const payload = {
         t_name: teacherName,
-        max_classes: maxPeriodsNum,
+        max_per_week: Number(maxPeriodsNum),
+        max_per_day: null,
+        max_consecutive_class: null,
       };
+      console.log(payload);
       const { data } = await axios.post("/api/teachers", payload);
       addTeacher(data);
       toast.success("Teacher added successfully");
