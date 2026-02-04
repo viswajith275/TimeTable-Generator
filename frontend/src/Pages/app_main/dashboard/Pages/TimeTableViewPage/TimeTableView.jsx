@@ -8,6 +8,7 @@ import { useAuth } from "../../../../../Context/AuthProvider";
 import axios from "axios";
 import ErrorLoadingStates from "../../../Components/ErrorLoadingStates/ErrorLoadingStates";
 import SearchableSelect from "../../../Components/SearchableSelect/SearchableSelect";
+import TimeTableSubjectItem from "./Components/TimeTableSubjectItem";
 
 const buildSubjectColorMap = (assignments, colors) => {
   const subjects = new Set();
@@ -189,22 +190,10 @@ const TimeTableView = () => {
                             key={`${day}-slot-${slotIndex}`}
                             className={`${styles.subjectBox} ${styles.rowItem}`}
                           >
-                            <div
-                              className={styles.subItem__background}
-                              style={{
-                                backgroundColor:
-                                  subjectColorMap[subject?.subject] ||
-                                  "#E5E7EB",
-                                color: subject ? "#fff" : "#6B7280",
-                              }}
-                            >
-                              <p className={styles.subjectName__rowItem}>
-                                {subject?.subject || "Free Period"}
-                              </p>
-                              <p className={styles.teacherName__rowItem}>
-                                {subject?.teacher_name || ""}
-                              </p>
-                            </div>
+                            <TimeTableSubjectItem
+                              subject={subject}
+                              subjectColorMap={subjectColorMap}
+                            />
                           </div>
                         );
                       },
