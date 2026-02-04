@@ -64,12 +64,12 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate,
     subject = Subject(
         subject_name=values.subject,
         user_id=current_user.id,
-        min_per_day=values.min_per_day if values.min_per_day else None,
-        max_per_day=values.max_per_day if values.max_per_day else None,
-        min_per_week=values.min_per_week if values.min_per_week else None,
-        max_per_week=values.max_per_week if values.max_per_week else None,
-        max_consecutive_class=values.max_consecutive_class if values.max_consecutive_class else None,
-        min_consecutive_class=values.min_consecutive_class if values.min_consecutive_class else None,
+        min_per_day=values.min_per_day,
+        max_per_day=values.max_per_day,
+        min_per_week=values.min_per_week,
+        max_per_week=values.max_per_week,
+        max_consecutive_class=values.max_consecutive_class,
+        min_consecutive_class=values.min_consecutive_class,
         is_hard_sub=values.is_hard_sub.value
     )
 
@@ -95,12 +95,12 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
     if subject:
         subject.subject_name = values.subject
-        subject.min_per_day = values.min_per_day if values.min_per_day else None
-        subject.max_per_day = values.max_per_day if values.max_per_day else None
-        subject.min_per_week = values.min_per_week if values.min_per_week else None
-        subject.max_per_week = values.max_per_week if values.max_per_week else None
-        subject.max_consecutive_class = values.max_consecutive_class if values.max_consecutive_class else None
-        subject.min_consecutive_class = values.min_consecutive_class if values.min_consecutive_class else None
+        subject.min_per_day = values.min_per_day
+        subject.max_per_day = values.max_per_day
+        subject.min_per_week = values.min_per_week
+        subject.max_per_week = values.max_per_week
+        subject.max_consecutive_class = values.max_consecutive_class
+        subject.min_consecutive_class = values.min_consecutive_class
         subject.is_hard_sub = values.is_hard_sub.value
 
         db.commit()

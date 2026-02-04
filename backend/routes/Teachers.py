@@ -126,7 +126,7 @@ def delete_teacher(id: int, current_user: UserDep, db: SessionDep, request: Requ
 
     teacher = db.query(Teacher).filter(Teacher.id == id, Teacher.user_id == current_user.id).first()
 
-    if teacher:
+    if not teacher:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
     
     db.delete(teacher)

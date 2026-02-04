@@ -98,9 +98,11 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
 @class_routes.delete('/classes/{id}')
 def delete_class(id: int, current_user: UserDep, db: SessionDep, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
-    if cur_class:
-        db.delete(cur_class)
-        db.commit()
-        return {'message': 'class deleted successfully'}
+    if not cur_class:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
+
+    db.delete(cur_class)
+    db.commit()
     
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Class not found!')
+    return {'message': 'class deleted successfully'}
+    

@@ -186,6 +186,7 @@ class TeacherClassAssignmentBase(BaseModel):
     class_id: int
     c_name: str
     role: str
+    morning_class_days: Optional[List[WeekDay]]
     subject_id: int
     subject_name: str
 

@@ -274,7 +274,7 @@ def Generate_Timetable(db, assignments, data, user_id):
             continue
 
         for d in day_indices:
-            for s in all_slotes:
+            for s in range(1,len(all_slotes)):
 
                 current_hard_shifts = [shifts[(a.id, d, s)] for a in hard_subs]
 
