@@ -97,8 +97,8 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
 
     updated_teacher.t_name = teacher.t_name
     updated_teacher.max_per_week = teacher.max_per_week
-    updated_teacher.max_per_day=teacher.max_per_day
-    updated_teacher.max_consecutive_class=teacher.max_consecutive_class
+    updated_teacher.max_per_day = teacher.max_per_day
+    updated_teacher.max_consecutive_class = teacher.max_consecutive_class
                     
 
     db.commit()

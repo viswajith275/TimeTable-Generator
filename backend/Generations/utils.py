@@ -317,22 +317,11 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
+    solver.parameters.num_search_workers = 8
+    solver.parameters.random_polarity_ratio = 0.99  # 99% chance to choose 0 or 1 randomly
+    solver.parameters.random_seed = random.randint(0, 10000)
     status = solver.Solve(Model)
 
-    # if model has no objective, solver may return all-false solution; prefer more assignments
-    try:
-        # set objective to maximize total assignments if not already set
-        if not Model.HasObjective():
-            solver = cp_model.CpSolver()
-            solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
-            solver.parameters.num_search_workers = 8
-            solver.parameters.random_polarity_ratio = 0.99  # 99% chance to choose 0 or 1 randomly
-            solver.parameters.random_seed = random.randint(0, 10000)
-            solver.parameters.exploit_best_solution_probability = 0.2
-            status = solver.Solve(Model)
-    except Exception:
-        # if objective addition fails, continue with original status
-        pass
 
     if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
         detected_errors = []

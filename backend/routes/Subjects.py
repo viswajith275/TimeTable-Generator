@@ -37,21 +37,22 @@ def Fetch_subject(current_user: UserDep, db: SessionDep, id: int, request: Reque
 
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
 
-    if subject:
-        return {
-                'id': subject.id,
-                'created_at': subject.created_at,
-                'subject':subject.subject_name,
-                'min_per_day': subject.min_per_day,
-                'max_per_day': subject.max_per_day,
-                'min_per_week': subject.min_per_week,
-                'max_per_week': subject.max_per_week,
-                'min_consecutive_class': subject.min_consecutive_class,
-                'max_consecutive_class': subject.max_consecutive_class,
-                'is_hard_sub': subject.is_hard_sub
+    if not subject:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
+
+    return {
+            'id': subject.id,
+            'created_at': subject.created_at,
+            'subject':subject.subject_name,
+            'min_per_day': subject.min_per_day,
+            'max_per_day': subject.max_per_day,
+            'min_per_week': subject.min_per_week,
+            'max_per_week': subject.max_per_week,
+            'min_consecutive_class': subject.min_consecutive_class,
+            'max_consecutive_class': subject.max_consecutive_class,
+            'is_hard_sub': subject.is_hard_sub
             }
     
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
 
 @subject_routes.post('/subjects', response_model=SubjectBase)
 def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate, request: Request):
@@ -93,19 +94,23 @@ def Create_subject(current_user: UserDep, db: SessionDep, values: SubjectCreate,
 @subject_routes.put('/subjects/{id}', response_model=SubjectBase)
 def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate, id: int, request: Request):
     subject = db.query(Subject).filter(Subject.user_id == current_user.id, Subject.id == id).first()
-    if subject:
-        subject.subject_name = values.subject
-        subject.min_per_day = values.min_per_day
-        subject.max_per_day = values.max_per_day
-        subject.min_per_week = values.min_per_week
-        subject.max_per_week = values.max_per_week
-        subject.max_consecutive_class = values.max_consecutive_class
-        subject.min_consecutive_class = values.min_consecutive_class
-        subject.is_hard_sub = values.is_hard_sub.value
+    
+    if not subject:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
 
-        db.commit()
 
-        return {
+    subject.subject_name = values.subject
+    subject.min_per_day = values.min_per_day
+    subject.max_per_day = values.max_per_day
+    subject.min_per_week = values.min_per_week
+    subject.max_per_week = values.max_per_week
+    subject.max_consecutive_class = values.max_consecutive_class
+    subject.min_consecutive_class = values.min_consecutive_class
+    subject.is_hard_sub = values.is_hard_sub.value
+
+    db.commit()
+
+    return {
                 'id': subject.id,
                 'created_at': subject.created_at,
                 'subject':subject.subject_name,
@@ -117,9 +122,7 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
                 'max_consecutive_class': subject.max_consecutive_class,
                 'is_hard_sub': subject.is_hard_sub
             }
-    
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
-    
+        
 
 @subject_routes.delete('/subjects/{id}')
 def Delete_subjects(current_user: UserDep, db: SessionDep, id: int, request: Request):

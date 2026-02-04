@@ -143,6 +143,7 @@ class SubjectBase(BaseModel):
     max_per_week: Optional[int] = None
     max_consecutive_class: Optional[int] = None
     min_consecutive_class: Optional[int] = None
+    isLab: bool = False
     is_hard_sub: Hardness
 
     model_config = ConfigDict(from_attributes=True)
