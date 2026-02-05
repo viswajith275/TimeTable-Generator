@@ -233,13 +233,49 @@ const TeacherDetailsEditPage = () => {
                 <div className={styles.gridItem__teacherInfo}>
                   <div>
                     <p>Max Classes Per Week</p>
-                    <h4>{teacherInfo.max_classes}</h4>
+                    <h4>{teacherInfo.max_per_week}</h4>
                   </div>
 
                   <button
                     className={styles.editBtn__teacherInfo}
                     onClick={() => {
-                      setEditTargetElm("max_classes");
+                      setEditTargetElm("max_per_week");
+                      setPopupShow(true);
+                    }}
+                  >
+                    <Pen size={16} strokeWidth={2} />
+                    Edit
+                  </button>
+                </div>
+
+                <div className={styles.gridItem__teacherInfo}>
+                  <div>
+                    <p>Max Classes Per Day</p>
+                    <h4>{teacherInfo.max_per_day ?? "—"}</h4>
+                  </div>
+
+                  <button
+                    className={styles.editBtn__teacherInfo}
+                    onClick={() => {
+                      setEditTargetElm("max_per_day");
+                      setPopupShow(true);
+                    }}
+                  >
+                    <Pen size={16} strokeWidth={2} />
+                    Edit
+                  </button>
+                </div>
+
+                <div className={styles.gridItem__teacherInfo}>
+                  <div>
+                    <p>Max Consecutive Classes</p>
+                    <h4>{teacherInfo.max_consecutive_class ?? "—"}</h4>
+                  </div>
+
+                  <button
+                    className={styles.editBtn__teacherInfo}
+                    onClick={() => {
+                      setEditTargetElm("max_consecutive_class");
                       setPopupShow(true);
                     }}
                   >
