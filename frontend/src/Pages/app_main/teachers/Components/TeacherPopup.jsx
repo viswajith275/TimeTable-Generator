@@ -1,6 +1,6 @@
 import styles from "./TeacherPopup.module.css";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, ChevronRight } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -18,18 +18,19 @@ const TeacherPopup = ({ popUpClose, isPopupOpen, addTeacher }) => {
   const [teacherName, setTeacherName] = useState("");
   const [maxPeriods, setMaxPeriods] = useState("1");
 
+  //  state for advanced settings
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [maxPerDay, setMaxPerDay] = useState("");
+  const [maxConsecutive, setMaxConsecutive] = useState("");
+
   const closeBtnClickHandler = () => {
     setTeacherName("");
     setMaxPeriods("1");
-    setErrors({
-      teacherName: "",
-      maxPeriods: "",
-    });
-    setErrorStates({
-      teacherName: false,
-      maxPeriods: false,
-    });
-
+    setMaxPerDay("");
+    setMaxConsecutive("");
+    setShowAdvanced(false);
+    setErrors({ teacherName: "", maxPeriods: "" });
+    setErrorStates({ teacherName: false, maxPeriods: false });
     popUpClose();
   };
 
@@ -73,14 +74,15 @@ const TeacherPopup = ({ popUpClose, isPopupOpen, addTeacher }) => {
 
     if (hasError) return;
 
-    // backend integration here
     try {
       const payload = {
         t_name: teacherName,
-        max_per_week: Number(maxPeriodsNum),
-        max_per_day: null,
-        max_consecutive_class: null,
+        max_per_week: maxPeriodsNum,
+        max_per_day: Number(maxPerDay) > 0 ? Number(maxPerDay) : null,
+        max_consecutive_class:
+          Number(maxConsecutive) > 0 ? Number(maxConsecutive) : null,
       };
+
       console.log(payload);
       const { data } = await axios.post("/api/teachers", payload);
       addTeacher(data);
@@ -150,6 +152,47 @@ const TeacherPopup = ({ popUpClose, isPopupOpen, addTeacher }) => {
               id="max-periods-input"
             />
           </div>
+
+          <div
+            className={styles.advancedToggle}
+            onClick={() => setShowAdvanced(!showAdvanced)}
+          >
+            <p>Advanced Settings</p>
+            <ChevronRight
+              size={18}
+              className={`${styles.chevron} ${
+                showAdvanced ? styles.rotate : ""
+              }`}
+            />
+          </div>
+
+          {showAdvanced && (
+            <div className={styles.advancedFields}>
+              <div className={styles.inputContainer}>
+                <label htmlFor="max-per-day-input">Maximum per day</label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Optional"
+                  value={maxPerDay}
+                  onChange={(e) => setMaxPerDay(e.target.value)}
+                />
+              </div>
+
+              <div className={styles.inputContainer}>
+                <label htmlFor="max-consecutive-input">
+                  Maximum consecutive classes
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Optional"
+                  value={maxConsecutive}
+                  onChange={(e) => setMaxConsecutive(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.actionBtns}>

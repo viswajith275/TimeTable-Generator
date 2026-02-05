@@ -8,7 +8,9 @@
   align-items: center;
   opacity: 0;
   pointer-events: none;
-  transition: transform 0.2s ease, opacity 0.1s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.1s ease;
 }
 .popupMain {
   min-width: clamp(330px, 30vw, 450px);
@@ -20,9 +22,35 @@
   gap: 1.2rem;
   opacity: 0;
   pointer-events: none;
-  transition: transform 0.2s ease, opacity 0.1s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.1s ease;
   transform: scale(0.6);
 }
+.advancedToggle {
+  display: flex;
+  gap: 0.1rem;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+}
+
+.rotate {
+  transform: rotate(90deg);
+}
+
+.advancedFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
 .open {
   transform: scale(1);
   pointer-events: auto;
