@@ -3,7 +3,7 @@ from typing import List
 from backend.oauth import UserDep
 from backend.database import SessionDep
 from backend.rate_limiter_deps import limiter
-from backend.models import Class, ClassBase, ClassCreate
+from backend.models import Class, ClassBase, ClassCreate, ClassUpdate
 
 
 class_routes = APIRouter(tags=['Classes'])
@@ -21,6 +21,7 @@ def Fetch_All_Classes(current_user: UserDep, request: Request):
             'c_name': c.c_name,
             'r_name': c.r_name,
             'created_at': c.created_at,
+            'is_lab': c.isLab,
             'teacher_assignments': [{
                 'assign_id': a.id,
                 't_name': a.teacher.t_name,
@@ -42,6 +43,7 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep, request: Request
             'id': cur_class.id,
             'c_name': cur_class.c_name,
             'r_name': cur_class.r_name,
+            'is_lab': cur_class.isLab,
             'created_at': cur_class.created_at,
             'teacher_assignments': [{
                 'assign_id': a.id,
@@ -55,7 +57,7 @@ def Fetch_Class(id: int, current_user: UserDep, db: SessionDep, request: Request
 @class_routes.post('/classes', response_model=ClassBase)
 def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, request: Request):
 
-    new_class = Class(c_name=classes.c_name, r_name=classes.r_name, user_id=current_user.id)
+    new_class = Class(c_name=classes.c_name, r_name=classes.r_name, user_id=current_user.id, isLab=classes.is_lab)
 
     db.add(new_class)
     db.commit()
@@ -65,6 +67,7 @@ def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, reque
                 'id': new_class.id,
                 'c_name': new_class.c_name,
                 'r_name': new_class.r_name,
+                'is_lab': new_class.isLab,
                 'created_at': new_class.created_at,
                 'teacher_assignments': [{
                     'assign_id': a.id,
@@ -75,7 +78,7 @@ def Add_class(classes: ClassCreate, current_user: UserDep, db: SessionDep, reque
             }
 
 @class_routes.put('/classes/{id}', response_model=ClassBase)
-def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: ClassCreate, request: Request):
+def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: ClassUpdate, request: Request):
     cur_class = db.query(Class).filter(Class.id == id, Class.user_id == current_user.id).first()
 
     if not cur_class:
@@ -84,6 +87,7 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
 
     cur_class.c_name = updated_class.c_name
     cur_class.r_name = updated_class.r_name
+    cur_class.isLab = updated_class.is_lab
 
     db.commit()
     db.refresh(cur_class)
@@ -92,6 +96,7 @@ def Update_Class(id: int, current_user: UserDep, db: SessionDep, updated_class: 
             'id': cur_class.id,
             'c_name': cur_class.c_name,
             'r_name': cur_class.r_name,
+            'is_lab': cur_class.isLab,
             'created_at': cur_class.created_at,
             'teacher_assignments': [{
                 'assign_id': a.id,

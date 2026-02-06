@@ -39,7 +39,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
     if not teacher:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher does not exists!')
     
-    cur_class = db.query(Class).filter_by(id=values.class_id, user_id=current_user.id).first()
+    cur_class = db.query(Class).filter(Class.id == values.class_id, Class.user_id == current_user.id, Class.isLab == False).first()
 
     if not cur_class:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='class does not exists!')

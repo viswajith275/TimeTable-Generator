@@ -106,7 +106,31 @@ def Generate_Timetable(db, assignments, data, user_id):
 
                 Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1 + slack)
 
+    # not two lab subjectss should not occur together
+    assigned_lab_class = collections.defaultdict(list)
+    for assignment in assignments:
+        is_lab_subject = getattr(assignment.subject, "is_lab_subject", None)
+        lab_classes = getattr(assignment.subject, "lab_classes", None)
 
+        if is_lab_subject:
+            for c in lab_classes:
+                assigned_lab_class[c.id].append(a)
+
+
+    for class_assignments in assigned_lab_class.values():
+
+        if len(class_assignments) < 2:
+            continue
+
+        for d in day_indices:
+            for s in all_slotes:
+
+                error_msg = f"Lab conflicts for {class_assignments[0].subject.subject_name} at slot {s}"
+                slack = make_slack(error_msg, penalty=100000000)
+
+                Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1 + slack)
+
+    
     #A class teacher should take morning classes at the specified dates
     for assignment in assignments:
 

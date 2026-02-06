@@ -1,13 +1,10 @@
-from sqlalchemy import Integer, String, ForeignKey, Enum, ARRAY
+from sqlalchemy import  String, ForeignKey, Enum, ARRAY, Table, Column
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator, model_validator
 from typing import List, Optional, Union
 from datetime import datetime
 import enum
 import re
-
-class Base(DeclarativeBase):
-    pass
 
 class WeekDay(enum.Enum):
     MONDAY = "Monday"
@@ -99,6 +96,7 @@ class ClassBase(BaseModel):
     id: int
     c_name: str
     r_name: str
+    is_lab: bool
     created_at: datetime
     teacher_assignments: List[TeacherAssignedBase]
 
@@ -120,6 +118,10 @@ class TeacherBase(BaseModel):
 class ClassCreate(BaseModel):
     c_name: str
     r_name: str
+    is_lab: bool = False
+
+class ClassUpdate(ClassCreate):
+    pass
 
 #Teacher creation/Updation detail model
 class TeacherCreate(BaseModel):
@@ -143,7 +145,8 @@ class SubjectBase(BaseModel):
     max_per_week: Optional[int] = None
     max_consecutive_class: Optional[int] = None
     min_consecutive_class: Optional[int] = None
-    isLab: bool = False
+    is_lab_subject: bool
+    lab_classes: Optional[List[str]]
     is_hard_sub: Hardness
 
     model_config = ConfigDict(from_attributes=True)
@@ -156,6 +159,8 @@ class SubjectCreate(BaseModel):
     max_per_week: Optional[int] = None
     max_consecutive_class: Optional[int] = None
     min_consecutive_class: Optional[int] = None
+    is_lab_subject: bool
+    lab_classes: Optional[List[int]] = None
     is_hard_sub: Hardness
 
     @model_validator(mode='after')
@@ -171,7 +176,12 @@ class SubjectCreate(BaseModel):
         if self.min_consecutive_class is not None and self.max_consecutive_class is not None:
             if self.min_consecutive_class > self.max_consecutive_class:
                 raise ValueError("The max value should be greater than min value!")
+            
+        if (self.is_lab_subject and self.lab_classes is None):
+            raise ValueError('You cant leave the lab classes empty!')
         
+        if not self.is_lab_subject and self.lab_classes is not None:
+            raise ValueError('You cannot enter lab classes for a non lab subject!')
         return self
 
 
@@ -318,6 +328,15 @@ class AllTimeTable(BaseModel):
     created_at: datetime
 
 #table structures
+class Base(DeclarativeBase):
+    pass
+
+Lab_assignments = Table(
+    'Lab_assignments',
+    Base.metadata,
+    Column('class_id', ForeignKey('classes.id'), primary_key=True),
+    Column('subject_id', ForeignKey('subjects.id'), primary_key=True)
+)
 
 #user table schemas
 class User(Base):
@@ -395,6 +414,7 @@ class Class(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     c_name: Mapped[str] = mapped_column(String(50), nullable=False)
     r_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    isLab: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
@@ -405,6 +425,7 @@ class Class(Base):
         back_populates="class_",
         cascade="all, delete-orphan"
     )
+    assigned_labs: Mapped[List['Subject']] = relationship(secondary=Lab_assignments, back_populates='lab_classes')
 
 class Subject(Base):
 
@@ -422,10 +443,12 @@ class Subject(Base):
     max_per_week: Mapped[Optional[int]] = mapped_column()
     max_consecutive_class: Mapped[Optional[int]] = mapped_column()
     min_consecutive_class: Mapped[Optional[int]] = mapped_column()
+    is_lab_subject: Mapped[bool] = mapped_column(default=False)
     is_hard_sub: Mapped[str] = mapped_column(default='Low')
 
     subject_assignments: Mapped[List["TeacherClassAssignment"]] = relationship(back_populates="subject", cascade="all, delete-orphan")
     user: Mapped['User'] = relationship(back_populates='subjects')
+    lab_classes: Mapped[List['Class']] = relationship(secondary=Lab_assignments, back_populates='assigned_labs')
 
 #Teacher Class Assignment Table Schema
 class TeacherClassAssignment(Base):
