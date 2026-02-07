@@ -22,6 +22,8 @@ def Generate_Timetable(db, assignments, data, user_id):
         'High': 3,
     }
 
+    is_forced_timetable = data.force_timetable
+
     slack_report = {}
     all_penalties = []
 
@@ -108,16 +110,21 @@ def Generate_Timetable(db, assignments, data, user_id):
 
     # not two lab subjectss should not occur together
     assigned_lab_class = collections.defaultdict(list)
+    res_limit = {}
     for assignment in assignments:
-        is_lab_subject = getattr(assignment.subject, "is_lab_subject", None)
-        lab_classes = getattr(assignment.subject, "lab_classes", None)
+        is_lab_subject = getattr(assignment.subject, "is_lab_subject", False)
+        lab_classes = getattr(assignment.subject, "lab_classes", [])
+        capacity = len(lab_classes)
 
         if is_lab_subject:
             for c in lab_classes:
-                assigned_lab_class[c.id].append(a)
+                assigned_lab_class[c.id].append(assignment)
+                res_limit[c.id] = capacity
 
 
-    for class_assignments in assigned_lab_class.values():
+    for idx, class_assignments in assigned_lab_class.items():
+
+        limit = res_limit[idx]
 
         if len(class_assignments) < 2:
             continue
@@ -128,7 +135,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                 error_msg = f"Lab conflicts for {class_assignments[0].subject.subject_name} at slot {s}"
                 slack = make_slack(error_msg, penalty=100000000)
 
-                Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1 + slack)
+                Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= limit + slack)
 
     
     #A class teacher should take morning classes at the specified dates
@@ -354,7 +361,7 @@ def Generate_Timetable(db, assignments, data, user_id):
             severity = solver.Value(slack_var)
             if severity > 0:
                 detected_errors.append(f"{error} (Violation amount: {severity})")
-        if len(detected_errors) > 0:
+        if len(detected_errors) > 0 and not is_forced_timetable:
             # change it to request to llm to get englified (wtf is this word) errors
             return {
                 'status': 'failed',
@@ -389,6 +396,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                 return {
                     'status': 'success',
                     'timetable_id': new_timetable.id,
+                    'error': detected_errors
                 }
             except Exception as e:
                 db.rollback()

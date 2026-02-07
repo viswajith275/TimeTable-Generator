@@ -122,7 +122,7 @@ def delete_assignment(current_user: UserDep, db: SessionDep, id: int, request: R
 
     assignment = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).filter(TeacherClassAssignment.id == id).first()
 
-    if assignment:
+    if not assignment:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
     
     db.delete(assignment)

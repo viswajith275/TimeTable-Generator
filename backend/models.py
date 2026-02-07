@@ -238,6 +238,7 @@ class Generate_Data(BaseModel):
     timetable_name: str
     slots: int
     days: List[WeekDay]
+    force_timetable: bool = False
 
 #Timetable Entries of an timetable data model
 

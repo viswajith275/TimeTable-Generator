@@ -143,6 +143,8 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
     
     if not subject:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No subjects Found!')
+    
+    subject.lab_classes.clear()
 
     if values.is_lab_subject:
         try:
@@ -154,15 +156,17 @@ def Update_subject(current_user: UserDep, db: SessionDep, values: SubjectUpdate,
 
                 if not lab_class:
                     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Lab class does not exist!')
-                if lab_class not in subject.lab_classes:
-                    subject.lab_classes.append(lab_class)
+                
+                subject.lab_classes.append(lab_class)
             
         except Exception as e:
             
             db.rollback()
 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{str(e)}")
-            
+    else:
+        subject.is_lab_subject = False
+     
 
     subject.subject_name = values.subject
     subject.min_per_day = values.min_per_day
