@@ -111,6 +111,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     # not two lab subjectss should not occur together
     assigned_lab_class = collections.defaultdict(list)
     res_limit = {}
+    assigned_lab_rooms = collections.defaultdict(list)
     for assignment in assignments:
         is_lab_subject = getattr(assignment.subject, "is_lab_subject", False)
         lab_classes = getattr(assignment.subject, "lab_classes", [])
@@ -118,6 +119,7 @@ def Generate_Timetable(db, assignments, data, user_id):
 
         if is_lab_subject:
             for c in lab_classes:
+                assigned_lab_rooms[assignment.subject.subject_name].append(c)
                 assigned_lab_class[c.id].append(assignment)
                 res_limit[c.id] = capacity
 
@@ -374,16 +376,30 @@ def Generate_Timetable(db, assignments, data, user_id):
                 db.flush()
                 db.refresh(new_timetable)
                 
-                
+                busy_rooms = collections.defaultdict(set)
+
                 for d in day_indices:
                     for s in all_slotes:
                         for assignment in assignments:
                             if solver.Value(shifts[(assignment.id, d, s)]):
+                                if assignment.subject.subject_name in assigned_lab_rooms:
+
+                                    availdable_rooms = assigned_lab_rooms[assignment.subject.subject_name]
+
+                                    for room in availdable_rooms:
+                                        if room not in busy_rooms[(d,s)]:
+                                            final_room = room.r_name
+                                            busy_rooms[(d,s)].add(room)
+                                            break
+
+                                else:
+                                    final_room = assignment.class_.r_name
+
                                 # store WeekDay enum member (not string) to match db enum type
                                 entry = TimeTableEntry(
                                     timetable_id=new_timetable.id,
                                     class_name=assignment.class_.c_name,
-                                    room_name=assignment.class_.r_name,
+                                    room_name=final_room,
                                     teacher_name=assignment.teacher.t_name,
                                     subject_name=assignment.subject.subject_name,
                                     day=index_to_day[d],
