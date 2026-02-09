@@ -98,15 +98,7 @@ def refresh_tokens(request: Request, response: Response, db: SessionDep):
             #token may be stolen
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token revoked or Invalid')
         
-        session_secret = secrets.token_urlsafe(32)
-        
-        new_expires_at = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
 
-        new_token = UserToken(user_id=user_id, expires_at=new_expires_at, refresh_key=session_secret)
-
-        db.add(new_token)
-        db.commit()
-        db.refresh(new_token)
 
         access_token = create_token(
             user_id=user_id,
@@ -114,20 +106,8 @@ def refresh_tokens(request: Request, response: Response, db: SessionDep):
             expires_time=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
         )
 
-        refresh_token = create_token(
-            user_id=user_id,
-            token_type="refresh",
-            expires_time=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
-            unique_id=str(new_token.id),
-            secret=session_secret
-        )
-
         response.set_cookie(
             key='access_token', value=f"Bearer {access_token}", httponly=True, secure=False, samesite="lax"
-        )
-
-        response.set_cookie(
-            key='refresh_token', value=refresh_token, httponly=True, secure=False ,samesite="lax"
         )
 
         return {'message': 'Token refreshed'}
