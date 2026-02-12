@@ -8,7 +8,9 @@
   align-items: center;
   opacity: 0;
   pointer-events: none;
-  transition: transform 0.2s ease, opacity 0.1s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.1s ease;
 }
 .popupMain {
   min-width: clamp(330px, 30vw, 450px);
@@ -20,7 +22,9 @@
   gap: 1.2rem;
   opacity: 0;
   pointer-events: none;
-  transition: transform 0.2s ease, opacity 0.1s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.1s ease;
   transform: scale(0.6);
 }
 .open {
@@ -96,4 +100,16 @@
   border-color: var(--color-primary);
   color: var(--color-bg);
   background-color: var(--color-primary);
+}
+.checkBoxContainer {
+  display: flex;
+
+  gap: 0.5rem;
+}
+.checkBoxContainer label,
+.checkbox__item {
+  cursor: pointer;
+}
+.checkbox__item {
+  accent-color: black;
 }

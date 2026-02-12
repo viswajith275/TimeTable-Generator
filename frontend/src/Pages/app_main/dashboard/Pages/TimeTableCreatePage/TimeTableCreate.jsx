@@ -25,6 +25,7 @@ const TimeTableCreate = () => {
   const [slots, setSlots] = useState(6);
   const [selectedDays, setSelectedDays] = useState(["Monday"]);
   const [loading, setLoading] = useState(false);
+  const [forceCreate, setForceCreate] = useState(false);
   const { setTimetables } = useGlobalData();
   const navigate = useNavigate();
 
@@ -58,6 +59,7 @@ const TimeTableCreate = () => {
       timetable_name: timetableName.trim(),
       slots: Number(slots),
       days: selectedDays,
+      force_timetable: forceCreate,
     };
 
     try {
@@ -168,6 +170,17 @@ const TimeTableCreate = () => {
                 </div>
               </div>
 
+              <div className={styles.forceCreateTb}>
+                <input
+                  className="checkbox__item"
+                  type="checkbox"
+                  name="force"
+                  id="force-create-tb"
+                  checked={forceCreate}
+                  onChange={(e) => setForceCreate(e.target.checked)}
+                />
+                <label htmlFor="force-create-tb">Force create</label>
+              </div>
               {/* Submit */}
               <button
                 type="submit"

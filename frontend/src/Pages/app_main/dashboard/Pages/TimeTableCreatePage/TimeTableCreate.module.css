@@ -118,9 +118,11 @@
   border-radius: 8px;
   font-size: 14px;
 }
-
+.forceCreateTb {
+  display: flex;
+  gap: 0.5rem;
+}
 .submit {
-  margin-top: 1rem;
   padding: 0.9rem;
   border-radius: 10px;
   border: none;
