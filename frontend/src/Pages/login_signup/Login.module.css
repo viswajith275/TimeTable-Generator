@@ -54,11 +54,15 @@
   justify-content: center;
   font-weight: 600;
   font-family: "Inter";
+  border: 1px solid var(--color-primary);
 }
 .googleLogin:hover {
   transition: 0.3s;
   box-shadow: 0 0 0 3px rgba(174, 184, 194, 0.2);
   cursor: pointer;
+}
+.googleLogin:focus{
+  border-color: var(--color-bg);
 }
 .left p {
   color: var(--color-grey-500);
@@ -145,7 +149,6 @@ form {
   justify-content: center;
   background-color: var(--color-primary);
   color: var(--color-bg);
-  outline: none;
   font-size: 14px;
   font-weight: 600;
   font-family: "Inter";
