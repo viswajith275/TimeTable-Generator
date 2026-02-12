@@ -178,7 +178,7 @@ const Register = () => {
         toast.success("Registration successful!");
         setTimeout(() => {
           handleLogin();
-        }, 3000);
+        }, 1000);
       }
     } catch (err) {
       if (err.response?.status === 400) {
@@ -218,8 +218,6 @@ const Register = () => {
     console.log("Google signup clicked");
   };
 
-
-  // real time error validation
   const handleChange = (e) => {
       const { name, value } = e.target;
       setForm((prev) => ({ ...prev, [name]: value }));

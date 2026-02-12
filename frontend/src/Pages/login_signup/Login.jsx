@@ -27,6 +27,42 @@ const Login = () => {
 
   const [submitLoading, setSubmitLoading] = useState(false);
 
+  const validateField = (fieldName, value) => {
+    const newErrors = { ...errors };
+    const newErrorStates = { ...errorStates };
+
+    switch(fieldName){
+      case 'password':
+        if (!value) {
+          newErrors.password = "Enter a password";
+          newErrorStates.password = true;
+        } else if (value.length < 6) {
+          newErrors.password = "Password too short";
+          newErrorStates.password = true;
+        } else {
+          newErrors.password = '';
+          newErrorStates.password = false;
+        }
+        break;
+
+      case 'username':
+        if (!value.trim()) {
+          newErrors.username = "Username is required";
+          newErrorStates.username = true;
+        } else {
+          newErrors.username = '';
+          newErrorStates.username = false;
+        }
+        break;
+      
+      default:
+          break;
+    }
+
+    setErrors(newErrors);
+    setErrorStates(newErrorStates);
+  }
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -104,6 +140,15 @@ const Login = () => {
     console.log("Google login clicked");
   };
 
+  const handleChange = (e) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({ ...prev, [name]: value }));
+
+      if (errorStates[name]) {
+        validateField(name, value);
+      }
+  };
+
   return (
     <section className={styles.loginPage}>
       <div className={styles.right}>
@@ -143,8 +188,9 @@ const Login = () => {
                 type="text"
                 id="username-login-page"
                 placeholder="Username"
+                name="username"
                 value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -171,9 +217,10 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password-login-page"
-                placeholder="●●●●●●●●"
+                name="password"
+                placeholder="Example@123"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={handleChange}
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
