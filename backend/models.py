@@ -47,6 +47,8 @@ class UserCreate(BaseModel):
             raise ValueError('Username cannot contain spaces')
         if len(u) < 3 or len(u) > 20:
             raise ValueError('Length of username should be between 3 and 20')
+        if re.search(r'[!#$%^&*(),.?":{}|<>]', u):
+            raise ValueError('Username should not contain any special characters other than @')
         return u
         
     @field_validator('password')
@@ -166,14 +168,26 @@ class SubjectCreate(BaseModel):
     @model_validator(mode='after')
     def max_min_validation(self) -> 'SubjectCreate':
         if self.min_per_day is not None and self.max_per_day is not None:
+
+            if (self.min_per_day < 0) or (self.max_per_day < 0):
+                raise ValueError("Min and Max value should be greater than 0")
+            
             if self.min_per_day > self.max_per_day:
                 raise ValueError("The max value should be greater than min value!")
             
         if self.min_per_week is not None and self.max_per_week is not None:
+
+            if (self.min_per_week < 0) or (self.max_per_week < 0):
+                raise ValueError("Min and Max value should be greater than 0")
+                
             if self.min_per_week > self.max_per_week:
                 raise ValueError("The max value should be greater than min value!")
             
         if self.min_consecutive_class is not None and self.max_consecutive_class is not None:
+
+            if (self.min_consecutive_class < 0) or (self.max_consecutive_class < 0):
+                raise ValueError("Min and Max value should be greater than 0")
+            
             if self.min_consecutive_class > self.max_consecutive_class:
                 raise ValueError("The max value should be greater than min value!")
             
@@ -182,6 +196,7 @@ class SubjectCreate(BaseModel):
         
         if not self.is_lab_subject and self.lab_classes is not None:
             raise ValueError('You cannot enter lab classes for a non lab subject!')
+        
         return self
 
 
@@ -239,6 +254,14 @@ class Generate_Data(BaseModel):
     slots: int
     days: List[WeekDay]
     force_timetable: bool = False
+
+    @field_validator('timetable_name')
+    @classmethod
+    def timetable_name_validator(cls, v: str) -> str:
+        if len(v) > 50:
+            raise ValueError('Name length too long!')
+        if len(v) < 3:
+            raise ValueError('Name length too small!')
 
 #Timetable Entries of an timetable data model
 

@@ -349,7 +349,7 @@ def Generate_Timetable(db, assignments, data, user_id):
 
 
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
+    solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30) # change if the timetable takes too long
     solver.parameters.num_search_workers = 8
     solver.parameters.random_polarity_ratio = 0.99  # 99% chance to choose 0 or 1 randomly
     solver.parameters.random_seed = random.randint(0, 10000)
@@ -364,7 +364,7 @@ def Generate_Timetable(db, assignments, data, user_id):
             if severity > 0:
                 detected_errors.append(f"{error} (Violation amount: {severity})")
         if len(detected_errors) > 0 and not is_forced_timetable:
-            # change it to request to llm to get englified (wtf is this word) errors
+            # change it to request to llm to get englified (wtf is this word) errors if needed
             return {
                 'status': 'failed',
                 'error': detected_errors
@@ -382,6 +382,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                     for s in all_slotes:
                         for assignment in assignments:
                             if solver.Value(shifts[(assignment.id, d, s)]):
+                                
                                 if assignment.subject.subject_name in assigned_lab_rooms:
 
                                     availdable_rooms = assigned_lab_rooms[assignment.subject.subject_name]
@@ -423,5 +424,5 @@ def Generate_Timetable(db, assignments, data, user_id):
     else:
         return {
             'status': 'MODEL_DOWN',
-            'error': ["Contact admin"] #verthe oru rasam
+            'error': ["Contact admin"] #verthe oru rasam aarum varan poonilla
         }
