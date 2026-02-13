@@ -12,7 +12,7 @@
 }
 
 .mainPanel {
-  padding: 0 3rem 2rem 3rem;
+  padding: 1rem 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -54,6 +54,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+}
+.section__special {
+  gap: 0rem;
 }
 
 .section div h4 {
@@ -110,7 +113,8 @@
   gap: 1rem;
 }
 
-.gridItem {
+.gridItem,
+.gridItem__type2 {
   border: 1px solid var(--color-grey-300);
   padding: 0.9rem 1.3rem;
   border-radius: 0.6rem;
@@ -118,8 +122,12 @@
   flex-direction: column;
   gap: 1.5rem;
 }
+.gridItem__type2 {
+  padding: 0;
+}
 
-.gridItem:focus-within{
+.gridItem:focus-within,
+.gridItem__type2:focus-within {
   border-color: var(--color-primary);
 }
 
@@ -177,6 +185,118 @@
 }
 .section .errorBox h4 {
   font-size: 14px;
+}
+.gridItem__header {
+  padding: 0.9rem 1.3rem 0rem 1.3rem;
+  border-bottom: 1px solid var(--color-grey-300);
+}
+.checkboxContainer {
+  display: flex;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  margin-top: 0.5rem;
+}
+.checkboxContainer label {
+  user-select: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.checkboxContainer input {
+  cursor: pointer;
+}
+.fullWidthGridItem {
+  grid-column: 1 / -1;
+}
+.errorBox__withpadding {
+  padding-inline: 1.3rem;
+  padding-top: 0.7rem;
+}
+/* this is the grid that has the lab items (multi select)*/
+.gridItem__Main {
+  padding: 0.9rem 1.3rem;
+  border-bottom: 1px solid var(--color-grey-300);
+  max-height: 200px;
+
+  overflow: auto;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(180px, max-content));
+  gap: 0.5rem 1rem;
+  align-content: start;
+}
+.inputField {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.5rem 1.3rem;
+  max-width: 300px;
+  border: 1px solid var(--color-grey-300);
+  padding-inline: 1rem;
+  border-radius: 0.3125rem;
+}
+.inputField:focus-within {
+  box-shadow: 0 0 0 2px rgba(174, 184, 194, 0.2);
+}
+
+.inputField input {
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  font-size: 15px;
+  min-height: 1.8rem;
+}
+.inputField input:focus {
+  box-shadow: none;
+}
+.searchContainer {
+  border-bottom: 1px solid var(--color-grey-300);
+}
+
+.selectedClasses {
+  padding: 0.3rem 1.3rem;
+}
+.selectedClasses p {
+  color: var(--color-grey-500);
+  font-size: 14px !important;
+}
+.selectedClasses p span {
+  color: var(--color-primary);
+  font-weight: 600 !important;
+}
+.labItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--color-grey-300);
+  background-color: var(--color-bg-light);
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.labItem:hover {
+  border-color: var(--color-grey-500);
+  background-color: var(--color-bg-muted);
+}
+
+.labItem input {
+  accent-color: var(--color-primary);
+}
+
+.labItem label,
+.labItem input {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  cursor: pointer;
+  accent-color: var(--color-primary);
 }
 @media (max-width: 768px) {
   .mainPanel {

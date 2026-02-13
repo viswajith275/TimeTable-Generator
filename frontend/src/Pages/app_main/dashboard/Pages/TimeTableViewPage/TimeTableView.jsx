@@ -42,15 +42,15 @@ const TimeTableView = () => {
   const [days, setDays] = useState([]);
 
   const baseColors = [
-    "#4DB7A9", // teal
-    "#3D86D8", // blue
-    "#52A3DD", // light blue
-    "#706FCE", // purple
-    "#3E9480", // dark teal
+    "#4DB7A9",
+    "#3D86D8",
+    "#52A3DD",
+    "#706FCE",
+    "#3E9480",
 
-    "#2C7A7B", // deep teal
-    "#00BFA6", // minty teal
-    "#b188f7", // soft violet
+    "#2C7A7B",
+    "#00BFA6",
+    "#b188f7",
   ];
 
   const colors = useMemo(() => {

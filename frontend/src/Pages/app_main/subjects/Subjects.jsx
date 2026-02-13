@@ -15,21 +15,12 @@ import { toast } from "react-toastify";
 const Subjects = () => {
   const navigate = useNavigate();
 
-  const {
-    subjects,
-    setSubjects,
-    subjectsLoaded,
-    fetchSubjects,
-    error,
-  } = useSubjects();
+  const { subjects, setSubjects, subjectsLoaded, fetchSubjects, error } =
+    useSubjects();
 
   const { refreshToken } = useAuth();
 
   const [isSubjectsLoading, setIsSubjectsLoading] = useState(true);
-
-  // delete confirmation state
-  const [openDelConf, setOpenDelConf] = useState(false);
-  const [subjectToDelete, setSubjectToDelete] = useState(null);
 
   // fetch once + smooth loader
   useEffect(() => {
@@ -44,24 +35,17 @@ const Subjects = () => {
       const elapsed = Date.now() - start;
       setTimeout(
         () => setIsSubjectsLoading(false),
-        Math.max(MIN_TIME - elapsed, 0)
+        Math.max(MIN_TIME - elapsed, 0),
       );
     };
 
     load();
   }, []);
 
-  // request delete (open popup)
-  const requestDeleteSubject = (id) => {
-    setSubjectToDelete(id);
-    setOpenDelConf(true);
-  };
-
-  // confirm delete
-  const confirmDeleteSubject = async () => {
+  const deleteSubject = async (id) => {
     const deleteReq = async (hasRetried = false) => {
       try {
-        await axios.delete(`/api/subjects/${subjectToDelete}`);
+        await axios.delete(`/api/subjects/${id}`);
         return true;
       } catch (err) {
         if (err?.response?.status === 401 && !hasRetried) {
@@ -74,34 +58,15 @@ const Subjects = () => {
     };
 
     const ok = await deleteReq(false);
-    if (ok) {
-      setSubjects((prev) => prev.filter((item) => item.id !== subjectToDelete));
-      setSubjectToDelete(null);
-      setOpenDelConf(false);
-    }
-  };
 
-  // cancel delete
-  const cancelDelete = () => {
-    setSubjectToDelete(null);
-    setOpenDelConf(false);
+    if (ok) {
+      setSubjects((prev) => prev.filter((item) => item.id !== id));
+    }
   };
 
   const editSubjectItem = (data) => {
     setSubjects((prev) =>
-      prev.map((item) =>
-        item.id === data.id ? { ...item, ...data } : item
-      )
-    );
-  };
-
-  // Popup component
-  const Popup = ({ children }) => {
-    return (
-      <div className={styles.popup}>
-        <div className={styles.overlay} onClick={cancelDelete} />
-        <div className={styles.card}>{children}</div>
-      </div>
+      prev.map((item) => (item.id === data.id ? { ...item, ...data } : item)),
     );
   };
 
@@ -132,11 +97,13 @@ const Subjects = () => {
         <div className={styles.utilityPanel}>
           <Filter />
         </div>
-
-        <div className={styles.gridSubjects}>
-          {isSubjectsLoading ? (
+        {isSubjectsLoading && (
+          <div className="small-container">
             <ErrorLoadingStates state="loading" />
-          ) : (
+          </div>
+        )}
+        <div className={styles.gridSubjects}>
+          {!isSubjectsLoading &&
             Object.values(subjects).map((value) => (
               <SubjectItem
                 key={value.id}
@@ -149,38 +116,21 @@ const Subjects = () => {
                   max: value.max_consecutive_class,
                 }}
                 toughnessLevel={value.is_hard_sub}
-                onRequestDelete={requestDeleteSubject}
+                onRequestDelete={deleteSubject}
                 editSubject={editSubjectItem}
               />
-            ))
-          )}
-
-          {Object.values(subjects).length === 0 &&
-            !isSubjectsLoading &&
-            !error && (
-              <ErrorLoadingStates
-                state="empty"
-                listName="subject"
-                btnName="Add Subject"
-              />
-            )}
+            ))}
         </div>
-      </div>
-
-      {openDelConf && (
-        <Popup>
-          <h3>Do you want to delete this subject?</h3>
-
-          <div className={styles.actions}>
-            <button className={styles.cancel} onClick={cancelDelete}>
-              Cancel
-            </button>
-            <button className={styles.delBtn} onClick={confirmDeleteSubject}>
-              Delete
-            </button>
+        {Object.values(subjects).length === 0 && !isSubjectsLoading && (
+          <div className="small-container">
+            <ErrorLoadingStates
+              state="empty"
+              listName="subject"
+              btnName="Add Subject"
+            />
           </div>
-        </Popup>
-      )}
+        )}
+      </div>
     </div>
   );
 };

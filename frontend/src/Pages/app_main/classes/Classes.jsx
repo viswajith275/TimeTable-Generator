@@ -35,7 +35,7 @@ const Classes = () => {
     load();
   }, []);
 
-  // Split classrooms and labs (derived safely)
+  // Split classrooms and labs
   const classList = useMemo(() => Object.values(classes), [classes]);
 
   const classRoomList = useMemo(
