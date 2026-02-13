@@ -268,6 +268,7 @@ class Generate_Data(BaseModel):
 class TimeTableEntryUpdate(BaseModel):
     subject: str
     teacher_name: str
+    room_name: str
 
 class ClassTimeTableEntryJson(BaseModel):
     id: int

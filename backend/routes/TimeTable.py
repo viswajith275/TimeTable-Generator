@@ -201,6 +201,7 @@ def Update_Timetable_Entry(current_user: UserDep, db: SessionDep, id: int,entry_
     
     timetable_entry.teacher_name = entry_data.teacher_name
     timetable_entry.subject_name = entry_data.subject
+    timetable_entry.room_name = entry_data.room_name
 
     db.commit()
     
