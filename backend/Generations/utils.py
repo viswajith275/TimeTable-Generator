@@ -301,7 +301,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     #no two hard subjects should be together
     for class_assign in assigned_to_class.values(): #reusing the variable from class conflicts :)
 
-        hard_subs = [a for a in class_assign if a.subject.is_hard_sub == "High"]
+        hard_subs = [a for a in class_assign if a.subject.is_hard_sub == "High" and a.subject.lab == False]
 
         if not hard_subs:
             continue
@@ -315,7 +315,7 @@ def Generate_Timetable(db, assignments, data, user_id):
 
                 if current_hard_shifts and next_hard_shifts:
 
-                    error_msg = f"Student Mental fatigue(adj hard subjects): Class {class_assign[0].class_.c_name} on {index_to_day[d]} (slotes {s} and {s+1})"
+                    error_msg = f"Student Mental fatigue(adj hard subjects): Class {class_assign[0].class_.c_name} on {index_to_day[d].value} (slotes {s} and {s+1})"
                     slack = make_slack(error_msg, penalty=500)
 
                     Model.Add(sum(current_hard_shifts) + sum(next_hard_shifts) <= 1 + slack)

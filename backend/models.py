@@ -262,6 +262,8 @@ class Generate_Data(BaseModel):
             raise ValueError('Name length too long!')
         if len(v) < 3:
             raise ValueError('Name length too small!')
+        
+        return v
 
 #Timetable Entries of an timetable data model
 
