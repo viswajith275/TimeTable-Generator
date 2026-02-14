@@ -134,7 +134,7 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
 
           <div className={styles.inputContainer}>
             <label htmlFor="class-no-entry-wa902">
-              <p>Room number</p>
+              <p>Room Name</p>
               <p
                 className={`${styles.errorText} ${
                   errorStates.roomno ? "" : "hidden"
