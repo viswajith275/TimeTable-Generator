@@ -12,6 +12,7 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
   const [formValue, setFormValue] = useState({
     subject: subject?.subject || "Free Period",
     teacher: subject?.teacher_name || "",
+    roomName: subject?.room_name || "",
   });
   const actionBtnSize = 18;
 
@@ -22,6 +23,7 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
     setFormValue({
       subject: subject?.subject || "Free Period",
       teacher: subject?.teacher_name || "",
+      roomName: subject?.room_name || "",
     });
     setEditMode(false);
   }, [subject]);
@@ -53,6 +55,7 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
     setFormValue({
       subject: subject?.subject || "Free Period",
       teacher: subject?.teacher_name || "",
+      roomName: subject?.room_name || "",
     });
   };
 
@@ -66,8 +69,6 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
       teacher_name: formValue.teacher,
     };
     try {
-      console.log("invoking api");
-      console.log("Payload structure : ", payload);
       await axios.put(`/api/entries/${subject.id}`, payload);
       editEntry({ ...payload, id: subject.id });
     } catch (error) {
@@ -150,6 +151,7 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
       >
         <p className={styles.subjectName__rowItem}>{formValue?.subject}</p>
         <p className={styles.teacherName__rowItem}>{formValue?.teacher}</p>
+        <p className={styles.roomName__rowItem}>{formValue?.roomName}</p>
       </div>
     );
   }
