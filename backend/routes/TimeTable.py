@@ -191,21 +191,6 @@ def Generate_TimeTable(current_user: UserDep, db: SessionDep, data: Generate_Dat
 
     return new_timetable
 
-@timetable_routes.put('/entries/{id}')
-def Update_Timetable_Entry(current_user: UserDep, db: SessionDep, id: int,entry_data: TimeTableEntryUpdate , request: Request):
-
-    timetable_entry = db.query(TimeTableEntry).join(TimeTable).filter(TimeTableEntry.id == id).filter(TimeTable.user_id == current_user.id).first()
-
-    if not timetable_entry:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="timetable entry not found!")
-    
-    timetable_entry.teacher_name = entry_data.teacher_name
-    timetable_entry.subject_name = entry_data.subject
-    timetable_entry.room_name = entry_data.room_name
-
-    db.commit()
-    
-    return {'message': 'Timetable entry updated successfully!'}
 
 @timetable_routes.delete('/timetables/{id}')
 def Delete_TimeTable(current_user: UserDep, db: SessionDep, id: int, request: Request):
