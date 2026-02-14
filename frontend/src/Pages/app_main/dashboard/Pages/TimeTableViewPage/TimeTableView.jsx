@@ -1,39 +1,34 @@
 import styles from "./TimeTableView.module.css";
 import Navbar from "../../../Components/navbar/Navbar";
 import TopbarLite from "../../../Components/topbar/TopbarLite";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Loader from "../../../Components/loader/Loader";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../../../../Context/AuthProvider";
 import axios from "axios";
 import ErrorLoadingStates from "../../../Components/ErrorLoadingStates/ErrorLoadingStates";
 import SearchableSelect from "../../../Components/SearchableSelect/SearchableSelect";
+import TimeTableSubjectItem from "./Components/TimeTableSubjectItem";
 
 const buildSubjectColorMap = (assignments, colors) => {
-  const subjects = new Set();
+  const map = {};
+  let index = 0;
 
   assignments.forEach((cls) => {
     cls.assignments.forEach((day) => {
       day.assignments.forEach((a) => {
-        subjects.add(a.subject);
+        if (!map[a.subject]) {
+          map[a.subject] = colors[index % colors.length];
+          index++;
+        }
       });
     });
-  });
-
-  const subjectList = Array.from(subjects);
-  const shuffled = [...colors].sort(() => Math.random() - 0.5);
-
-  const map = {};
-  subjectList.forEach((s, i) => {
-    map[s] = shuffled[i % shuffled.length];
   });
 
   return map;
 };
 
 const TimeTableView = () => {
-  const colors = ["#4DB7A9", "#3D86D8", "#52A3DD", "#706FCE", "#3E9480"];
-
   const [timeTable, setTimeTable] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,6 +40,22 @@ const TimeTableView = () => {
   const [dropDownLabels, setDropDownLabels] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
   const [days, setDays] = useState([]);
+
+  const baseColors = [
+    "#4DB7A9",
+    "#3D86D8",
+    "#52A3DD",
+    "#706FCE",
+    "#3E9480",
+
+    "#2C7A7B",
+    "#00BFA6",
+    "#b188f7",
+  ];
+
+  const colors = useMemo(() => {
+    return [...baseColors].sort(() => Math.random() - 0.5);
+  }, [timeTable?.id]);
 
   useEffect(() => {
     const loadPageData = async (hasRetried = false) => {
@@ -85,6 +96,45 @@ const TimeTableView = () => {
     setDays(["", ...firstClass.assignments.map((d) => d.day)]);
     setSubjectColorMap(buildSubjectColorMap(timeTable.assignments, colors));
   }, [timeTable]);
+
+  const editEntry = (data) => {
+    setTimeTable((prev) => {
+      if (!prev) return prev;
+
+      const updatedAssignments = prev.assignments.map((cls) => {
+        if (cls.class_name !== selectedClass.class_name) return cls;
+
+        return {
+          ...cls,
+          assignments: cls.assignments.map((day) => ({
+            ...day,
+            assignments: day.assignments.map((a) =>
+              a.id === data.id
+                ? {
+                    ...a,
+                    subject: data.subject,
+                    teacher_name: data.teacher_name,
+                  }
+                : a,
+            ),
+          })),
+        };
+      });
+
+      const updatedTimeTable = {
+        ...prev,
+        assignments: updatedAssignments,
+      };
+
+      const updatedSelectedClass = updatedAssignments.find(
+        (c) => c.class_name === selectedClass.class_name,
+      );
+
+      setSelectedClass(updatedSelectedClass);
+
+      return updatedTimeTable;
+    });
+  };
 
   if (isLoading) {
     return (
@@ -189,22 +239,11 @@ const TimeTableView = () => {
                             key={`${day}-slot-${slotIndex}`}
                             className={`${styles.subjectBox} ${styles.rowItem}`}
                           >
-                            <div
-                              className={styles.subItem__background}
-                              style={{
-                                backgroundColor:
-                                  subjectColorMap[subject?.subject] ||
-                                  "#E5E7EB",
-                                color: subject ? "#fff" : "#6B7280",
-                              }}
-                            >
-                              <p className={styles.subjectName__rowItem}>
-                                {subject?.subject || "Free Period"}
-                              </p>
-                              <p className={styles.teacherName__rowItem}>
-                                {subject?.teacher_name || ""}
-                              </p>
-                            </div>
+                            <TimeTableSubjectItem
+                              subject={subject}
+                              editEntry={editEntry}
+                              subjectColorMap={subjectColorMap}
+                            />
                           </div>
                         );
                       },

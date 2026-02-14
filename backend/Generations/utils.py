@@ -22,6 +22,8 @@ def Generate_Timetable(db, assignments, data, user_id):
         'High': 3,
     }
 
+    is_forced_timetable = data.force_timetable
+
     slack_report = {}
     all_penalties = []
 
@@ -106,7 +108,38 @@ def Generate_Timetable(db, assignments, data, user_id):
 
                 Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= 1 + slack)
 
+    # not two lab subjectss should not occur together
+    assigned_lab_class = collections.defaultdict(list)
+    res_limit = {}
+    assigned_lab_rooms = collections.defaultdict(list)
+    for assignment in assignments:
+        is_lab_subject = getattr(assignment.subject, "is_lab_subject", False)
+        lab_classes = getattr(assignment.subject, "lab_classes", [])
+        capacity = len(lab_classes)
 
+        if is_lab_subject:
+            for c in lab_classes:
+                assigned_lab_rooms[assignment.subject.subject_name].append(c)
+                assigned_lab_class[c.id].append(assignment)
+                res_limit[c.id] = capacity
+
+
+    for idx, class_assignments in assigned_lab_class.items():
+
+        limit = res_limit[idx]
+
+        if len(class_assignments) < 2:
+            continue
+
+        for d in day_indices:
+            for s in all_slotes:
+
+                error_msg = f"Lab conflicts for {class_assignments[0].subject.subject_name} at slot {s}"
+                slack = make_slack(error_msg, penalty=100000000)
+
+                Model.Add(sum(shifts[(a.id, d, s)] for a in class_assignments) <= limit + slack)
+
+    
     #A class teacher should take morning classes at the specified dates
     for assignment in assignments:
 
@@ -274,7 +307,7 @@ def Generate_Timetable(db, assignments, data, user_id):
             continue
 
         for d in day_indices:
-            for s in all_slotes:
+            for s in range(1,len(all_slotes)):
 
                 current_hard_shifts = [shifts[(a.id, d, s)] for a in hard_subs]
 
@@ -316,23 +349,12 @@ def Generate_Timetable(db, assignments, data, user_id):
 
 
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
+    solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30) # change if the timetable takes too long
+    solver.parameters.num_search_workers = 8
+    solver.parameters.random_polarity_ratio = 0.99  # 99% chance to choose 0 or 1 randomly
+    solver.parameters.random_seed = random.randint(0, 10000)
     status = solver.Solve(Model)
 
-    # if model has no objective, solver may return all-false solution; prefer more assignments
-    try:
-        # set objective to maximize total assignments if not already set
-        if not Model.HasObjective():
-            solver = cp_model.CpSolver()
-            solver.parameters.max_time_in_seconds = getattr(data, 'max_solve_seconds', 30)
-            solver.parameters.num_search_workers = 8
-            solver.parameters.random_polarity_ratio = 0.99  # 99% chance to choose 0 or 1 randomly
-            solver.parameters.random_seed = random.randint(0, 10000)
-            solver.parameters.exploit_best_solution_probability = 0.2
-            status = solver.Solve(Model)
-    except Exception:
-        # if objective addition fails, continue with original status
-        pass
 
     if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
         detected_errors = []
@@ -341,8 +363,8 @@ def Generate_Timetable(db, assignments, data, user_id):
             severity = solver.Value(slack_var)
             if severity > 0:
                 detected_errors.append(f"{error} (Violation amount: {severity})")
-        if len(detected_errors) > 0:
-            # change it to request to llm to get englified (wtf is this word) errors
+        if len(detected_errors) > 0 and not is_forced_timetable:
+            # change it to request to llm to get englified (wtf is this word) errors if needed
             return {
                 'status': 'failed',
                 'error': detected_errors
@@ -354,16 +376,31 @@ def Generate_Timetable(db, assignments, data, user_id):
                 db.flush()
                 db.refresh(new_timetable)
                 
-                
+                busy_rooms = collections.defaultdict(set)
+
                 for d in day_indices:
                     for s in all_slotes:
                         for assignment in assignments:
                             if solver.Value(shifts[(assignment.id, d, s)]):
+                                
+                                if assignment.subject.subject_name in assigned_lab_rooms:
+
+                                    availdable_rooms = assigned_lab_rooms[assignment.subject.subject_name]
+
+                                    for room in availdable_rooms:
+                                        if room not in busy_rooms[(d,s)]:
+                                            final_room = room.r_name
+                                            busy_rooms[(d,s)].add(room)
+                                            break
+
+                                else:
+                                    final_room = assignment.class_.r_name
+
                                 # store WeekDay enum member (not string) to match db enum type
                                 entry = TimeTableEntry(
                                     timetable_id=new_timetable.id,
                                     class_name=assignment.class_.c_name,
-                                    room_name=assignment.class_.r_name,
+                                    room_name=final_room,
                                     teacher_name=assignment.teacher.t_name,
                                     subject_name=assignment.subject.subject_name,
                                     day=index_to_day[d],
@@ -376,6 +413,7 @@ def Generate_Timetable(db, assignments, data, user_id):
                 return {
                     'status': 'success',
                     'timetable_id': new_timetable.id,
+                    'error': detected_errors
                 }
             except Exception as e:
                 db.rollback()
@@ -386,5 +424,5 @@ def Generate_Timetable(db, assignments, data, user_id):
     else:
         return {
             'status': 'MODEL_DOWN',
-            'error': ["Contact admin"] #verthe oru rasam
+            'error': ["Contact admin"] #verthe oru rasam aarum varan poonilla
         }

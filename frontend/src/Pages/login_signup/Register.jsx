@@ -5,14 +5,16 @@ import logoSmall from "../../assets/logo_small.png";
 import { Link } from "react-router-dom";
 import googleImg from "./img/googlel.webp";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../../Context/AuthProvider";
 
 const Register = () => {
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  
+  const { confirmLogin } = useAuth();
 
   const [form, setForm] = useState({
     username: "",
@@ -37,77 +39,131 @@ const Register = () => {
 
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    let hasError = false;
+  const validateField = (fieldName, value) => {
     const newErrors = { ...errors };
     const newErrorStates = { ...errorStates };
 
-    // USERNAME
-    if (!form.username.trim()) {
-      newErrors.username = "Username is required";
-      newErrorStates.username = true;
-      hasError = true;
-    } else {
-      newErrorStates.username = false;
-    }
+    switch(fieldName){
+      case 'email':
+        if (!value.trim()) {
+          newErrors.email = "Email is required";
+          newErrorStates.email = true;
+        } else if (!emailRegex.test(value)) {
+          newErrors.email = "Invalid email address";
+          newErrorStates.email = true;
+        } else {
+          newErrors.email = '';
+          newErrorStates.email = false;
+        }
+        break;
 
-    // EMAIL
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      case 'password':
+        if (!value) {
+          newErrors.password = "Enter a password";
+          newErrorStates.password = true;
+        } else if (value.length < 6) {
+          newErrors.password = "Password must be at least 6 characters";
+          newErrorStates.password = true;
+        } else if (!passwordRegex.test(value)) {
+          newErrors.password = "Include A-Z, a-z, 0-9 & symbol";
+          newErrorStates.password = true;
+        } else {
+          newErrors.password = '';
+          newErrorStates.password = false;
+        }
+        break;
+      
+      case 'confirmPassword':
+        if (!value) {
+          newErrors.confirmPassword = "Confirm your password";
+          newErrorStates.confirmPassword = true;
+        } else if (form.password !== value) {
+          newErrors.confirmPassword = "Passwords do not match";
+          newErrorStates.confirmPassword = true;
+        } else {
+          newErrors.confirmPassword = '';
+          newErrorStates.confirmPassword = false;
+        }
+        break;
 
-    if (!form.email.trim()) {
-      newErrors.email = "Email is required";
-      newErrorStates.email = true;
-      hasError = true;
-    } else if (!emailRegex.test(form.email)) {
-      newErrors.email = "Invalid email address";
-      newErrorStates.email = true;
-      hasError = true;
-    } else {
-      newErrorStates.email = false;
-    }
-
-    // PASSWORD
-    // PASSWORD
-    if (!form.password) {
-      newErrors.password = "Enter a password";
-      newErrorStates.password = true;
-      hasError = true;
-    } else if (form.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-      newErrorStates.password = true;
-      hasError = true;
-    } else if (!passwordRegex.test(form.password)) {
-      newErrors.password = "Include A–Z, a–z, 0–9 & symbol";
-
-      newErrorStates.password = true;
-      hasError = true;
-    } else {
-      newErrorStates.password = false;
-    }
-
-    // CONFIRM PASSWORD
-    if (!form.confirmPassword) {
-      newErrors.confirmPassword = "Confirm your password";
-      newErrorStates.confirmPassword = true;
-      hasError = true;
-    } else if (form.confirmPassword !== form.password) {
-      newErrors.confirmPassword = "Passwords do not match";
-      newErrorStates.confirmPassword = true;
-      hasError = true;
-    } else {
-      newErrorStates.confirmPassword = false;
+      case 'username':
+        if (!value.trim()) {
+          newErrors.username = "Username is required";
+          newErrorStates.username = true;
+        } else {
+          newErrors.username = '';
+          newErrorStates.username = false;
+        }
+        break;
+      
+        default:
+          break;
     }
 
     setErrors(newErrors);
     setErrorStates(newErrorStates);
+  }
 
-    if (hasError) return;
+  const validateAll = () => {
+    const newErrors = {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
 
+    let hasError = false;
+
+    if (!form.username.trim()) {
+      newErrors.username = "Username is required";
+      hasError = true;
+    }
+
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+      hasError = true;
+    } else if (!emailRegex.test(form.email)) {
+      newErrors.email = "Invalid email address";
+      hasError = true;
+    }
+
+    if (!form.password) {
+      newErrors.password = "Enter a password";
+      hasError = true;
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      hasError = true;
+    } else if (!passwordRegex.test(form.password)) {
+      newErrors.password = "Include A-Z, a-z, 0-9 & symbol";
+      hasError = true;
+    }
+
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = "Confirm your password";
+      hasError = true;
+    } else if (form.confirmPassword !== form.password) {
+      newErrors.confirmPassword = "Passwords do not match";
+      hasError = true;
+    }
+
+    setErrors(newErrors);
+    setErrorStates({
+      username: !!newErrors.username,
+      email: !!newErrors.email,
+      password: !!newErrors.password,
+      confirmPassword: !!newErrors.confirmPassword,
+    });
+
+    return !hasError;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateAll()) return;
+    
     try {
       setSubmitLoading(true);
-
       // backend integration here
       const payload = {
         username: form.username,
@@ -119,13 +175,13 @@ const Register = () => {
       const response = await axios.post("/api/register", payload);
 
       if (response.status === 200) {
-        toast.success("Registration successful, now please login!");
+        toast.success("Registration successful!");
         setTimeout(() => {
-          navigate("/login");
-        }, 3000);
+          handleLogin();
+        }, 1000);
       }
     } catch (err) {
-      if (err.status === 400) {
+      if (err.response?.status === 400) {
         setErrorStates({ ...errorStates, username: true, email: true });
         setErrors({
           ...errors,
@@ -138,8 +194,37 @@ const Register = () => {
     }
   };
 
+  const handleLogin = async () => {
+    const formData = new URLSearchParams();
+    formData.append("username", form.username);
+    formData.append("password", form.password);
+    formData.append("grant_type", "password");
+    formData.append("scope", "");
+    formData.append("client_id", "");
+    formData.append("client_secret", "");
+    const response = await axios.post("/api/login", formData, {
+      headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      },
+      withCredentials: true,
+    });
+
+    if (response.status == 200) {
+      confirmLogin(form.username);
+    }
+  };
+
   const handleGoogleSignup = () => {
     console.log("Google signup clicked");
+  };
+
+  const handleChange = (e) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({ ...prev, [name]: value }));
+
+      if (errorStates[name]) {
+        validateField(name, value);
+      }
   };
 
   return (
@@ -181,8 +266,9 @@ const Register = () => {
                 type="text"
                 id="username-register-page"
                 placeholder="Username"
+                name="username"
                 value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -209,9 +295,10 @@ const Register = () => {
               <input
                 type="email"
                 id="email-register-page"
+                name="email"
                 placeholder="example@email.com"
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -238,9 +325,10 @@ const Register = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password-register-page"
-                placeholder="●●●●●●●●"
+                name="password"
+                placeholder="Example@123"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={handleChange}
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
@@ -280,11 +368,10 @@ const Register = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="confirm-password-register-page"
-                placeholder="●●●●●●●●"
+                name="confirmPassword"
+                placeholder="Example@123"
                 value={form.confirmPassword}
-                onChange={(e) =>
-                  setForm({ ...form, confirmPassword: e.target.value })
-                }
+                onChange={handleChange}
               />
             </div>
           </div>

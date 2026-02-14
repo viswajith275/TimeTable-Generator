@@ -64,7 +64,7 @@ def add_teacher(current_user: UserDep, new_teacher: TeacherCreate, db: SessionDe
     if exists:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Teacher already exists!")
 
-    teacher = Teacher(t_name=new_teacher.t_name, max_per_week=new_teacher.max_per_week, max_per_day=new_teacher.max_per_day if new_teacher.max_per_day is not None else None, max_consecutive_class=new_teacher.max_consecutive_class if new_teacher.max_consecutive_class is not None else None, user_id=current_user.id)
+    teacher = Teacher(t_name=new_teacher.t_name, max_per_week=new_teacher.max_per_week, max_per_day=new_teacher.max_per_day, max_consecutive_class=new_teacher.max_consecutive_class, user_id=current_user.id)
 
     db.add(teacher)
     db.commit()
@@ -97,8 +97,8 @@ def update_teacher(id: int, current_user: UserDep, db: SessionDep, teacher: Teac
 
     updated_teacher.t_name = teacher.t_name
     updated_teacher.max_per_week = teacher.max_per_week
-    updated_teacher.max_per_day=teacher.max_per_day if teacher.max_per_day is not None else None
-    updated_teacher.max_consecutive_class=teacher.max_consecutive_class if teacher.max_consecutive_class is not None else None
+    updated_teacher.max_per_day = teacher.max_per_day
+    updated_teacher.max_consecutive_class = teacher.max_consecutive_class
                     
 
     db.commit()
@@ -126,7 +126,7 @@ def delete_teacher(id: int, current_user: UserDep, db: SessionDep, request: Requ
 
     teacher = db.query(Teacher).filter(Teacher.id == id, Teacher.user_id == current_user.id).first()
 
-    if teacher:
+    if not teacher:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found!")
     
     db.delete(teacher)

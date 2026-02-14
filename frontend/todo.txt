@@ -4,14 +4,12 @@ Edit subjects
 Edit teacher-class Assigments
 
 Subject creation -> min,max settings -> default value none.. add it
-Error handling
-Timetable thirikal
-Teacher Timetable
+Error handling in timetable creation : RAG shit
 
 Teacher assignments new constraints.
+Refactoring everything
 
-URGENT :
-FETCH DASHBOARD STUFF IN TEACHERS
+
 
 
 FIX 404 error pages.. error handling aint proper.. especially in nested pages... /timetableview page

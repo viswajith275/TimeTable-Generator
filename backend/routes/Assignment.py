@@ -24,6 +24,7 @@ def fetch_all_assignments(current_user: UserDep, db: SessionDep, request: Reques
             'class_id': a.class_id,
             'c_name': a.class_.c_name,
             'role': a.role,
+            'morning_class_days': a.morning_class_days,
             'subject_id': a.subject_id,
             'subject_name': a.subject.subject_name,
         })
@@ -38,7 +39,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
     if not teacher:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Teacher does not exists!')
     
-    cur_class = db.query(Class).filter_by(id=values.class_id, user_id=current_user.id).first()
+    cur_class = db.query(Class).filter(Class.id == values.class_id, Class.user_id == current_user.id, Class.isLab == False).first()
 
     if not cur_class:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='class does not exists!')
@@ -66,7 +67,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
         class_id=cur_class.id,
         subject_id=subject.id,
         role=values.role,
-        morning_class_days=values.morning_class_days if values.morning_class_days is not None else None
+        morning_class_days=values.morning_class_days
     )
 
     db.add(new_assignment)
@@ -81,6 +82,7 @@ def add_assignments(current_user: UserDep, db: SessionDep, values: TeacherClassA
             'class_id': new_assignment.class_id,
             'c_name': new_assignment.class_.c_name,
             'role': new_assignment.role,
+            'morning_class_days': new_assignment.morning_class_days,
             'subject_id': new_assignment.subject_id,
             'subject_name': new_assignment.subject.subject_name,
         }
@@ -110,6 +112,7 @@ def update_assignment(current_user: UserDep, db: SessionDep, values: TeacherClas
             'class_id': assignment.class_id,
             'c_name': assignment.class_.c_name,
             'role': assignment.role,
+            'morning_class_days': assignment.morning_class_days,
             'subject_id': assignment.subject_id,
             'subject_name': assignment.subject.subject_name,
         }
@@ -119,9 +122,10 @@ def delete_assignment(current_user: UserDep, db: SessionDep, id: int, request: R
 
     assignment = db.query(TeacherClassAssignment).join(Teacher).filter(Teacher.user_id == current_user.id).filter(TeacherClassAssignment.id == id).first()
 
-    if assignment:
-        db.delete(assignment)
-        db.commit()
+    if not assignment:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
+    
+    db.delete(assignment)
+    db.commit()
 
-        return {'message': 'Assignment deleted successfully'}
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='assignment not found!')
+    return {'message': 'Assignment deleted successfully'}

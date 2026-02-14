@@ -122,7 +122,15 @@ this shake animation is for error indication in inputfields */
   min-height: 100vh;
   align-items: center;
 }
-
+.small_container {
+  text-align: center;
+  padding: 2rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-height: 50vh;
+  align-items: center;
+}
 .label {
   display: flex;
   justify-content: space-between;
@@ -156,4 +164,11 @@ this shake animation is for error indication in inputfields */
 }
 .errorInput::placeholder {
   color: var(--color-danger);
+}
+
+input[type="number"]:focus {
+  outline: none !important;
+}
+.checkbox__item {
+  accent-color: black;
 }

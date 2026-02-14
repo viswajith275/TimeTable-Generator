@@ -19,6 +19,7 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
   // two way binding
   const [className, setClassName] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
+  const [isLab, setIsLab] = useState(false);
 
   const closeBtnClickHandler = () => {
     // reset state on close
@@ -32,7 +33,7 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
       classroom: false,
       roomno: false,
     });
-
+    setIsLab(false);
     popUpClose();
   };
 
@@ -74,6 +75,7 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
       const response = await axios.post("/api/classes", {
         c_name: className,
         r_name: roomNumber,
+        is_lab: isLab,
       });
 
       addClass(response.data);
@@ -149,6 +151,21 @@ const ClassDetailsPopup = ({ popUpClose, isPopupOpen, addClass }) => {
               placeholder="Enter Room number"
               id="class-no-entry-wa902"
             />
+          </div>
+
+          <div className={styles.checkBoxContainer}>
+            <input
+              className={styles.checkbox__item}
+              type="checkbox"
+              name="is_lab"
+              id="lab-check"
+              checked={isLab}
+              onChange={(e) => setIsLab(e.target.checked)}
+            />
+            <label htmlFor="lab-check">
+              {" "}
+              <p>Mark as lab</p>{" "}
+            </label>
           </div>
 
           <div className={styles.actionBtns}>

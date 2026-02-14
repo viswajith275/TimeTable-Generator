@@ -39,7 +39,10 @@ const TeacherAssignPopup = ({
   // these are done to form labels for the drop down.. useMemo is used to avoid repeated calculcations..
   // the concept of DP
   const classOptions = useMemo(
-    () => classes.map((c) => ({ label: c.c_name, value: c.id })),
+    () =>
+      classes
+        .filter((val) => !val.is_lab)
+        .map((c) => ({ label: c.c_name, value: c.id })),
     [classes],
   );
 
@@ -198,8 +201,6 @@ const TeacherAssignPopup = ({
       );
     }
   };
-
-  /* ---------------- UI ---------------- */
 
   return (
     <div

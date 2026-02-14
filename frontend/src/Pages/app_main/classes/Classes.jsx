@@ -2,25 +2,20 @@ import styles from "./Classes.module.css";
 import Navbar from "../Components/navbar/Navbar";
 import Topbar from "../Components/topbar/Topbar";
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ClassDetailsPopup from "./Components/ClassDetailsPopup";
 import ClassItem from "./Components/ClassItem";
 import Filter from "../Components/filter/Filter";
 import { useClasses } from "../../../Context/ClassesProvider";
-
 import ErrorLoadingStates from "../Components/ErrorLoadingStates/ErrorLoadingStates";
+
 const Classes = () => {
   const { classes, classesLoaded, setClasses, fetchClasses } = useClasses();
-  //state variables needed
-  const [popupShow, setPopupShow] = useState(false);
 
+  const [popupShow, setPopupShow] = useState(false);
   const [isClassesLoading, setIsClassesLoading] = useState(true);
 
-  //fetches all the classes on mounting of component
-  // Ensure the loader is visible for at least MIN_TIME.
-  // If the API responds faster, we wait the remaining time.
-  // If it takes longer, we stop loading immediately (no extra delay). Math.max is used to prevent that (in case of -ve delay, make it 0)
-  // this prevents that flickering problem.. so kind of a smooth transition
+  // Fetch classes on mount
   useEffect(() => {
     const load = async () => {
       const MIN_TIME = 500;
@@ -40,12 +35,27 @@ const Classes = () => {
     load();
   }, []);
 
+  // Split classrooms and labs
+  const classList = useMemo(() => Object.values(classes), [classes]);
+
+  const classRoomList = useMemo(
+    () => classList.filter((val) => !val.is_lab),
+    [classList],
+  );
+
+  const labList = useMemo(
+    () => classList.filter((val) => val.is_lab),
+    [classList],
+  );
+
   const deleteClassItem = (id) => {
     setClasses((prev) => prev.filter((item) => item.id !== id));
   };
+
   const addClassItem = (data) => {
-    setClasses([...classes, data]);
+    setClasses((prev) => [...prev, data]);
   };
+
   const editClassItem = (data) => {
     setClasses((prev) =>
       prev.map((item) =>
@@ -76,9 +86,12 @@ const Classes = () => {
         isPopupOpen={popupShow}
         popUpClose={() => setPopupShow(false)}
       />
-      <Navbar></Navbar>
+
+      <Navbar />
+
       <div className={styles.mainPanelPlaceholder}>
-        <Topbar></Topbar>
+        <Topbar />
+
         <div className={styles.mainPanel}>
           <div className={styles.mainPanel__headings}>
             <div>
@@ -88,9 +101,7 @@ const Classes = () => {
 
             <button
               className={styles.createBtn}
-              onClick={() => {
-                setPopupShow(true);
-              }}
+              onClick={() => setPopupShow(true)}
             >
               <Plus />
               <p>Add Class</p>
@@ -99,18 +110,32 @@ const Classes = () => {
         </div>
 
         <div className={styles.utilityPanel}>
-          <Filter></Filter>
+          <Filter />
         </div>
 
-        <div className={styles.gridClasses}>
-          {/* have used roomName instead of className to avoid confusion
-            as classNaame is a pre-defined keyword in jsx */}
-
-          {isClassesLoading ? (
+        {/* Loading */}
+        {isClassesLoading && (
+          <div className="small_container">
             <ErrorLoadingStates state={"loading"} />
-          ) : (
-            Object.values(classes).map((value) => {
-              return (
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isClassesLoading && classList.length === 0 && (
+          <div className="small_container">
+            <ErrorLoadingStates
+              state={"empty"}
+              listName={"classroom"}
+              btnName={"Add class"}
+            />
+          </div>
+        )}
+
+        {/* classrooms normal  */}
+        {!isClassesLoading && classRoomList.length > 0 && (
+          <>
+            <div className={styles.gridClasses}>
+              {classRoomList.map((value) => (
                 <ClassItem
                   key={value.id}
                   id={value.id}
@@ -119,20 +144,29 @@ const Classes = () => {
                   deleteClass={deleteClassItem}
                   editClass={editClassItem}
                 />
-              );
-            })
-          )}
-          {/* //Work in progress */}
-          {Object.values(classes).length == 0 && !isClassesLoading ? (
-            <ErrorLoadingStates
-              state={"empty"}
-              listName={"classroom"}
-              btnName={"Add class"}
-            />
-          ) : (
-            ""
-          )}
-        </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/*lab rooms*/}
+        {!isClassesLoading && labList.length > 0 && (
+          <div className={styles.labContainer}>
+            <h3 className={styles.sectionHeading}>Labs</h3>
+            <div className={styles.gridClasses}>
+              {labList.map((value) => (
+                <ClassItem
+                  key={value.id}
+                  id={value.id}
+                  roomName={value.c_name}
+                  roomNumber={value.r_name}
+                  deleteClass={deleteClassItem}
+                  editClass={editClassItem}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
