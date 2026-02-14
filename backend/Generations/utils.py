@@ -301,7 +301,7 @@ def Generate_Timetable(db, assignments, data, user_id):
     #no two hard subjects should be together
     for class_assign in assigned_to_class.values(): #reusing the variable from class conflicts :)
 
-        hard_subs = [a for a in class_assign if a.subject.is_hard_sub == "High" and a.subject.lab == False]
+        hard_subs = [a for a in class_assign if a.subject.is_hard_sub == "High" and a.subject.min_consecutive_class < 2]
 
         if not hard_subs:
             continue
