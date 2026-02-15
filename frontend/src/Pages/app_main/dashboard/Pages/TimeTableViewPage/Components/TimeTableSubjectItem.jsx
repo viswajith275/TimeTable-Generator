@@ -12,6 +12,7 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
   const [formValue, setFormValue] = useState({
     subject: subject?.subject || "Free Period",
     teacher: subject?.teacher_name || "",
+    roomName: subject?.room_name || "",
   });
   const actionBtnSize = 18;
 
@@ -22,6 +23,7 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
     setFormValue({
       subject: subject?.subject || "Free Period",
       teacher: subject?.teacher_name || "",
+      roomName: subject?.room_name || "",
     });
     setEditMode(false);
   }, [subject]);
@@ -39,20 +41,27 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
 
     const subjectValue = formValue.subject.trim();
     const teacherValue = formValue.teacher.trim();
+    const roomValue = formValue.roomName.trim();
 
     const hasChanges =
-      subjectValue !== subject.subject || teacherValue !== subject.teacher_name;
+      subjectValue !== subject.subject ||
+      teacherValue !== subject.teacher_name ||
+      roomValue !== subject.room_name;
 
-    const isValid = subjectValue.length > 0 && teacherValue.length > 0;
+    const isValid =
+      subjectValue.length > 0 &&
+      teacherValue.length > 0 &&
+      roomValue.length > 0;
 
     setIsValidForSubmit(hasChanges && isValid);
-  }, [formValue]);
+  }, [formValue, subject]);
 
   const cancelBtnClickHandler = () => {
     setEditMode(false);
     setFormValue({
       subject: subject?.subject || "Free Period",
       teacher: subject?.teacher_name || "",
+      roomName: subject?.room_name || "",
     });
   };
 
@@ -64,10 +73,10 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
     const payload = {
       subject: formValue.subject,
       teacher_name: formValue.teacher,
+      room_name: formValue.roomName,
     };
+
     try {
-      console.log("invoking api");
-      console.log("Payload structure : ", payload);
       await axios.put(`/api/entries/${subject.id}`, payload);
       editEntry({ ...payload, id: subject.id });
     } catch (error) {
@@ -111,6 +120,15 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
               setFormValue((prev) => ({ ...prev, teacher: e.target.value }))
             }
           />
+          <input
+            type="text"
+            placeholder="Edit room name"
+            value={formValue.roomName}
+            onChange={(e) =>
+              setFormValue((prev) => ({ ...prev, roomName: e.target.value }))
+            }
+          />
+
           <button type="submit" hidden />
         </form>
 
@@ -150,6 +168,7 @@ const TimeTableSubjectItem = ({ subject, subjectColorMap, editEntry }) => {
       >
         <p className={styles.subjectName__rowItem}>{formValue?.subject}</p>
         <p className={styles.teacherName__rowItem}>{formValue?.teacher}</p>
+        <p className={styles.roomName__rowItem}>{formValue?.roomName}</p>
       </div>
     );
   }

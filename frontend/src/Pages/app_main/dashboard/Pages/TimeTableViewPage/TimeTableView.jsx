@@ -114,6 +114,7 @@ const TimeTableView = () => {
                     ...a,
                     subject: data.subject,
                     teacher_name: data.teacher_name,
+                    room_name: data.room_name,
                   }
                 : a,
             ),

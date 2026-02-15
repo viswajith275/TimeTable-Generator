@@ -67,6 +67,11 @@ const TimeTableCreate = () => {
 
       const { data } = await axios.post("/api/generate", payload);
       console.log(data, data.timetable_id);
+      if (!data.timetable_id) {
+        return toast.error(
+          `Error: ${data.status != "DATABASE_ERROR" ? data?.error[0] || "Unknown Error" : "Unknown Error"}`,
+        );
+      }
       setTimetables((prev) => [
         ...prev,
         {
@@ -74,6 +79,7 @@ const TimeTableCreate = () => {
           timetable_name: timetableName.trim(),
         },
       ]);
+
       navigate(`/dashboard/timetables/${data.timetable_id}`, { replace: true });
     } catch (err) {
       if (err?.response?.status == 401 && !hasRetried) {

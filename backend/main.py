@@ -9,6 +9,7 @@ from .routes.Classes import class_routes
 from .routes.Assignment import assign_routes
 from .routes.TimeTable import timetable_routes
 from .routes.Subjects import subject_routes
+from .routes.Entries import entry_routes
 from backend.database import create_db_and_tables
 
 
@@ -35,3 +36,4 @@ app.include_router(class_routes)
 app.include_router(subject_routes)
 app.include_router(assign_routes)
 app.include_router(timetable_routes)
+app.include_router(entry_routes)

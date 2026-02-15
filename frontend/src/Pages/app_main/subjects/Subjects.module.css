@@ -53,13 +53,11 @@ body {
   padding: 0rem 2rem 2rem 0rem;
 
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 }
 
-/*=================== POPUP MENU ====================*/
-
-.popup{
+.popup {
   position: fixed;
   display: flex;
   justify-content: center;
@@ -70,7 +68,7 @@ body {
   height: 100vh;
 }
 
-.overlay{
+.overlay {
   width: 100%;
   height: 100%;
   opacity: 0.5;
@@ -78,7 +76,7 @@ body {
   background-color: var(--color-primary);
 }
 
-.popup .card{
+.popup .card {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -90,13 +88,11 @@ body {
   min-width: 30%;
 }
 
-/*=================== DEL POPUP ====================*/
-
-.popup h3{
+.popup h3 {
   font-weight: normal;
 }
 
-.popup .actions{
+.popup .actions {
   width: 100%;
   margin-top: 2rem;
   display: flex;
@@ -105,7 +101,7 @@ body {
   gap: 1rem;
 }
 
-.popup .actions button{
+.popup .actions button {
   border: none;
   outline: none;
   padding: 0.5rem 2rem;
@@ -114,16 +110,16 @@ body {
   transition: all 0.25s ease;
 }
 
-.popup .actions button:hover{
+.popup .actions button:hover {
   transform: translateY(-2px);
 }
 
-.popup .actions .delBtn{
+.popup .actions .delBtn {
   background-color: var(--color-danger);
   color: #fff;
 }
 
-.popup .actions .cancel{
+.popup .actions .cancel {
   border: 1px solid var(--color-grey-500);
 }
 
