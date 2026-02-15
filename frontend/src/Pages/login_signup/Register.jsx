@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./Login.module.css";
 import { LockKeyhole, Eye, EyeOff, User, Mail } from "lucide-react";
-import logoSmall from "../../assets/logo_small.png";
+import logoSmall from "../../assets/logo_small.svg";
 import { Link } from "react-router-dom";
 import googleImg from "./img/googlel.webp";
 import axios from "axios";

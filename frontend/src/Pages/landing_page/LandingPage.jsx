@@ -11,7 +11,8 @@ import {
   Send
 } from "lucide-react";
 import styles from "./LandingPage.module.css";
-import logoFull from "../../assets/logo_full_width.png";
+// import logoFull from "../../assets/logo_full_width.png";
+import logoSmall from "../../assets/logo_small.svg";
 
 const FEATURES = [
   {
@@ -64,7 +65,11 @@ const LandingPage = () => {
     <div className={styles.container}>
       {/* ================= HEADER ================= */}
       <header className={styles.header}>
-        <img src={logoFull} alt="Logo" />
+        {/* <img src={logoFull} alt="Logo" /> */}
+        <div className={styles.logo}>
+          <img src={logoSmall} alt="Logo" />
+          Make<span>Table</span>
+        </div>
 
         <nav>
           <a href="#Features">Features</a>
@@ -265,7 +270,10 @@ const LandingPage = () => {
 
       {/* ================= FOOTER ================= */}
       <footer className={styles.footer}>
-        <img src={logoFull} alt="Logo" />
+        <div className={styles.logo}>
+          <img src={logoSmall} alt="Logo" />
+          Make<span>Table</span>
+        </div>
         <nav>
           <a>About</a>
           <a href="https://github.com/viswajith275/TimeTable-Generator" target="blank" rel="noopener noreferrer">GitHub</a>

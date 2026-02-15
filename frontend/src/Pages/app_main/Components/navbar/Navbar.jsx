@@ -7,8 +7,8 @@ import {
   Settings,
 } from "lucide-react";
 
-import logoSmall from "../../../../assets/logo_small.png";
-import logoFullWidth from "../../../../assets/logo_full_width.png";
+import logoSmall from "../../../../assets/logo_small.svg";
+// import logoFullWidth from "../../../../assets/logo_full_width.png";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
@@ -18,7 +18,11 @@ const Navbar = () => {
 
   return (
     <div className={styles.navBar}>
-      <img src={logoFullWidth} width={"120px"} alt="" />
+      <div className={styles.logo}>
+        <img src={logoSmall} />
+        Make<span>Table</span>
+      </div>
+      {/* <img src={logoFullWidth} width={"120px"} alt="" /> */}
       <div className={styles.linkContainer}>
         <div className={styles.linkGroups}>
           <div
@@ -26,7 +30,7 @@ const Navbar = () => {
               currentPath.startsWith("dashboard") || currentPath.trim() === ""
                 ? styles.selected
                 : ""
-            }`}
+              }`}
             onClick={() => {
               navigate("/dashboard");
             }}

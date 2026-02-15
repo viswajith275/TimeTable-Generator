@@ -1,6 +1,6 @@
 import styles from "./Login.module.css";
 import style2 from "./Forgot.module.css";
-import logoSmall from "../../assets/logo_small.png";
+import logoSmall from "../../assets/logo_small.svg";
 
 import { Mail, ChevronLeft } from "lucide-react";
 
